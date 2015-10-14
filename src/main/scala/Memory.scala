@@ -37,7 +37,30 @@ class Storage( val start: Int, val size: Int ) extends Addressable {
 	
 }
 
-abstract class Port( val start: Int, val size: Int ) extends Addressable
+abstract class Port( val start: Int, val size: Int ) extends Addressable {
+	
+	require( start >= 0 )
+	require( size > 0 )
+
+}
+
+abstract class ReadOnlyPort( val start: Int, val size: Int ) extends Addressable {
+	
+	require( start >= 0 )
+	require( size > 0 )
+	
+	def writeByte( addr: Int, value: Int ) = sys.error( "read only port" )
+	
+}
+
+abstract class WriteOnlyPort( val start: Int, val size: Int ) extends Addressable {
+	
+	require( start >= 0 )
+	require( size > 0 )
+	
+	def readByte( addr: Int ) = sys.error( "write only port" )
+	
+}
 
 class Memory extends Addressable {
 	

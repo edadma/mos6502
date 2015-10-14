@@ -7,6 +7,20 @@ object Main extends App {
 	
 	m add new Storage( 0x0000, 0x1000 )
 	
-	m writeByte (0x0100, 0x5a)
+	m add
+		new Port( 0xFF00, 1 ) {
+			def readByte( addr: Int ) = io.StdIn.readChar.toInt
+			
+			def writeByte( addr: Int, value: Int ) {
+				print( value.toChar )
+			}
+		}
+		
+	m writeByte( 0x0100, 0x5a )
 	printf( "%x\n", m readByte 0x100 )
+	
+	val in = m readByte( 0xFF00 )
+	
+	m writeByte( 0xFF00, in )
+	m writeByte( 0xFF00, '\n' )
 }
