@@ -15,12 +15,20 @@ object Main extends App {
 				print( value.toChar )
 			}
 		}
+	m add
+		new Port( 0xFF01, 1 ) {
+			def readByte( addr: Int ) = io.StdIn.readInt
+			
+			def writeByte( addr: Int, value: Int ) {
+				print( value )
+			}
+		}
 		
 	m writeByte( 0x0100, 0x5a )
 	printf( "%x\n", m readByte 0x100 )
 	
-	val in = m readByte( 0xFF00 )
+	val in = m readByte( 0xFF01 )
 	
-	m writeByte( 0xFF00, in )
+	m writeByte( 0xFF01, in )
 	m writeByte( 0xFF00, '\n' )
 }
