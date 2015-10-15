@@ -1,7 +1,7 @@
 package xyz.hyperreal.mos6502
 
 
-abstract class CPU( val mem: Memory ) extends LogicalAddressModes with Vectors {
+abstract class CPU( val mem: Memory ) extends LogicalAddressModes with Vectors with Flags {
 	
 	val opcodes: Seq[Instruction]
 	
@@ -11,19 +11,19 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with Vectors {
 	var SP = 0
 	var PC = 0
 	
-	var N = false
-	var V = false
+	val status = Array( false, false, false, false )
+	
 	var B = false
 	var D = false
 	var I = false
-	var Z = false
-	var C = false
 	
 	var trace = false
 	var opcode = 0
 	var aaa = 0
 	var bbb = 0
 	var cc = 0
+	var xx = 0
+	var y = false
 	
 	def nextByte = {
 		val res = mem.readByte(PC)
@@ -53,15 +53,17 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with Vectors {
 	
 	def step = {
 		opcode = nextByte
-		aaa = opcode>>5
+//		aaa = opcode>>5
 		bbb = (opcode>>2)&0x03
-		cc = opcode&0x03
-		opcodes( opcode ) perform this
+//		cc = opcode&0x03
+		xx = opcode>>6
+		y = ((opcode>>5)&1) == 1
+		opcodes(opcode) perform this
 	}
 	
 	def flags( a: Int ) = {
-		N = a < 0
-		Z = a == 0
+		status(N) = a < 0
+		status(Z) = a == 0
 		a
 	}
 	
@@ -83,6 +85,13 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with Vectors {
 		run
 	}
 	
+}
+
+trait Flags {
+	val N = 0
+	val V = 1
+	val C = 2
+	val Z = 3
 }
 
 class CPU6502( mem: Memory ) extends CPU( mem ) {

@@ -61,6 +61,19 @@ object TXS extends Instruction {
 	
 }
 
+object BXX extends Instruction {
+	
+	def perform( cpu: CPU ) = {
+		val offset = cpu.nextByte
+		
+		if (cpu.status(cpu.xx) == cpu.y)
+			cpu.PC += offset
+			
+		true
+	}
+	
+}
+
 abstract class AddressModeInstruction( modes: Seq[AddressMode] ) extends Instruction {
 	
 	def address( cpu: CPU ) = modes( cpu.bbb )( cpu )
