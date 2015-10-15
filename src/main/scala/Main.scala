@@ -5,7 +5,7 @@ object Main extends App {
 	
 	val m = new Memory
 	
-	m add new RAM( 0x0000, 0x1000 )
+	m add new RAM( 0x0000, 0x4000 )
 	m add new StdInChar( 0x4000 )
 	m add new StdInInt( 0x4001 )
 	m add new ROM( 0x8000, Seq(

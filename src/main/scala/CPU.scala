@@ -10,7 +10,14 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes {
 	var Y = 0
 	var SP = 0
 	var PC = 0
-	var status = 0
+	
+	var N = false
+	var V = false
+	var B = false
+	var D = false
+	var I = false
+	var Z = false
+	var C = false
 	
 	var trace = false
 	var opcode = 0
@@ -50,6 +57,12 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes {
 		bbb = (opcode>>2)&0x03
 		cc = opcode&0x03
 		opcodes( opcode ) perform this
+	}
+	
+	def flags( a: Int ) = {
+		N = a < 0
+		Z = a == 0
+		a
 	}
 	
 	def run {

@@ -3,14 +3,6 @@ package xyz.hyperreal.mos6502
 
 abstract class Instruction {
 	
-	val N = 0x80
-	val V = 0x40
-	val B = 0x01
-	val D = 0x08
-	val I = 0x04
-	val Z = 0x02
-	val C = 0x01
-	
 	def perform( cpu: CPU ): Boolean
 	
 }
@@ -65,7 +57,7 @@ object Instruction {
 object LDA extends AddressModeInstruction( Instruction.cc01 ) {
 	
 	def perform( cpu: CPU ) = {
-		cpu.A = cpu.read( address(cpu) )
+		cpu.A = cpu.flags( cpu.read(address(cpu)) )
 		true
 	}
 	
@@ -84,6 +76,7 @@ object ORA extends AddressModeInstruction( Instruction.cc01 ) {
 	
 	def perform( cpu: CPU ) = {
 		cpu.A |= cpu.read( address(cpu) )
+		cpu.flags( cpu.A )
 		true
 	}
 	
