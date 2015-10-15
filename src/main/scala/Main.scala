@@ -21,9 +21,6 @@ object Main extends App {
 		0xD0, 0xEE,					// BNE $EF
 		0x00								// BRK
 		) )
-	m add new ROM( 0x9000, Seq(
-		0x12								// DB $12
-		) )
 	m add new ROM( 0xFFFC, Seq(0x00, 0x80, 0x00, 0x00) )
 	
 	val cpu = new CPU6502( m ) //{trace = true}

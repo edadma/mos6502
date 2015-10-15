@@ -21,6 +21,8 @@ libraryDependencies ++= Seq(
 	"org.scalacheck" %% "scalacheck" % "1.11.5" % "test"
 )
 
+libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4"
+
 mainClass in (Compile, run) := Some( "xyz.hyperreal." + name.value + ".Main" )
 
 mainClass in assembly := Some( "xyz.hyperreal." + name.value + ".Main" )
