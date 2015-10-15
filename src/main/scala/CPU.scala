@@ -1,23 +1,73 @@
 package xyz.hyperreal.mos6502
 
 
-class CPU( mem: Memory ) {
+abstract class CPU( val mem: Memory ) extends LogicalAddressModes {
 	
-	val bitN = 0x80
-	val bitV = 0x40
-	val bitB = 0x01
-	val bitD = 0x08
-	val bitI = 0x04
-	val bitZ = 0x02
-	val bitC = 0x01
+	val opcodes: Seq[Instruction]
 	
-	var regA = 0
-	var regX = 0
-	var regY = 0
-	var regSP = 0
-	var regPC = 0
-	var regStatus = 0
+	var A = 0
+	var X = 0
+	var Y = 0
+	var SP = 0
+	var PC = 0
+	var status = 0
 	
+	var opcode = 0
+	var aaa = 0
+	var bbb = 0
+	var cc = 0
 	
+	def nextByte = {
+		val res = mem.readByte(PC)
+		
+		PC += 1
+		res
+	}
+	
+	def nextWord = {
+		val res = mem.readWord(PC)
+		
+		PC += 2
+		res
+	}
+	
+	def read( addr: Int ) =
+		addr match {
+			case ACCUMULATOR => A
+			case _ => mem.readByte( addr )
+		}
+		
+	def write( addr: Int, v: Int ) =
+		addr match {
+			case ACCUMULATOR => A = v&0xFF
+			case _ => mem.writeByte( addr, v )
+		}
+	
+	def step = {
+		opcode = nextByte
+		aaa = opcode>>5
+		bbb = (opcode>>2)&0x03
+		cc = opcode&0x03
+		opcodes( opcode ) perform this
+	}
+	
+	def run = while (step) {}
+	
+}
+
+class CPU6502( mem: Memory ) extends CPU( mem ) {
+	
+	val opcodes = CPU.table6502
+	
+}
+
+object CPU {
+	
+	val table6502 = {
+		val opcodes = Array.fill( 256 )( IllegalInstruction )
+		
+		
+		opcodes.toVector
+	}
 	
 }
