@@ -3,6 +3,11 @@ package xyz.hyperreal.mos6502
 import collection.mutable.{ArrayBuffer}
 
 
+trait Vectors {
+	val RESET_VECTOR = 0xFFFC
+	val BRK_VECTOR = 0xFFFE
+}
+
 trait Addressable {
 	
 	def start: Int

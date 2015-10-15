@@ -1,7 +1,7 @@
 package xyz.hyperreal.mos6502
 
 
-abstract class Instruction {
+abstract class Instruction extends Vectors {
 	
 	def perform( cpu: CPU ): Boolean
 	
@@ -37,9 +37,27 @@ object IllegalInstruction extends Instruction {
 // 	
 // }
 
-object StopInstruction extends Instruction {
+object BRK extends Instruction {
 	
-	def perform( cpu: CPU ) = false
+	def perform( cpu: CPU ) = {
+		val addr = cpu.mem.readWord( BRK_VECTOR )
+		
+		if (addr > 0) {
+			cpu.PC = addr
+			// to be completed
+			true
+		} else
+			false
+	}
+	
+}
+
+object TXS extends Instruction {
+	
+	def perform( cpu: CPU ) = {
+		cpu.SP = cpu.X + 0x0100
+		true
+	}
 	
 }
 
@@ -52,6 +70,10 @@ abstract class AddressModeInstruction( modes: Seq[AddressMode] ) extends Instruc
 object Instruction {
 	val cc01 = Vector( IndirectXAddressMode, ZeroPageAddressMode, ImmediateAddressMode, AbsoluteAddressMode, IndirectYAddressMode,
 											ZeroPageIndexedXAddressMode, AbsoluteIndexedYAddressMode, AbsoluteIndexedXAddressMode )
+	val cc10 = Vector( ImmediateAddressMode, ZeroPageAddressMode, AccumulatorAddressMode, AbsoluteAddressMode, IllegalAddressMode,
+											ZeroPageIndexedXAddressMode, IllegalAddressMode, AbsoluteIndexedXAddressMode )
+	val cc10x = Vector( ImmediateAddressMode, ZeroPageAddressMode, AccumulatorAddressMode, AbsoluteAddressMode, IllegalAddressMode,
+											ZeroPageIndexedYAddressMode, IllegalAddressMode, AbsoluteIndexedYAddressMode )
 }
 
 object LDA extends AddressModeInstruction( Instruction.cc01 ) {
@@ -85,6 +107,26 @@ object ORA extends AddressModeInstruction( Instruction.cc01 ) {
 object TODO extends AddressModeInstruction( Instruction.cc01 ) {
 	
 	def perform( cpu: CPU ) = {
+		true
+	}
+	
+}
+
+object INC extends AddressModeInstruction( Instruction.cc10 ) {
+	
+	def perform( cpu: CPU ) = {
+		val addr = address(cpu)
+		
+		cpu.write( addr, cpu.flags(cpu.read(addr) + 1) )
+		true
+	}
+	
+}
+
+object LDX extends AddressModeInstruction( Instruction.cc10x ) {
+	
+	def perform( cpu: CPU ) = {
+		cpu.X = cpu.flags( cpu.read(address(cpu)) )
 		true
 	}
 	

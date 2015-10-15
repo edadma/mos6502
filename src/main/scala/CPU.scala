@@ -1,7 +1,7 @@
 package xyz.hyperreal.mos6502
 
 
-abstract class CPU( val mem: Memory ) extends LogicalAddressModes {
+abstract class CPU( val mem: Memory ) extends LogicalAddressModes with Vectors {
 	
 	val opcodes: Seq[Instruction]
 	
@@ -79,7 +79,7 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes {
 	}
 	
 	def reset {
-		PC = mem.readWord( 0xFFFC )
+		PC = mem.readWord( RESET_VECTOR )
 		run
 	}
 	
@@ -105,8 +105,10 @@ object CPU {
 	val table6502 = {
 		val opcodes = Array.fill[Instruction]( 256 )( IllegalInstruction )
 		
-		opcodes(0) = StopInstruction
+		opcodes(0) = BRK
+		opcodes(0x9A) = TXS
 		populate( opcodes, Seq(ORA, TODO, TODO, TODO, STA, LDA, TODO, TODO), 1, 0x89 )
+		populate( opcodes, Seq(TODO, TODO, TODO, TODO, TODO, TODO, TODO, INC), 2, 0x02, 0x22, 0x42, 0x62, 0x82, 0xC2, 0xE2, 0xCA, 0xEA, 0x9E )
 		opcodes.toVector
 	}
 	

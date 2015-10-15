@@ -7,6 +7,12 @@ trait LogicalAddressModes {
 
 abstract class AddressMode extends (CPU => Int) with LogicalAddressModes
 
+object IllegalAddressMode extends AddressMode {
+	
+	def apply( cpu: CPU ) = sys.error( "illegal address mode" )
+	
+}
+
 object AccumulatorAddressMode extends AddressMode {
 	
 	def apply( cpu: CPU ) = ACCUMULATOR
