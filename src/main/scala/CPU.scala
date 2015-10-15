@@ -12,6 +12,7 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes {
 	var PC = 0
 	var status = 0
 	
+	var trace = false
 	var opcode = 0
 	var aaa = 0
 	var bbb = 0
@@ -51,7 +52,23 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes {
 		opcodes( opcode ) perform this
 	}
 	
-	def run = while (step) {}
+	def run {
+		if (trace)
+			println( hexWord(PC) + ' ' + hexByte(mem.readByte(PC)) )
+			
+		val cont = step
+		
+		if (trace)
+			println( "A = " + hexByte(A) )
+			
+		if (cont)
+			run
+	}
+	
+	def reset {
+		PC = mem.readWord( 0xFFFC )
+		run
+	}
 	
 }
 
@@ -63,10 +80,20 @@ class CPU6502( mem: Memory ) extends CPU( mem ) {
 
 object CPU {
 	
+	def populate( table: Array[Instruction], instructions: Seq[AddressModeInstruction], cc: Int, exceptions: Int* ) {
+		for (aaa <- 0 to 7; bbb <- 0 to 7) {
+			val opcode = aaa<<5 | bbb<<2 | cc
+			
+			if (!exceptions.contains( opcode ))
+				table(opcode) = instructions(aaa)
+		}
+	}
+	
 	val table6502 = {
-		val opcodes = Array.fill( 256 )( IllegalInstruction )
+		val opcodes = Array.fill[Instruction]( 256 )( IllegalInstruction )
 		
-		
+		opcodes(0) = StopInstruction
+		populate( opcodes, Seq(ORA, TODO, TODO, TODO, STA, LDA, TODO, TODO), 1, 0x89 )
 		opcodes.toVector
 	}
 	

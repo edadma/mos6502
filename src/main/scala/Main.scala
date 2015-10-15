@@ -5,16 +5,19 @@ object Main extends App {
 	
 	val m = new Memory
 	
-	m add new Storage( 0x0000, 0x1000 )
+	m add new RAM( 0x0000, 0x1000 )
+	m add new StdInChar( 0x4000 )
+	m add new StdInInt( 0x4001 )
+	m add new ROM( 0x8000, Seq(
+		0xA9, 0x12,					// LDA #$12
+		0x8D, 0x01, 0x40,		// STA $4001
+		0xA9, '\n',					// LDA #'\n'
+		0x8D, 0x00, 0x40,		// STA $4000
+		0x00
+		) )
+	m add new ROM( 0xFFFC, Seq(0x00, 0x80) )
 	
-	m add new StdInChar( 0xFF00 )
-	m add new StdInInt( 0xFF01 )
-		
-	m writeByte( 0x0100, 0x5a )
-	printf( "%x\n", m readByte 0x100 )
+	val cpu = new CPU6502( m ) //{trace = true}
 	
-	val in = m readByte( 0xFF01 )
-	
-	m writeByte( 0xFF01, in )
-	m writeByte( 0xFF00, '\n' )
+	cpu.reset
 }

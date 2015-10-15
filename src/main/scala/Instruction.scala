@@ -21,8 +21,6 @@ object IllegalInstruction extends Instruction {
 	
 }
 
-abstract class InstructionAddress extends (CPU => Int)
-
 // abstract class Address {
 // 	
 // 	def readByte: Int
@@ -53,21 +51,47 @@ object StopInstruction extends Instruction {
 	
 }
 
-abstract class AddressModeInstruction( protected val addr: InstructionAddress ) extends Instruction
-
-object cc01 extends InstructionAddress {
-
-	val modes = Vector( IndirectXAddressMode, ZeroPageAddressMode, ImmediateAddressMode, AbsoluteAddressMode, IndirectYAddressMode,
-											ZeroPageIndexedXAddressMode, AbsoluteIndexedYAddressMode, AbsoluteIndexedXAddressMode )
+abstract class AddressModeInstruction( modes: Seq[AddressMode] ) extends Instruction {
 	
-	def apply( cpu: CPU ) = modes( cpu.bbb ).apply( cpu )
+	def address( cpu: CPU ) = modes( cpu.bbb )( cpu )
 	
 }
 
-object LDA extends AddressModeInstruction( cc01 ) {
+object Instruction {
+	val cc01 = Vector( IndirectXAddressMode, ZeroPageAddressMode, ImmediateAddressMode, AbsoluteAddressMode, IndirectYAddressMode,
+											ZeroPageIndexedXAddressMode, AbsoluteIndexedYAddressMode, AbsoluteIndexedXAddressMode )
+}
+
+object LDA extends AddressModeInstruction( Instruction.cc01 ) {
 	
 	def perform( cpu: CPU ) = {
-		cpu.A = cpu.read( addr(cpu) )
+		cpu.A = cpu.read( address(cpu) )
+		true
+	}
+	
+}
+
+object STA extends AddressModeInstruction( Instruction.cc01 ) {
+	
+	def perform( cpu: CPU ) = {
+		cpu.write( address(cpu), cpu.A )
+		true
+	}
+	
+}
+
+object ORA extends AddressModeInstruction( Instruction.cc01 ) {
+	
+	def perform( cpu: CPU ) = {
+		cpu.A |= cpu.read( address(cpu) )
+		true
+	}
+	
+}
+
+object TODO extends AddressModeInstruction( Instruction.cc01 ) {
+	
+	def perform( cpu: CPU ) = {
 		true
 	}
 	

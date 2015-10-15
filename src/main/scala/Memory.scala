@@ -14,7 +14,7 @@ trait Addressable {
 	def writeByte( addr: Int, value: Int )
 	
 	def readWord( addr: Int ) = {
-		readByte( addr ) + readByte( addr + 1 )<<8
+		readByte( addr ) + (readByte( addr + 1 )<<8)
 	}
 	
 	def writeWord( addr: Int, value: Int ) {
@@ -24,7 +24,7 @@ trait Addressable {
 	
 }
 
-class Storage( val start: Int, val size: Int ) extends Addressable {
+class RAM( val start: Int, val size: Int ) extends Addressable {
 	
 	require( start >= 0 )
 	require( size > 0 )
@@ -34,6 +34,18 @@ class Storage( val start: Int, val size: Int ) extends Addressable {
 	def readByte( addr: Int ) = mem( addr - start )
 	
 	def writeByte( addr: Int, value: Int ) = mem( addr - start ) = value.toByte
+	
+}
+
+class ROM( val start: Int, mem: Seq[Int] ) extends Addressable {
+	
+	require( start >= 0 )
+	
+	val size = mem.size
+	
+	def readByte( addr: Int ) = mem( addr - start )
+	
+	def writeByte( addr: Int, value: Int ) = sys.error( "read only memory" )
 	
 }
 
