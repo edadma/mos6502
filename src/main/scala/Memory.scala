@@ -36,7 +36,7 @@ class RAM( val start: Int, val size: Int ) extends Addressable {
 	
 	private val mem = new Array[Byte]( size )
 	
-	def readByte( addr: Int ) = mem( addr - start )
+	def readByte( addr: Int ) = mem( addr - start )&0xFF
 	
 	def writeByte( addr: Int, value: Int ) = mem( addr - start ) = value.toByte
 	

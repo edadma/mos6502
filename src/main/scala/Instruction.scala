@@ -1,7 +1,7 @@
 package xyz.hyperreal.mos6502
 
 
-abstract class Instruction extends Vectors {
+abstract class Instruction extends Vectors with Flags {
 	
 	def perform( cpu: CPU ): Boolean
 	
@@ -64,7 +64,7 @@ object TXS extends Instruction {
 object BXX extends Instruction {
 	
 	def perform( cpu: CPU ) = {
-		val offset = cpu.nextByte
+		val offset = cpu.nextByte.toByte
 		
 		if (cpu.status(cpu.xx) == cpu.y)
 			cpu.PC += offset
@@ -112,6 +112,17 @@ object ORA extends AddressModeInstruction( Instruction.cc01 ) {
 	def perform( cpu: CPU ) = {
 		cpu.A |= cpu.read( address(cpu) )
 		cpu.flags( cpu.A )
+		true
+	}
+	
+}
+
+object CMP extends AddressModeInstruction( Instruction.cc01 ) {
+	
+	def perform( cpu: CPU ) = {
+		val diff = cpu.A - cpu.read( address(cpu) )
+		cpu.flags( diff )
+		cpu.status(C) = diff >= 0
 		true
 	}
 	

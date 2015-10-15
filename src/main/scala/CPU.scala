@@ -116,8 +116,12 @@ object CPU {
 		
 		opcodes(0) = BRK
 		opcodes(0x9A) = TXS
-		populate( opcodes, Seq(ORA, TODO, TODO, TODO, STA, LDA, TODO, TODO), 1, 0x89 )
+		populate( opcodes, Seq(ORA, TODO, TODO, TODO, STA, LDA, CMP, TODO), 1, 0x89 )
 		populate( opcodes, Seq(TODO, TODO, TODO, TODO, TODO, TODO, TODO, INC), 2, 0x02, 0x22, 0x42, 0x62, 0x82, 0xC2, 0xE2, 0xCA, 0xEA, 0x9E )
+		
+		for (xx <- 0 to 3; y <- 0 to 1)
+			opcodes(xx<<6 | y<<5 | 0x10) = BXX
+			
 		opcodes.toVector
 	}
 	
