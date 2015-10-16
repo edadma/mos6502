@@ -52,6 +52,15 @@ object BRK extends Instruction {
 	
 }
 
+class SimpleInstruction( computation: CPU => Unit ) extends Instruction {
+	
+	def address( cpu: CPU ) = {
+		computation( cpu )
+		true
+	}
+		
+}
+
 object TXS extends Instruction {
 	
 	def perform( cpu: CPU ) = {
@@ -74,46 +83,36 @@ object BXX extends Instruction {
 	
 }
 
-abstract class AddressModeInstruction( modes: Seq[AddressMode] ) extends Instruction {
+class AddressModeInstruction( computation: (CPU, Int) => Unit, mode: AddressMode ) extends Instruction {
 	
-	def address( cpu: CPU ) = modes( cpu.bbb )( cpu )
+	def perform( cpu: CPU ) = {
+		computation( cpu, mode(cpu) )
+		true
+	}
 	
 }
 
-object Instruction {
+object Modes {
 	val cc01 = Vector( IndirectXAddressMode, ZeroPageAddressMode, ImmediateAddressMode, AbsoluteAddressMode, IndirectYAddressMode,
 											ZeroPageIndexedXAddressMode, AbsoluteIndexedYAddressMode, AbsoluteIndexedXAddressMode )
-	val cc10 = Vector( ImmediateAddressMode, ZeroPageAddressMode, AccumulatorAddressMode, AbsoluteAddressMode, IllegalAddressMode,
-											ZeroPageIndexedXAddressMode, IllegalAddressMode, AbsoluteIndexedXAddressMode )
-	val cc10x = Vector( ImmediateAddressMode, ZeroPageAddressMode, AccumulatorAddressMode, AbsoluteAddressMode, IllegalAddressMode,
-											ZeroPageIndexedYAddressMode, IllegalAddressMode, AbsoluteIndexedYAddressMode )
+	val cc10 = Vector( null, ZeroPageAddressMode, AccumulatorAddressMode, AbsoluteAddressMode, null,
+											ZeroPageIndexedXAddressMode, null, AbsoluteIndexedXAddressMode )
+	val cc10x = Vector( ImmediateAddressMode, ZeroPageAddressMode, AccumulatorAddressMode, AbsoluteAddressMode, null,
+											ZeroPageIndexedYAddressMode, null, AbsoluteIndexedYAddressMode )
 }
 
-object LDA extends AddressModeInstruction( Instruction.cc01 ) {
-	
-	def perform( cpu: CPU ) = {
-		cpu.A = cpu.flags( cpu.read(address(cpu)) )
-		true
-	}
-	
-}
+object Instructions {
 
-object STA extends AddressModeInstruction( Instruction.cc01 ) {
+	def lda( cpu: CPU, addr: Int ) = cpu.A = cpu.flags( cpu.read(addr) )
 	
-	def perform( cpu: CPU ) = {
-		cpu.write( address(cpu), cpu.A )
-		true
-	}
+	def sta( cpu: CPU, addr: Int ) = cpu.write( addr, cpu.A )
 	
-}
-
-object ORA extends AddressModeInstruction( Instruction.cc01 ) {
-	
-	def perform( cpu: CPU ) = {
+	def ora( cpu: CPU, addr: Int ) = {
 		cpu.A |= cpu.read( address(cpu) )
 		cpu.flags( cpu.A )
-		true
 	}
+	
+	def todo( cpu: CPU, addr: Int ) = sys.error( "illegal instruction" )
 	
 }
 
