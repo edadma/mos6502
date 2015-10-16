@@ -19,11 +19,6 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with Vectors w
 	
 	var trace = false
 	var opcode = 0
-	var aaa = 0
-	var bbb = 0
-	var cc = 0
-	var xx = 0
-	var y = false
 	
 	def nextByte = {
 		val res = mem.readByte(PC)
@@ -53,11 +48,6 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with Vectors w
 	
 	def step = {
 		opcode = nextByte
-//		aaa = opcode>>5
-		bbb = (opcode>>2)&0x03
-//		cc = opcode&0x03
-		xx = opcode>>6
-		y = ((opcode>>5)&1) == 1
 		opcodes(opcode) perform this
 	}
 	
