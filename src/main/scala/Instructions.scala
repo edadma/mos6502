@@ -36,6 +36,7 @@ object Instructions extends Flags {
 	//
 	def txs = (cpu: CPU) => cpu.SP = cpu.X + 0x0100
 	
+	def jmp = (cpu: CPU) => cpu.PC = cpu.nextWord
 	
 	def todo( cpu: CPU, addr: Int ) = sys.error( "unimplemented instruction: " + hexByte(cpu.opcode) + " at " + hexWord(cpu.PC - 1) )
 	

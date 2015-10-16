@@ -121,7 +121,10 @@ object CPU {
 		
 		opcodes(0) = BRK
 		
-		List( 0x9A -> txs ) foreach {case (opcode, computation) => opcodes(opcode) = new SimpleInstruction( computation )}		
+		List(
+			0x4C -> jmp,
+			0x9A -> txs
+			) foreach {case (opcode, computation) => opcodes(opcode) = new SimpleInstruction( computation )}		
 		populate( opcodes, Seq(ora, todo, todo, todo, sta, lda, cmp, todo),
 							Seq(indirectX, zeroPage, immediate, absolute, indirectY, zeroPageIndexedX, absoluteIndexedY, absoluteIndexedX), 1, 0x89 )
 		populate( opcodes, Seq(todo, todo, todo, todo, null, null, todo, inc),
