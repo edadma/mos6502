@@ -1,7 +1,7 @@
 package xyz.hyperreal.mos6502
 
 
-class StdInChar( addr: Int ) extends Port( addr, 1 ) {
+class StdInChar( val start: Int ) extends SingleAddressPort {
 	
 	def readByte( addr: Int ) = io.StdIn.readChar.toInt
 	
@@ -11,7 +11,7 @@ class StdInChar( addr: Int ) extends Port( addr, 1 ) {
 	
 }
 
-class StdInInt( addr: Int ) extends Port( addr, 1 ) {
+class StdInInt( val start: Int ) extends SingleAddressPort {
 	
 	def readByte( addr: Int ) = io.StdIn.readInt
 	

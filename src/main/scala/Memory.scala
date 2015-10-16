@@ -42,38 +42,45 @@ class RAM( val start: Int, val size: Int ) extends Addressable {
 	
 }
 
-class ROM( val start: Int, mem: Seq[Int] ) extends Addressable {
+class ROM( val start: Int, mem: Seq[Byte] ) extends Addressable {
 	
 	require( start >= 0 )
 	
 	val size = mem.size
 	
-	def readByte( addr: Int ) = mem( addr - start )
+	def readByte( addr: Int ) = mem( addr - start )&0xFF
 	
 	def writeByte( addr: Int, value: Int ) = sys.error( "read only memory" )
 	
 }
 
-abstract class Port( val start: Int, val size: Int ) extends Addressable {
+object ROM {
+	def apply( start: Int, mem: Int* ) = new ROM( start, mem map (_.toByte) )
+}
+
+abstract class Port extends Addressable {
 	
-	require( start >= 0 )
-	require( size > 0 )
+	val start: Int
+	val size: Int
 
 }
 
-abstract class ReadOnlyPort( val start: Int, val size: Int ) extends Addressable {
+abstract class SingleAddressPort extends Port {
+	
+	val size = 1
 	
 	require( start >= 0 )
 	require( size > 0 )
+	
+}
+
+abstract class ReadOnlyPort extends SingleAddressPort {
 	
 	def writeByte( addr: Int, value: Int ) = sys.error( "read only port" )
 	
 }
 
-abstract class WriteOnlyPort( val start: Int, val size: Int ) extends Addressable {
-	
-	require( start >= 0 )
-	require( size > 0 )
+abstract class WriteOnlyPort extends SingleAddressPort {
 	
 	def readByte( addr: Int ) = sys.error( "write only port" )
 	
@@ -100,7 +107,12 @@ class Memory extends Addressable {
 	def writeByte( addr: Int, value: Int ) = find( addr ).writeByte( addr, value )
 	
 	def add( region: Addressable ) {
-		regions.indexWhere( r => r.start >= region.start + region.size ) match {
+		regions find (r => r.start <= region.start && region.start < r.start + r.size) match {
+			case Some(_) => sys.error( "overlaps existing memory" )
+			case None =>
+		}
+		
+		regions indexWhere (_.start >= region.start + region.size) match {
 			case -1 =>
 				regions += region
 				end = region.size + region.start

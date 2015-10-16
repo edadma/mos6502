@@ -8,7 +8,7 @@ object Main extends App {
 	m add new RAM( 0x0000, 0x4000 )
 	m add new StdInChar( 0x4000 )
 	m add new StdInInt( 0x4001 )
-	m add new ROM( 0x8000, Seq(
+	m add ROM( 0x8000,
 		0xA9, 0x00,					// LDA #$00
 		0x85, 0x00,					// STA $00
 		0xE6, 0x00,					// INC $00
@@ -20,8 +20,8 @@ object Main extends App {
 		0xC9, 0x05,					// CMP #$05
 		0xD0, 0xEE,					// BNE $EF
 		0x00								// BRK
-		) )
-	m add new ROM( 0xFFFC, Seq(0x00, 0x80, 0x00, 0x00) )
+		)
+	m add ROM( 0xFFFC, 0x00, 0x80, 0x00, 0x00 )
 	
 	val cpu = new CPU6502( m ) //{trace = true}
 	
