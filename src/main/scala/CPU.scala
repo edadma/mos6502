@@ -102,12 +102,17 @@ class CPU6502( mem: Memory ) extends CPU( mem ) {
 
 object CPU {
 	
-	def populate( table: Array[Instruction], instructions: Seq[AddressModeInstruction], modes: cc: Int, exceptions: Int* ) {
+	import Instructions._
+	import AddressModes._
+	
+	def populate( table: Array[Instruction], instructions: Seq[(CPU, Int) => Unit], modes: Seq[CPU => Int], cc: Int, exceptions: Int* ) {
 		for (aaa <- 0 to 7; bbb <- 0 to 7) {
 			val opcode = aaa<<5 | bbb<<2 | cc
+			val inst = instructions(aaa)
+			val mode = modes(bbb)
 			
-			if (!exceptions.contains( opcode ))
-				table(opcode) = instructions(aaa)
+			if (!exceptions.contains( opcode ) && inst != null && mode != null)
+				table(opcode) = new AddressModeInstruction( inst, mode )
 		}
 	}
 	
@@ -115,12 +120,17 @@ object CPU {
 		val opcodes = Array.fill[Instruction]( 256 )( IllegalInstruction )
 		
 		opcodes(0) = BRK
-		opcodes(0x9A) = TXS
-		populate( opcodes, Seq(ORA, TODO, TODO, TODO, STA, LDA, CMP, TODO), 1, 0x89 )
-		populate( opcodes, Seq(TODO, TODO, TODO, TODO, TODO, TODO, TODO, INC), 2, 0x82, 0xCA, 0xEA, 0x9E )
+		
+		List( 0x9A -> txs ) foreach {case (opcode, computation) => opcodes(opcode) = new SimpleInstruction( computation )}		
+		populate( opcodes, Seq(ora, todo, todo, todo, sta, lda, cmp, todo),
+							Seq(indirectX, zeroPage, immediate, absolute, indirectY, zeroPageIndexedX, absoluteIndexedY, absoluteIndexedX), 1, 0x89 )
+		populate( opcodes, Seq(todo, todo, todo, todo, null, null, todo, inc),
+							Seq(null, zeroPage, accumulator, absolute, null, zeroPageIndexedX, null, absoluteIndexedX), 2, 0xCA, 0xEA )
+		populate( opcodes, Seq(null, null, null, null, todo, todo, null, null),
+							Seq(immediate, zeroPage, accumulator, absolute, null, zeroPageIndexedY, null, absoluteIndexedY), 2, 0x82, 0x9E )
 		
 		for (xx <- 0 to 3; y <- 0 to 1)
-			opcodes(xx<<6 | y<<5 | 0x10) = BXX
+			opcodes(xx<<6 | y<<5 | 0x10) = new BranchInstruction( xx, if (y == 0) false else true )
 			
 		opcodes.toVector
 	}
