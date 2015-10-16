@@ -100,7 +100,12 @@ class Memory extends Addressable {
 	def writeByte( addr: Int, value: Int ) = find( addr ).writeByte( addr, value )
 	
 	def add( region: Addressable ) {
-		regions.indexWhere( r => r.start >= region.start + region.size ) match {
+		regions find (r => r.start <= region.start && region.start < r.start + r.size) match {
+			case Some(_) => sys.error( "overlaps existing memory" )
+			case None =>
+		}
+		
+		regions indexWhere (_.start >= region.start + region.size) match {
 			case -1 =>
 				regions += region
 				end = region.size + region.start
