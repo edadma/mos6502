@@ -28,8 +28,8 @@ object AddressModes extends LogicalAddressModes {
 	
 	def zeroPageIndexedY( cpu: CPU ) = cpu.nextByte + cpu.Y
 	
-	def indirectX( cpu: CPU ) = cpu.mem.readWord( cpu.nextByte + cpu.X )
+	def indirectX( cpu: CPU ) = cpu.readWord( cpu.nextByte + cpu.X )
 	
-	def indirectY( cpu: CPU ) = cpu.mem.readWord( cpu.nextByte ) + cpu.Y
+	def indirectY( cpu: CPU ) = cpu.readWord( cpu.nextByte ) + cpu.Y
 	
 }

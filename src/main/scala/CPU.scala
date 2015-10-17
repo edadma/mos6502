@@ -1,7 +1,7 @@
 package xyz.hyperreal.mos6502
 
 
-abstract class CPU( val mem: Memory ) extends LogicalAddressModes with Vectors with Flags {
+abstract class CPU( mem: Memory ) extends LogicalAddressModes with Vectors with Flags {
 	
 	val opcodes: Seq[Instruction]
 	
@@ -34,13 +34,19 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with Vectors w
 		res
 	}
 	
-	def read( addr: Int ) =
+	def readByte( addr: Int ) =
 		addr match {
 			case ACCUMULATOR => A
 			case _ => mem.readByte( addr )
 		}
 		
-	def write( addr: Int, v: Int ) =
+	def readWord( addr: Int ) =
+		addr match {
+			case ACCUMULATOR => A
+			case _ => mem.readWord( addr )
+		}
+		
+	def writeByte( addr: Int, v: Int ) =
 		addr match {
 			case ACCUMULATOR => A = v&0xFF
 			case _ => mem.writeByte( addr, v )
@@ -121,6 +127,8 @@ object CPU {
 							Seq(null, zeroPage, accumulator, absolute, null, zeroPageIndexedX, null, absoluteIndexedX), 2, 0xCA, 0xEA )
 		populate( opcodes, Seq(null, null, null, null, todo, todo, null, null),
 							Seq(immediate, zeroPage, accumulator, absolute, null, zeroPageIndexedY, null, absoluteIndexedY), 2, 0x82, 0x9E )
+		populate( opcodes, Seq(null, todo, null, null, todo, ldy, todo, todo),
+							Seq(immediate, zeroPage, null, absolute, null, zeroPageIndexedX, null, absoluteIndexedX), 0, 0x20, 0x24, 0x2C, 0x80, 0x9C, 0xD4, 0xDC, 0xF4, 0xFC )
 		
 		for (xx <- 0 to 3; y <- 0 to 1)
 			opcodes(xx<<6 | y<<5 | 0x10) = new BranchInstruction( xx, if (y == 0) false else true )

@@ -16,7 +16,7 @@ object IllegalInstruction extends Instruction {
 object BRK extends Instruction {
 	
 	def perform( cpu: CPU ) = {
-		val addr = cpu.mem.readWord( BRK_VECTOR )
+		val addr = cpu.readWord( BRK_VECTOR )
 		
 		if (addr > 0) {
 			cpu.PC = addr
