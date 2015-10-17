@@ -40,27 +40,25 @@ abstract class CPU( mem: Memory ) extends LogicalAddressModes with Vectors with 
 			case _ => mem.readByte( addr )
 		}
 		
-	def readWord( addr: Int ) =
-		addr match {
-			case ACCUMULATOR => A
-			case _ => mem.readWord( addr )
-		}
+	def readWord( addr: Int ) = mem.readWord( addr )
 		
 	def writeByte( addr: Int, v: Int ) =
 		addr match {
-			case ACCUMULATOR => A = v&0xFF
+			case ACCUMULATOR => loadA( v )
 			case _ => mem.writeByte( addr, v )
 		}
 	
-	def step = {
-		opcode = nextByte
-		opcodes(opcode) perform this
-	}
+	def loadA( v: Int ) = A = flags( v&0xFF )
 	
 	def flags( a: Int ) = {
 		status(N) = a < 0
 		status(Z) = a == 0
 		a
+	}
+	
+	def step = {
+		opcode = nextByte
+		opcodes(opcode) perform this
 	}
 	
 	def run {

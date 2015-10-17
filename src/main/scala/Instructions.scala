@@ -13,7 +13,7 @@ object Instructions extends Flags {
 	
 	def sta( cpu: CPU, addr: Int ) = cpu.writeByte( addr, cpu.A )
 	
-	def lda( cpu: CPU, addr: Int ) = cpu.A = cpu.flags( cpu.readByte(addr) )
+	def lda( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
 	
 	def cmp( cpu: CPU, addr: Int ) = {
 		val diff = cpu.A - cpu.readByte( addr )
