@@ -29,28 +29,34 @@ trait Addressable {
 	
 }
 
-class RAM( val start: Int, val size: Int ) extends Addressable {
+class RAM( val start: Int, end: Int ) extends Addressable {
 	
 	require( start >= 0 )
-	require( size > 0 )
+	require( end >= start )
 	
-	private val mem = new Array[Byte]( size )
+	val size = end - start + 1
+		
+	protected val mem = new Array[Byte]( size )
 	
 	def readByte( addr: Int ) = mem( addr - start )&0xFF
 	
 	def writeByte( addr: Int, value: Int ) = mem( addr - start ) = value.toByte
 	
+	override def toString = s"RAM: ${hexWord(start)}-${hexWord(end)}"
 }
 
 class ROM( val start: Int, mem: Seq[Byte] ) extends Addressable {
 	
 	require( start >= 0 )
+	require( mem.size > 0 )
 	
 	val size = mem.size
 	
 	def readByte( addr: Int ) = mem( addr - start )&0xFF
 	
 	def writeByte( addr: Int, value: Int ) = sys.error( "read only memory" )
+	
+	override def toString = s"ROM: ${hexWord(start)}-${hexWord(start + size - 1)}"
 	
 }
 
@@ -62,6 +68,8 @@ abstract class Port extends Addressable {
 	
 	val start: Int
 	val size: Int
+	
+	override def toString = s"port: ${hexWord(start)}-${hexWord(start + size - 1)}"
 
 }
 
@@ -108,7 +116,7 @@ class Memory extends Addressable {
 	
 	def add( region: Addressable ) {
 		regions find (r => r.start <= region.start && region.start < r.start + r.size) match {
-			case Some(_) => sys.error( "overlaps existing memory" )
+			case Some(r) => sys.error( hexWord(region.start) + ", " + hexWord(region.size) + " overlaps " + hexWord(r.start) + ", " + hexWord(r.size) )
 			case None =>
 		}
 		
@@ -127,4 +135,5 @@ class Memory extends Addressable {
 		}
 	}
 	
+	override def toString = regions mkString "\n"
 }
