@@ -57,20 +57,24 @@ abstract class CPU( mem: Memory ) extends LogicalAddressModes with Vectors with 
 	}
 	
 	def step = {
-		opcode = nextByte
-		opcodes(opcode) perform this
-	}
-	
-	def run {
+		def flag( f: Boolean ) = if (f) 1 else 0
+		
 		if (trace)
 			println( hexWord(PC) + ' ' + hexByte(mem.readByte(PC)) )
 			
-		val cont = step
+		opcode = nextByte
+		
+		val cont = opcodes(opcode) perform this
 		
 		if (trace)
-			println( "A = " + hexByte(A) )
+			printf( "A:%s X:%s Y:%s SP:%s PC:%s N:%d V:%d B:%d D:%d I:%d Z:%d C:%d\n\n", hexByte(A), hexByte(X), hexByte(Y), hexWord(SP), hexWord(PC),
+							flag(status(N)), flag(status(V)), flag(B), flag(D), flag(I), flag(status(Z)), flag(status(C)) )
 			
-		if (cont)
+		cont
+	}
+	
+	def run {
+		if (step)
 			run
 	}
 	
@@ -117,7 +121,8 @@ object CPU {
 		
 		List(
 			0x4C -> jmp,
-			0x9A -> txs
+			0x9A -> txs,
+			0xEA -> ((_: CPU) => ())
 			) foreach {case (opcode, computation) => opcodes(opcode) = new SimpleInstruction( computation )}		
 		populate( opcodes, Seq(ora, todo, todo, todo, sta, lda, cmp, todo),
 							Seq(indirectX, zeroPage, immediate, absolute, indirectY, zeroPageIndexedX, absoluteIndexedY, absoluteIndexedX), 1, 0x89 )
