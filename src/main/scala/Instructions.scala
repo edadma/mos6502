@@ -17,6 +17,7 @@ object Instructions extends Flags {
 	
 	def cmp( cpu: CPU, addr: Int ) = {
 		val diff = cpu.A - cpu.readByte( addr )
+		
 		cpu.flags( diff )
 		cpu.status(C) = diff >= 0
 	}

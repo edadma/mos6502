@@ -8,8 +8,8 @@ object Main extends App {
 	m add new RAM( 0x0000, 0x00DF )
 	m add new RAM( 0x0100, 0x01FF )
 	m add new VideoRAM( 0x0200 )
-	m add new StdInChar( 0xE0 )
-	m add new StdInInt( 0xE1 )
+	m add new StdIOChar( 0xE0 )
+	m add new StdIOInt( 0xE1 )
 // 	m add ROM( 0x0600,
 // 		)
 	Hex( m, """

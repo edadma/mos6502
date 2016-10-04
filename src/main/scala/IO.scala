@@ -3,7 +3,7 @@ package xyz.hyperreal.mos6502
 import scala.swing._
 
 
-class StdInChar( val start: Int ) extends SingleAddressPort {
+class StdIOChar( val start: Int ) extends SingleAddressPort {
 	
 	def readByte( addr: Int ) = io.StdIn.readChar.toInt
 	
@@ -13,7 +13,7 @@ class StdInChar( val start: Int ) extends SingleAddressPort {
 	
 }
 
-class StdInInt( val start: Int ) extends SingleAddressPort {
+class StdIOInt( val start: Int ) extends SingleAddressPort {
 	
 	def readByte( addr: Int ) = io.StdIn.readInt
 	
