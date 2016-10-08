@@ -11,6 +11,16 @@ object Instructions extends Flags {
 		cpu.flags( cpu.A )
 	}
 	
+	def and( cpu: CPU, addr: Int ) = {
+		cpu.A &= cpu.readByte( addr )
+		cpu.flags( cpu.A )
+	}
+	
+	def eor( cpu: CPU, addr: Int ) = {
+		cpu.A ^= cpu.readByte( addr )
+		cpu.flags( cpu.A )
+	}
+	
 	def sta( cpu: CPU, addr: Int ) = cpu.writeByte( addr, cpu.A )
 	
 	def lda( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )

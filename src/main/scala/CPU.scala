@@ -124,7 +124,7 @@ object CPU {
 			0x9A -> txs,
 			0xEA -> ((_: CPU) => ())
 			) foreach {case (opcode, computation) => opcodes(opcode) = new SimpleInstruction( computation )}		
-		populate( opcodes, Seq(ora, todo, todo, todo, sta, lda, cmp, todo),
+		populate( opcodes, Seq(ora, and, eor, todo, sta, lda, cmp, todo),
 							Seq(indirectX, zeroPage, immediate, absolute, indirectY, zeroPageIndexedX, absoluteIndexedY, absoluteIndexedX), 1, 0x89 )
 		populate( opcodes, Seq(todo, todo, todo, todo, null, null, todo, inc),
 							Seq(null, zeroPage, accumulator, absolute, null, zeroPageIndexedX, null, absoluteIndexedX), 2, 0xCA, 0xEA )
