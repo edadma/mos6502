@@ -21,6 +21,16 @@ object Instructions extends Flags {
 		cpu.flags( cpu.A )
 	}
 	
+	def adc( cpu: CPU, addr: Int ) =
+		if (cpu.status(D)) {
+			todo( cpu, addr )
+		} else {
+			val res = cpu.A + cpu.readByte( addr ) + cpu.read(C)
+			
+			cpu.set( C, res > 255 )
+			
+		}
+	
 	def sta( cpu: CPU, addr: Int ) = cpu.writeByte( addr, cpu.A )
 	
 	def lda( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
@@ -29,7 +39,7 @@ object Instructions extends Flags {
 		val diff = cpu.A - cpu.readByte( addr )
 		
 		cpu.flags( diff )
-		cpu.status(C) = diff >= 0
+		cpu.set( C, diff >= 0 )
 	}
 	
 	//

@@ -11,14 +11,32 @@ abstract class CPU( mem: Memory ) extends LogicalAddressModes with Vectors with 
 	var SP = 0
 	var PC = 0
 	
-	val status = Array( false, false, false, false )
-	
-	var B = false
-	var D = false
-	var I = false
+	var S = 0
 	
 	var trace = false
 	var opcode = 0
+	
+	def status( flag: Int ) = (S&flag) != 0
+	
+	def set( flag: Int ) {S |= flag}
+	
+	def set( flag: Int, v: Boolean ) {
+		if (v)
+			set( flag )
+		else
+			clear( flag )
+	}
+	
+	def set( flag: Int, v: Int ) {
+		if (v != 0)
+			set( flag )
+		else
+			clear( flag )
+	}
+	
+	def clear( flag: Int ) = S &= (flag^0xFF)
+	
+	def read( flag: Int ) = if (status( flag )) 1 else 0
 	
 	def nextByte = {
 		val res = mem.readByte(PC)
@@ -51,13 +69,12 @@ abstract class CPU( mem: Memory ) extends LogicalAddressModes with Vectors with 
 	def loadA( v: Int ) = A = flags( v&0xFF )
 	
 	def flags( a: Int ) = {
-		status(N) = a < 0
-		status(Z) = a == 0
+		set( N, a < 0 )
+		set( Z, a == 0 )
 		a
 	}
 	
 	def step = {
-		def flag( f: Boolean ) = if (f) 1 else 0
 		
 		if (trace)
 			println( hexWord(PC) + ' ' + hexByte(mem.readByte(PC)) )
@@ -68,7 +85,7 @@ abstract class CPU( mem: Memory ) extends LogicalAddressModes with Vectors with 
 		
 		if (trace)
 			printf( "A:%s X:%s Y:%s SP:%s PC:%s N:%d V:%d B:%d D:%d I:%d Z:%d C:%d\n\n", hexByte(A), hexByte(X), hexByte(Y), hexWord(SP), hexWord(PC),
-							flag(status(N)), flag(status(V)), flag(B), flag(D), flag(I), flag(status(Z)), flag(status(C)) )
+							read(N), read(V), read(B), read(D), read(I), read(Z), read(C) )
 			
 		cont
 	}
@@ -86,10 +103,13 @@ abstract class CPU( mem: Memory ) extends LogicalAddressModes with Vectors with 
 }
 
 trait Flags {
-	val N = 0
-	val V = 1
-	val C = 2
-	val Z = 3
+	val C = 0x00
+	val Z = 0x02
+	val I = 0x04
+	val D = 0x08
+	val B = 0x10
+	val V = 0x40
+	val N = 0x80
 }
 
 class CPU6502( mem: Memory ) extends CPU( mem ) {
