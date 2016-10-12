@@ -6,20 +6,11 @@ object Instructions extends Flags {
 	//
 	// cc = 01
 	//
-	def ora( cpu: CPU, addr: Int ) = {
-		cpu.A |= cpu.readByte( addr )
-		cpu.flags( cpu.A )
-	}
+	def ora( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
 	
-	def and( cpu: CPU, addr: Int ) = {
-		cpu.A &= cpu.readByte( addr )
-		cpu.flags( cpu.A )
-	}
+	def and( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
 	
-	def eor( cpu: CPU, addr: Int ) = {
-		cpu.A ^= cpu.readByte( addr )
-		cpu.flags( cpu.A )
-	}
+	def eor( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
 	
 	def adc( cpu: CPU, addr: Int ) =
 		if (cpu.status(D)) {
@@ -29,6 +20,9 @@ object Instructions extends Flags {
 			
 			cpu.set( C, res > 255 )
 			
+			set( V, (res&0x80)^(cpu.A&0x80) != 0 )
+			set( N, (res&0x80) != 0 )
+			cpu.loadA( res&0xFF )
 		}
 	
 	def sta( cpu: CPU, addr: Int ) = cpu.writeByte( addr, cpu.A )
@@ -45,6 +39,13 @@ object Instructions extends Flags {
 	//
 	// cc = 10
 	//
+	def asl( cpu: CPU, addr: Int ) = {
+		val res = cpu.readByte( addr ) << 1
+		
+		set( C, (res&0x100) != 0 )
+		cpu.loadA( res )
+	}
+	
 	def inc( cpu: CPU, addr: Int ) = cpu.writeByte( addr, cpu.flags(cpu.readByte(addr) + 1) )
 	
 	//
