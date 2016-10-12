@@ -20,8 +20,8 @@ object Instructions extends Flags {
 			
 			cpu.set( C, res > 255 )
 			
-			set( V, (res&0x80)^(cpu.A&0x80) != 0 )
-			set( N, (res&0x80) != 0 )
+			cpu.set( V, (res&0x80)^(cpu.A&0x80) )
+			cpu.set( N, res&0x80 )
 			cpu.loadA( res&0xFF )
 		}
 	
@@ -42,7 +42,7 @@ object Instructions extends Flags {
 	def asl( cpu: CPU, addr: Int ) = {
 		val res = cpu.readByte( addr ) << 1
 		
-		set( C, (res&0x100) != 0 )
+		cpu.set( C, res&0x100 )
 		cpu.loadA( res )
 	}
 	
@@ -60,10 +60,12 @@ object Instructions extends Flags {
 	
 	//
 	// simple
-	//
-	def txs = (cpu: CPU) => cpu.SP = cpu.X + 0x0100
+	//	
+	def iny = (cpu: CPU) => cpu.Y = cpu.flags( cpu.Y + 1 )
 	
 	def jmp = (cpu: CPU) => cpu.PC = cpu.nextWord
+	
+	def txs = (cpu: CPU) => cpu.SP = cpu.X + 0x100
 	
 	def todo( cpu: CPU, addr: Int ) = sys.error( "unimplemented instruction: " + hexByte(cpu.opcode) + " at " + hexWord(cpu.PC - 1) )
 	

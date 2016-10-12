@@ -27,13 +27,8 @@ abstract class CPU( mem: Memory ) extends LogicalAddressModes with Vectors with 
 			clear( flag )
 	}
 	
-	def set( flag: Int, v: Int ) {
-		if (v != 0)
-			set( flag )
-		else
-			clear( flag )
-	}
-	
+	def set( flag: Int, v: Int ) {set( flag, v != 0 )}
+
 	def clear( flag: Int ) = S &= (flag^0xFF)
 	
 	def read( flag: Int ) = if (status( flag )) 1 else 0
@@ -66,12 +61,14 @@ abstract class CPU( mem: Memory ) extends LogicalAddressModes with Vectors with 
 			case _ => mem.writeByte( addr, v )
 		}
 	
-	def loadA( v: Int ) = A = flags( v&0xFF )
+	def loadA( v: Int ) = A = flags( v )
 	
 	def flags( a: Int ) = {
-		set( N, a < 0 )
-		set( Z, a == 0 )
-		a
+		val b = a&0xFF
+		
+		set( N, b < 0 )
+		set( Z, b == 0 )
+		b
 	}
 	
 	def step = {
@@ -140,6 +137,7 @@ object CPU {
 		opcodes(0) = BRK
 		
 		List(
+			0xC8 -> iny,
 			0x4C -> jmp,
 			0x9A -> txs,
 			0xEA -> ((_: CPU) => ())
