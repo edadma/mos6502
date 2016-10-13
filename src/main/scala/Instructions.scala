@@ -61,9 +61,25 @@ object Instructions extends Flags {
 	//
 	// simple
 	//	
+	def clc = (cpu: CPU) => cpu.clear( C )
+	
+	def cli = (cpu: CPU) => cpu.clear( I )
+	
 	def iny = (cpu: CPU) => cpu.Y = cpu.flags( cpu.Y + 1 )
 	
 	def jmp = (cpu: CPU) => cpu.PC = cpu.nextWord
+	
+	def pha = (cpu: CPU) => cpu.push( cpu.A )
+	
+	def php = (cpu: CPU) => cpu.push( cpu.S )
+	
+	def pla = (cpu: CPU) => cpu.loadA( cpu.pull )
+	
+	def plp = (cpu: CPU) => cpu.S = cpu.pull
+	
+	def sec = (cpu: CPU) => cpu.set( C )
+	
+	def sei = (cpu: CPU) => cpu.set( I )
 	
 	def txs = (cpu: CPU) => cpu.SP = cpu.X + 0x100
 	

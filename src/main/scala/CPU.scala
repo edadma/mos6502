@@ -71,6 +71,16 @@ abstract class CPU( mem: Memory ) extends LogicalAddressModes with Vectors with 
 		b
 	}
 	
+	def push( a: Int ) {
+		mem.writeByte( SP, a )
+		SP -= 1
+	}
+	
+	def pull = {
+		SP += 1
+		mem.readByte( SP )
+	}
+	
 	def step = {
 		
 		if (trace)
@@ -137,8 +147,16 @@ object CPU {
 		opcodes(0) = BRK
 		
 		List(
+			0x18 -> clc,
+			0x58 -> cli,
 			0xC8 -> iny,
 			0x4C -> jmp,
+			0x48 -> pha,
+			0x08 -> php,
+			0x68 -> pla,
+			0x28 -> plp,
+			0x38 -> sec,
+			0x78 -> sei,
 			0x9A -> txs,
 			0xEA -> ((_: CPU) => ())
 			) foreach {case (opcode, computation) => opcodes(opcode) = new SimpleInstruction( computation )}		
