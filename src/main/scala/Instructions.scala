@@ -65,6 +65,10 @@ object Instructions extends Flags {
 	
 	def cli = (cpu: CPU) => cpu.clear( I )
 	
+	def clv = (cpu: CPU) => cpu.clear( V )
+	
+	def inx = (cpu: CPU) => cpu.X = cpu.flags( cpu.X + 1 )
+	
 	def iny = (cpu: CPU) => cpu.Y = cpu.flags( cpu.Y + 1 )
 	
 	def jmp = (cpu: CPU) => cpu.PC = cpu.nextWord
@@ -82,6 +86,8 @@ object Instructions extends Flags {
 	def sei = (cpu: CPU) => cpu.set( I )
 	
 	def txs = (cpu: CPU) => cpu.SP = cpu.X + 0x100
+	
+	def tya = (cpu: CPU) => cpu.loadA( cpu.Y )
 	
 	def todo( cpu: CPU, addr: Int ) = sys.error( "unimplemented instruction: " + hexByte(cpu.opcode) + " at " + hexWord(cpu.PC - 1) )
 	

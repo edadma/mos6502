@@ -149,6 +149,8 @@ object CPU {
 		List(
 			0x18 -> clc,
 			0x58 -> cli,
+			0xB8 -> clv,
+			0xE8 -> inx,
 			0xC8 -> iny,
 			0x4C -> jmp,
 			0x48 -> pha,
@@ -158,6 +160,7 @@ object CPU {
 			0x38 -> sec,
 			0x78 -> sei,
 			0x9A -> txs,
+			0x98 -> tya,
 			0xEA -> ((_: CPU) => ())
 			) foreach {case (opcode, computation) => opcodes(opcode) = new SimpleInstruction( computation )}		
 		populate( opcodes, Seq(ora, and, eor, todo, sta, lda, cmp, todo),
