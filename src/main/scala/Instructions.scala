@@ -61,33 +61,47 @@ object Instructions extends Flags {
 	//
 	// simple
 	//	
-	def clc = (cpu: CPU) => cpu.clear( C )
+	val clc = (cpu: CPU) => cpu.clear( C )
 	
-	def cli = (cpu: CPU) => cpu.clear( I )
+	val cli = (cpu: CPU) => cpu.clear( I )
 	
-	def clv = (cpu: CPU) => cpu.clear( V )
+	val clv = (cpu: CPU) => cpu.clear( V )
 	
-	def inx = (cpu: CPU) => cpu.X = cpu.flags( cpu.X + 1 )
+	val dex = (cpu: CPU) => cpu.X = cpu.flags( cpu.X - 1 )
 	
-	def iny = (cpu: CPU) => cpu.Y = cpu.flags( cpu.Y + 1 )
+	val dey = (cpu: CPU) => cpu.Y = cpu.flags( cpu.Y - 1 )
 	
-	def jmp = (cpu: CPU) => cpu.PC = cpu.nextWord
+	val inx = (cpu: CPU) => cpu.X = cpu.flags( cpu.X + 1 )
 	
-	def pha = (cpu: CPU) => cpu.push( cpu.A )
+	val iny = (cpu: CPU) => cpu.Y = cpu.flags( cpu.Y + 1 )
 	
-	def php = (cpu: CPU) => cpu.push( cpu.S )
+	val jmp = (cpu: CPU) => cpu.PC = cpu.nextWord
 	
-	def pla = (cpu: CPU) => cpu.loadA( cpu.pull )
+	val jsr = (cpu: CPU) => {
+		val pc = cpu.PC + 1
+		
+		cpu.push( pc >> 8 )
+		cpu.push( pc )
+		cpu.PC = cpu.nextWord
+	}
 	
-	def plp = (cpu: CPU) => cpu.S = cpu.pull
+	val pha = (cpu: CPU) => cpu.push( cpu.A )
 	
-	def sec = (cpu: CPU) => cpu.set( C )
+	val php = (cpu: CPU) => cpu.push( cpu.S )
 	
-	def sei = (cpu: CPU) => cpu.set( I )
+	val pla = (cpu: CPU) => cpu.loadA( cpu.pull )
 	
-	def txs = (cpu: CPU) => cpu.SP = cpu.X + 0x100
+	val plp = (cpu: CPU) => cpu.S = cpu.pull
 	
-	def tya = (cpu: CPU) => cpu.loadA( cpu.Y )
+	val rts = (cpu: CPU) => cpu.PC = ((cpu.pull<<8) + cpu.pull) + 1
+	
+	val sec = (cpu: CPU) => cpu.set( C )
+	
+	val sei = (cpu: CPU) => cpu.set( I )
+	
+	val txs = (cpu: CPU) => cpu.SP = cpu.X + 0x100
+	
+	val tya = (cpu: CPU) => cpu.loadA( cpu.Y )
 	
 	def todo( cpu: CPU, addr: Int ) = sys.error( "unimplemented instruction: " + hexByte(cpu.opcode) + " at " + hexWord(cpu.PC - 1) )
 	
