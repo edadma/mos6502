@@ -43,10 +43,27 @@ object Instructions extends Flags {
 		val res = cpu.readByte( addr ) << 1
 		
 		cpu.set( C, res&0x100 )
-		cpu.loadA( res )
+		cpu.writeByte( addr, cpu.flags(res) )
 	}
 	
+	def dec( cpu: CPU, addr: Int ) = cpu.writeByte( addr, cpu.flags(cpu.readByte(addr) - 1) )
+	
 	def inc( cpu: CPU, addr: Int ) = cpu.writeByte( addr, cpu.flags(cpu.readByte(addr) + 1) )
+	
+	def lsr( cpu: CPU, addr: Int ) = {
+		val src = cpu.readByte( addr )
+		
+		cpu.set( C, src&0x01 )
+		cpu.writeByte( addr, cpu.flags(src >> 1) )
+	}
+	
+	def rol( cpu: CPU, addr: Int ) = {
+		val src = cpu.readByte( addr )
+		val res = (src << 1) | (if ((src&0x80) != 0) 1 else 0)
+		
+		cpu.set( C, res > 0xFF )
+		cpu.writeByte( addr, cpu.flags(res) )
+	}
 	
 	//
 	// cc = 10 (X)
