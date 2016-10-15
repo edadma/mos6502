@@ -161,6 +161,7 @@ object CPU {
 			0x08 -> php,
 			0x68 -> pla,
 			0x28 -> plp,
+			0x60 -> rts,
 			0x38 -> sec,
 			0xF8 -> sed,
 			0x78 -> sei,

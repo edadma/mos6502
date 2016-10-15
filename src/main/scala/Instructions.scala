@@ -123,7 +123,7 @@ object Instructions extends Flags {
 	
 	val plp = (cpu: CPU) => cpu.S = cpu.pull
 	
-	val rts = (cpu: CPU) => cpu.PC = ((cpu.pull<<8) + cpu.pull) + 1
+	val rts = (cpu: CPU) => cpu.PC = (cpu.pull + (cpu.pull<<8)) + 1
 	
 	val sec = (cpu: CPU) => cpu.set( C )
 	
