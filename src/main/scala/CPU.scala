@@ -148,6 +148,7 @@ object CPU {
 		
 		List(
 			0x18 -> clc,
+			0xD8 -> cld,
 			0x58 -> cli,
 			0xB8 -> clv,
 			0xCA -> dex,
@@ -161,14 +162,19 @@ object CPU {
 			0x68 -> pla,
 			0x28 -> plp,
 			0x38 -> sec,
+			0xF8 -> sed,
 			0x78 -> sei,
+			0xAA -> tax,
+			0xA8 -> tay,
+			0xBA -> tsx,
 			0x9A -> txs,
+			0x8A -> txa,
 			0x98 -> tya,
 			0xEA -> ((_: CPU) => ())
 			) foreach {case (opcode, computation) => opcodes(opcode) = new SimpleInstruction( computation )}		
 		populate( opcodes, Seq(ora, and, eor, adc, sta, lda, cmp, todo),
 							Seq(indirectX, zeroPage, immediate, absolute, indirectY, zeroPageIndexedX, absoluteIndexedY, absoluteIndexedX), 1, 0x89 )
-		populate( opcodes, Seq(asl, rol, lsr, todo, null, null, dec, inc),
+		populate( opcodes, Seq(asl, rol, lsr, ror, null, null, dec, inc),
 							Seq(null, zeroPage, accumulator, absolute, null, zeroPageIndexedX, null, absoluteIndexedX), 2, 0xCA, 0xEA )
 		populate( opcodes, Seq(null, null, null, null, todo, todo, null, null),
 							Seq(immediate, zeroPage, accumulator, absolute, null, zeroPageIndexedY, null, absoluteIndexedY), 2, 0x82, 0x9E )

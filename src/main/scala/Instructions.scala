@@ -65,6 +65,14 @@ object Instructions extends Flags {
 		cpu.writeByte( addr, cpu.flags(res) )
 	}
 	
+	def ror( cpu: CPU, addr: Int ) = {
+		val src = cpu.readByte( addr )
+		val carry = (src&0x01) != 0
+		
+		cpu.set( C, carry )
+		cpu.writeByte( addr, cpu.flags((src >> 1)|(if (carry) 0x80 else 0)) )
+	}
+	
 	//
 	// cc = 10 (X)
 	//
@@ -79,6 +87,8 @@ object Instructions extends Flags {
 	// simple
 	//	
 	val clc = (cpu: CPU) => cpu.clear( C )
+	
+	val cld = (cpu: CPU) => cpu.clear( D )
 	
 	val cli = (cpu: CPU) => cpu.clear( I )
 	
@@ -114,9 +124,19 @@ object Instructions extends Flags {
 	
 	val sec = (cpu: CPU) => cpu.set( C )
 	
+	val sed = (cpu: CPU) => cpu.set( D )
+	
 	val sei = (cpu: CPU) => cpu.set( I )
 	
+	val tax = (cpu: CPU) => cpu.X = cpu.flags( cpu.A )
+	
+	val tay = (cpu: CPU) => cpu.Y = cpu.flags( cpu.A )
+	
+	val tsx = (cpu: CPU) => cpu.X = cpu.flags( cpu.SP )
+	
 	val txs = (cpu: CPU) => cpu.SP = cpu.X + 0x100
+	
+	val txa = (cpu: CPU) => cpu.loadA( cpu.X )
 	
 	val tya = (cpu: CPU) => cpu.loadA( cpu.Y )
 	
