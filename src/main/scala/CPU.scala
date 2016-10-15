@@ -66,7 +66,7 @@ abstract class CPU( mem: Memory ) extends LogicalAddressModes with VectorsAddres
 	def flags( a: Int ) = {
 		val b = a&0xFF
 		
-		set( N, b < 0 )
+		set( N, b&0x80 )
 		set( Z, b == 0 )
 		b
 	}

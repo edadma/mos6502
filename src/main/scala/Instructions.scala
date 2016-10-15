@@ -12,18 +12,34 @@ object Instructions extends Flags {
 	
 	def eor( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
 	
-	def adc( cpu: CPU, addr: Int ) =
-		if (cpu.status(D)) {
-			todo( cpu, addr )
+	def adc( cpu: CPU, addr: Int ) {
+		val src = cpu.readByte( addr )
+		val res = cpu.A + src + cpu.read( C )
+		
+		if (cpu.status( D )) {
+			val res1 =
+				if (((cpu.A&0x0f) + (src & 0x0f) + cpu.read( C )) > 9)
+					res + 6
+				else
+					res
+			
+			cpu.set( Z, res )
+			cpu.set( N, res1 )
+			cpu.set( V, (cpu.A^res1)&(src^res1)&0x80 )
+			
+			val res2 =
+				if (res1 > 0x99)
+					res1 + 96
+				else
+					res1
+			
+			cpu.set( C, res2 > 0x99 )
 		} else {
-			val res = cpu.A + cpu.readByte( addr ) + cpu.read(C)
-			
-			cpu.set( C, res > 255 )
-			
-			cpu.set( V, (res&0x80)^(cpu.A&0x80) )
-			cpu.set( N, res&0x80 )
-			cpu.loadA( res&0xFF )
+			cpu.set( C, res > 0xff )
+			cpu.set( V, (cpu.A^res)&(src^res)&0x80 )
+			cpu.loadA( res )
 		}
+	}
 	
 	def sta( cpu: CPU, addr: Int ) = cpu.writeByte( addr, cpu.A )
 	
