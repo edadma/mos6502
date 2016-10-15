@@ -29,12 +29,7 @@ object Instructions extends Flags {
 	
 	def lda( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
 	
-	def cmp( cpu: CPU, addr: Int ) = {
-		val diff = cpu.A - cpu.readByte( addr )
-		
-		cpu.flags( diff )
-		cpu.set( C, diff >= 0 )
-	}
+	def cmp( cpu: CPU, addr: Int ) = cpu.set( C, cpu.flags(cpu.A - cpu.readByte(addr)) >= 0 )
 	
 	//
 	// cc = 10
@@ -76,12 +71,20 @@ object Instructions extends Flags {
 	//
 	// cc = 10 (X)
 	//
+	def stx( cpu: CPU, addr: Int ) = cpu.writeByte( addr, cpu.X )
+	
 	def ldx( cpu: CPU, addr: Int ) = cpu.X = cpu.flags( cpu.readByte(addr) )
 	
 	//
 	// cc = 00
 	//
+	def cpx( cpu: CPU, addr: Int ) = cpu.set( C, cpu.flags(cpu.X - cpu.readByte(addr)) >= 0 )
+	
+	def cpy( cpu: CPU, addr: Int ) = cpu.set( C, cpu.flags(cpu.Y - cpu.readByte(addr)) >= 0 )
+	
 	def ldy( cpu: CPU, addr: Int ) = cpu.Y = cpu.flags( cpu.readByte(addr) )
+	
+	def sty( cpu: CPU, addr: Int ) = cpu.writeByte( addr, cpu.Y )
 	
 	//
 	// simple
@@ -140,6 +143,6 @@ object Instructions extends Flags {
 	
 	val tya = (cpu: CPU) => cpu.loadA( cpu.Y )
 	
-	def todo( cpu: CPU, addr: Int ) = sys.error( "unimplemented instruction: " + hexByte(cpu.opcode) + " at " + hexWord(cpu.PC - 1) )
+	def todo( cpu: CPU, addr: Int ) = sys.error( "unimplemented insrtuction: " + hexByte(cpu.opcode) + " at " + hexWord(cpu.PC - 1) )
 	
 }

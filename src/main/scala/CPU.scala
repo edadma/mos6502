@@ -176,9 +176,9 @@ object CPU {
 							Seq(indirectX, zeroPage, immediate, absolute, indirectY, zeroPageIndexedX, absoluteIndexedY, absoluteIndexedX), 1, 0x89 )
 		populate( opcodes, Seq(asl, rol, lsr, ror, null, null, dec, inc),
 							Seq(null, zeroPage, accumulator, absolute, null, zeroPageIndexedX, null, absoluteIndexedX), 2, 0xCA, 0xEA )
-		populate( opcodes, Seq(null, null, null, null, todo, todo, null, null),
+		populate( opcodes, Seq(null, null, null, null, stx, ldx, null, null),
 							Seq(immediate, zeroPage, accumulator, absolute, null, zeroPageIndexedY, null, absoluteIndexedY), 2, 0x82, 0x9E )
-		populate( opcodes, Seq(null, todo, null, null, todo, ldy, todo, todo),
+		populate( opcodes, Seq(null, todo, null, null, sty, ldy, cpx, cpy),
 							Seq(immediate, zeroPage, null, absolute, null, zeroPageIndexedX, null, absoluteIndexedX), 0, 0x20, 0x24, 0x2C, 0x80, 0x9C, 0xD4, 0xDC, 0xF4, 0xFC )
 		
 		for (xx <- 0 to 3; y <- 0 to 1)
