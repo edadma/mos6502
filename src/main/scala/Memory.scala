@@ -18,9 +18,7 @@ trait Addressable {
 	
 	def writeByte( addr: Int, value: Int )
 	
-	def readWord( addr: Int ) = {
-		readByte( addr ) + (readByte( addr + 1 )<<8)
-	}
+	def readWord( addr: Int ) = readByte( addr ) + (readByte( addr + 1 )<<8)
 	
 	def writeWord( addr: Int, value: Int ) {
 		writeByte( addr, value&0xFF )
