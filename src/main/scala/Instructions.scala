@@ -6,12 +6,6 @@ object Instructions extends Flags {
 	//
 	// cc = 01
 	//
-	def ora( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
-	
-	def and( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
-	
-	def eor( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
-	
 	def adc( cpu: CPU, addr: Int ) =
 		if (cpu.status(D)) {
 			todo( cpu, addr )
@@ -25,11 +19,21 @@ object Instructions extends Flags {
 			cpu.loadA( res&0xFF )
 		}
 	
-	def sta( cpu: CPU, addr: Int ) = cpu.writeByte( addr, cpu.A )
-	
-	def lda( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
+	def and( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
 	
 	def cmp( cpu: CPU, addr: Int ) = cpu.set( C, cpu.flags(cpu.A - cpu.readByte(addr)) >= 0 )
+	
+	def eor( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
+	
+	def lda( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
+		
+	def ora( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
+	
+	def sbc( cpu: CPU, addr: Int ) = {
+		
+	}
+
+	def sta( cpu: CPU, addr: Int ) = cpu.writeByte( addr, cpu.A )
 	
 	//
 	// cc = 10
@@ -78,6 +82,14 @@ object Instructions extends Flags {
 	//
 	// cc = 00
 	//
+	def bit( cpu: CPU, addr: Int ) = {
+		val src = cpu.readByte( addr )
+		
+		cpu.set( N, src&0x80 )
+		cpu.set( V, src&0x40 )
+		cpu.set( Z, cpu.A&src )
+	}
+	
 	def cpx( cpu: CPU, addr: Int ) = cpu.set( C, cpu.flags(cpu.X - cpu.readByte(addr)) >= 0 )
 	
 	def cpy( cpu: CPU, addr: Int ) = cpu.set( C, cpu.flags(cpu.Y - cpu.readByte(addr)) >= 0 )
