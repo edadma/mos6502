@@ -1,7 +1,7 @@
 package xyz.hyperreal.mos6502
 
 
-abstract class CPU( mem: Memory ) extends LogicalAddressModes with VectorsAddresses with Flags {
+abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAddresses with Flags {
 	
 	val opcodes: Seq[Instruction]
 	
@@ -136,8 +136,12 @@ object CPU {
 			val inst = instructions(aaa)
 			val mode = modes(bbb)
 			
-			if (!exceptions.contains( opcode ) && inst != null && mode != null)
+			if (!exceptions.contains( opcode ) && inst != null && mode != null) {
+				if (table(opcode) ne IllegalInstruction)
+					sys.error( "opcode already populated: " + opcode.toHexString )
+					
 				table(opcode) = new AddressModeInstruction( inst, mode )
+			}
 		}
 	}
 	
@@ -156,11 +160,13 @@ object CPU {
 			0xE8 -> inx,
 			0xC8 -> iny,
 			0x4C -> jmp,
+			0x6C -> jmpind,
 			0x20 -> jsr,
 			0x48 -> pha,
 			0x08 -> php,
 			0x68 -> pla,
 			0x28 -> plp,
+			0x40 -> rti,
 			0x60 -> rts,
 			0x38 -> sec,
 			0xF8 -> sed,
@@ -172,13 +178,13 @@ object CPU {
 			0x8A -> txa,
 			0x98 -> tya,
 			0xEA -> ((_: CPU) => ())
-			) foreach {case (opcode, computation) => opcodes(opcode) = new SimpleInstruction( computation )}		
+			) foreach {case (opcode, computation) => opcodes(opcode) = new SimpleInstruction( computation )}
 		populate( opcodes, Seq(ora, and, eor, adc, sta, lda, cmp, sbc),
 							Seq(indirectX, zeroPage, immediate, absolute, indirectY, zeroPageIndexedX, absoluteIndexedY, absoluteIndexedX), 1, 0x89 )
 		populate( opcodes, Seq(asl, rol, lsr, ror, null, null, dec, inc),
 							Seq(null, zeroPage, accumulator, absolute, null, zeroPageIndexedX, null, absoluteIndexedX), 2, 0xCA, 0xEA )
 		populate( opcodes, Seq(null, null, null, null, stx, ldx, null, null),
-							Seq(immediate, zeroPage, accumulator, absolute, null, zeroPageIndexedY, null, absoluteIndexedY), 2, 0x82, 0x9E )
+							Seq(immediate, zeroPage, null, absolute, null, zeroPageIndexedY, null, absoluteIndexedY), 2, 0x82, 0x9E )
 		populate( opcodes, Seq(null, bit, null, null, sty, ldy, cpx, cpy),
 							Seq(immediate, zeroPage, null, absolute, null, zeroPageIndexedX, null, absoluteIndexedX), 0, 0x20, 0x24, 0x2C, 0x80, 0x9C, 0xD4, 0xDC, 0xF4, 0xFC )
 		

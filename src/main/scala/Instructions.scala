@@ -159,6 +159,8 @@ object Instructions extends Flags {
 	
 	val jmp = (cpu: CPU) => cpu.PC = cpu.nextWord
 	
+	val jmpind = (cpu: CPU) => cpu.PC = cpu.mem.readWord( cpu.nextWord )
+	
 	val jsr = (cpu: CPU) => {
 		val pc = cpu.PC + 1
 		
