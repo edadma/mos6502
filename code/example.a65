@@ -1,0 +1,19 @@
+				cpu 6502
+				cout = $e0
+				* = $600
+
+pstring	ldy #0
+.1				lda message,y
+				beq .2
+				sta	cout
+				iny
+				bne .1
+.2				lda #'\n'
+				sta cout				
+				brk
+	
+message	asc	"This is a test.\0"
+				
+				* = $FFFC
+				dw		$600
+				dw		0

@@ -20,7 +20,7 @@ object Hex {
 				
 				if (addr != ptr) {
 					if (ptr != -1) {
-						mem.add( new ROM(start, buf.toSeq) )
+						mem.add( new ROM(start, buf.toIndexedSeq) )
 						buf.clear
 					}
 				
@@ -35,7 +35,7 @@ object Hex {
 			}
 		}
 		
-		mem.add( new ROM(start, buf.toSeq) )
+		mem.add( new ROM(start, buf.toIndexedSeq) )
 	}
 	
 	def fromFile( mem: Memory, file: String ) = fromSource( mem, io.Source.fromFile(file) )

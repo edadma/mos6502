@@ -1,7 +1,7 @@
 package xyz.hyperreal.mos6502
 
 
-abstract class Instruction extends Vectors with Flags {
+abstract class Instruction extends VectorsAddresses with Flags {
 	
 	def perform( cpu: CPU ): Boolean
 	

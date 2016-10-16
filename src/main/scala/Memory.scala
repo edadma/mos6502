@@ -3,7 +3,7 @@ package xyz.hyperreal.mos6502
 import collection.mutable.{ArrayBuffer}
 
 
-trait Vectors {
+trait VectorsAddresses {
 	val RESET_VECTOR = 0xFFFC
 	val BRK_VECTOR = 0xFFFE
 }
@@ -45,7 +45,7 @@ class RAM( val start: Int, end: Int ) extends Addressable {
 	override def toString = s"RAM: ${hexWord(start)}-${hexWord(end)}"
 }
 
-class ROM( val start: Int, mem: Seq[Byte] ) extends Addressable {
+class ROM( val start: Int, mem: IndexedSeq[Byte] ) extends Addressable {
 	
 	require( start >= 0 )
 	require( mem.size > 0 )
@@ -61,7 +61,15 @@ class ROM( val start: Int, mem: Seq[Byte] ) extends Addressable {
 }
 
 object ROM {
-	def apply( start: Int, mem: Int* ) = new ROM( start, mem map (_.toByte) )
+	def apply( start: Int, mem: Int* ) = new ROM( start, mem.toIndexedSeq map (_.toByte) )
+}
+
+object Vectors {
+	def apply( resetVector: Int, brkVector: Int ) = {
+		def word2bytes( a: Int ) = IndexedSeq( a.toByte, (a >> 8).toByte )
+		
+		new ROM( 0xFFFC, word2bytes(resetVector) ++ word2bytes(brkVector) )
+	}
 }
 
 abstract class Port extends Addressable {

@@ -1,7 +1,7 @@
 package xyz.hyperreal.mos6502
 
 
-abstract class CPU( mem: Memory ) extends LogicalAddressModes with Vectors with Flags {
+abstract class CPU( mem: Memory ) extends LogicalAddressModes with VectorsAddresses with Flags {
 	
 	val opcodes: Seq[Instruction]
 	
@@ -66,7 +66,7 @@ abstract class CPU( mem: Memory ) extends LogicalAddressModes with Vectors with 
 	def flags( a: Int ) = {
 		val b = a&0xFF
 		
-		set( N, b < 0 )
+		set( N, b&0x80 )
 		set( Z, b == 0 )
 		b
 	}
@@ -161,6 +161,7 @@ object CPU {
 			0x08 -> php,
 			0x68 -> pla,
 			0x28 -> plp,
+			0x60 -> rts,
 			0x38 -> sec,
 			0xF8 -> sed,
 			0x78 -> sei,

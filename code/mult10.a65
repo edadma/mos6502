@@ -1,0 +1,30 @@
+				cpu	6502
+				start = $600
+				r0 = $00
+				r1 = $01
+				cout = $E0
+				iout = $E1
+				* = start
+
+				ldx #$ff
+				txs
+				
+				lda	#12
+				jsr	mult10
+				STA iout
+				LDA #'\n'
+				STA cout
+				
+				brk
+				
+MULT10  ASL         ;multiply by 2
+        STA r0    ;temp store in r0
+        ASL         ;again multiply by 2 (*4)
+        ASL         ;again multiply by 2 (*8)
+        CLC
+        ADC r0    ;as result, A = x*8 + x*2
+        RTS
+				
+				* = $FFFC
+				dw	start
+				dw	0

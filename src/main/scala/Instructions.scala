@@ -6,31 +6,71 @@ object Instructions extends Flags {
 	//
 	// cc = 01
 	//
-	def adc( cpu: CPU, addr: Int ) =
-		if (cpu.status(D)) {
-			todo( cpu, addr )
+	def adc( cpu: CPU, addr: Int ) {
+		val src = cpu.readByte( addr )
+		val res = cpu.A + src + cpu.read( C )
+		
+		if (cpu.status( D )) {
+			val res1 =
+				if (((cpu.A&0x0f) + (src & 0x0f) + cpu.read( C )) > 9)
+					res + 6
+				else
+					res
+			
+			cpu.set( Z, res )
+			cpu.set( N, res1 )
+			cpu.set( V, (cpu.A^res1)&(src^res1)&0x80 )
+			
+			val res2 =
+				if (res1 > 0x99)
+					res1 + 96
+				else
+					res1
+			
+			cpu.set( C, res2 > 0x99 )
+			cpu.A = res2
 		} else {
-			val res = cpu.A + cpu.readByte( addr ) + cpu.read(C)
-			
-			cpu.set( C, res > 255 )
-			
-			cpu.set( V, (res&0x80)^(cpu.A&0x80) )
-			cpu.set( N, res&0x80 )
-			cpu.loadA( res&0xFF )
+			cpu.set( C, res > 0xff )
+			cpu.set( V, (cpu.A^res)&(src^res)&0x80 )
+			cpu.loadA( res )
 		}
+	}
 	
 	def and( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
 	
 	def cmp( cpu: CPU, addr: Int ) = cpu.set( C, cpu.flags(cpu.A - cpu.readByte(addr)) >= 0 )
 	
 	def eor( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
-	
+
 	def lda( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
-		
+
 	def ora( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
 	
-	def sbc( cpu: CPU, addr: Int ) = {
+	def sbc( cpu: CPU, addr: Int ) {
+		val src = cpu.readByte( addr )
+		val temp = cpu.flags( cpu.A - src - cpu.read(C) )
 		
+		cpu.set( V, ((cpu.A^temp)&0x80) != 0 && ((cpu.A^src)&0x80) != 0 )
+		
+		if (cpu.status( D )) {
+			val temp1 =
+				if (((cpu.A&0x0f) - cpu.read( C )) < (src&0x0f))
+					temp - 6
+				else
+					temp
+					
+			val temp2 =
+				if (temp1 > 0x99)
+					temp1 - 0x60
+				else
+					temp1
+					
+			cpu.set( C, temp2 < 0x100 )
+			cpu.A = temp2&0xff
+		} else {
+			cpu.set( C, temp < 0x100 )
+			cpu.A = temp&0xff
+		}
 	}
 
 	def sta( cpu: CPU, addr: Int ) = cpu.writeByte( addr, cpu.A )
@@ -135,7 +175,12 @@ object Instructions extends Flags {
 	
 	val plp = (cpu: CPU) => cpu.S = cpu.pull
 	
-	val rts = (cpu: CPU) => cpu.PC = ((cpu.pull<<8) + cpu.pull) + 1
+	val rti = (cpu: CPU) => {
+		cpu.S = cpu.pull
+		cpu.PC = cpu.pull + (cpu.pull<<8)
+	}
+	
+	val rts = (cpu: CPU) => cpu.PC = (cpu.pull + (cpu.pull<<8)) + 1
 	
 	val sec = (cpu: CPU) => cpu.set( C )
 	
