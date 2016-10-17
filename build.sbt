@@ -21,9 +21,14 @@ libraryDependencies ++= Seq(
 	"org.scalacheck" %% "scalacheck" % "1.11.5" % "test"
 )
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4"
+libraryDependencies ++= Seq(
+	"org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
+	"org.scala-lang.modules" %% "scala-swing" % "1.0.2"
+)
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "1.0.2"
+libraryDependencies ++= Seq(
+	"xyz.hyperreal" %% "options" % "0.1"
+)
 
 mainClass in (Compile, run) := Some( "xyz.hyperreal." + name.value + ".Main" )
 
