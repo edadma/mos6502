@@ -22,7 +22,7 @@ object SREC {
 		
 		def data( addr: Int, bytes: Vector[Byte] ) {
 			if (!buf.isEmpty && addr != base + buf.length) {
-				m add new ROM( base, buf.toIndexedSeq )
+				m add new ROM( "SREC", base, buf.toIndexedSeq )
 				base = addr
 				buf.clear
 			} else if (buf.isEmpty)
@@ -36,7 +36,7 @@ object SREC {
 		apply( s, header, data, start )
 		
 		if (!buf.isEmpty)
-			m add new ROM( base, buf.toIndexedSeq )
+			m add new ROM( "SREC", base, buf.toIndexedSeq )
 			
 		startAddr
 	}

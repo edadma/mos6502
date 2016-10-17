@@ -9,6 +9,8 @@ trait VectorsAddresses {
 }
 
 trait Addressable {
+
+	def name: String
 	
 	def start: Int
 	
@@ -27,7 +29,7 @@ trait Addressable {
 	
 }
 
-class RAM( val start: Int, end: Int ) extends Addressable {
+class RAM( val name: String, val start: Int, end: Int ) extends Addressable {
 	
 	require( start >= 0 )
 	require( end >= start )
@@ -40,10 +42,10 @@ class RAM( val start: Int, end: Int ) extends Addressable {
 	
 	def writeByte( addr: Int, value: Int ) = mem( addr - start ) = value.toByte
 	
-	override def toString = s"RAM: ${hexWord(start)}-${hexWord(end)}"
+	override def toString = s"$name RAM: ${hexWord(start)}-${hexWord(end)}"
 }
 
-class ROM( val start: Int, mem: IndexedSeq[Byte] ) extends Addressable {
+class ROM( val name: String, val start: Int, mem: IndexedSeq[Byte] ) extends Addressable {
 	
 	require( start >= 0 )
 	require( mem.size > 0 )
@@ -54,19 +56,19 @@ class ROM( val start: Int, mem: IndexedSeq[Byte] ) extends Addressable {
 	
 	def writeByte( addr: Int, value: Int ) = sys.error( "read only memory" )
 	
-	override def toString = s"ROM: ${hexWord(start)}-${hexWord(start + size - 1)}"
+	override def toString = s"$name ROM: ${hexWord(start)}-${hexWord(start + size - 1)}"
 	
 }
 
 object ROM {
-	def apply( start: Int, mem: Int* ) = new ROM( start, mem.toIndexedSeq map (_.toByte) )
+	def apply( name: String, start: Int, mem: Int* ) = new ROM( name, start, mem.toIndexedSeq map (_.toByte) )
 }
 
 object Vectors {
 	def apply( resetVector: Int, brkVector: Int ) = {
 		def word2bytes( a: Int ) = IndexedSeq( a.toByte, (a >> 8).toByte )
 		
-		new ROM( 0xFFFC, word2bytes(resetVector) ++ word2bytes(brkVector) )
+		new ROM( "vector table", 0xFFFC, word2bytes(resetVector) ++ word2bytes(brkVector) )
 	}
 }
 
@@ -75,7 +77,7 @@ abstract class Port extends Addressable {
 	val start: Int
 	val size: Int
 	
-	override def toString = s"port: ${hexWord(start)}-${hexWord(start + size - 1)}"
+	override def toString = s"$name port: ${hexWord(start)}-${hexWord(start + size - 1)}"
 
 }
 
@@ -83,8 +85,7 @@ abstract class SingleAddressPort extends Port {
 	
 	val size = 1
 	
-	require( start >= 0 )
-	require( size > 0 )
+	override def toString = s"$name port: ${hexWord(start)}"
 	
 }
 
@@ -102,6 +103,7 @@ abstract class WriteOnlyPort extends SingleAddressPort {
 
 class Memory extends Addressable {
 	
+	val name = "System memory"
 	private val regions = new ArrayBuffer[Addressable]
 	private var first = 0
 	private var end = 0
