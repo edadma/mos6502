@@ -5,25 +5,21 @@ import scala.swing._
 
 class StdIOChar( val start: Int ) extends SingleAddressPort {
 	
-	val name = "StdIO char"
+	val name = "stdio-char"
 	
 	def readByte( addr: Int ) = io.StdIn.readChar.toInt
 	
-	def writeByte( addr: Int, value: Int ) {
-		print( value.toChar )
-	}
+	def writeByte( addr: Int, value: Int ) = print( value.toChar )
 	
 }
 
 class StdIOInt( val start: Int ) extends SingleAddressPort {
 	
-	val name = "StdIO int"
+	val name = "stdio-int"
 	
 	def readByte( addr: Int ) = io.StdIn.readInt
 	
-	def writeByte( addr: Int, value: Int ) {
-		print( value )
-	}
+	def writeByte( addr: Int, value: Int ) = print( value )
 	
 }
 

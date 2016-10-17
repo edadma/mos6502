@@ -27,6 +27,10 @@ libraryDependencies ++= Seq(
 )
 
 libraryDependencies ++= Seq(
+	"jline" % "jline" % "2.14.2"
+)
+
+libraryDependencies ++= Seq(
 	"xyz.hyperreal" %% "options" % "0.1"
 )
 
