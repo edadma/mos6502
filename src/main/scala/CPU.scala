@@ -161,7 +161,7 @@ object CPU {
 		}
 	}
 	
-	val (opcodes6502, asm6502, mnemonics) = {
+	val (opcodes6502, asm6502, mnemonics6502) = {
 		val opcodes = Array.fill[Instruction]( 256 )( IllegalInstruction )
 		val asmmap = new HashMap[(String, Symbol), Byte]
 		

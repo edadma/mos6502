@@ -10,13 +10,15 @@ case class BinaryExpressionAST( left: ExpressionAST, op: String, right: Expressi
 case class UnaryExpressionAST( op: String, exp: ExpressionAST ) extends ExpressionAST
 
 trait ModeAST
-case object ImplicitModeAST
-case class ImmediateModeAST( v: ExpressionAST )
-case class AddressModeAST( a: ExpressionAST, var absolute: Boolean = false )
-case class AddressXModeAST( a: ExpressionAST, var absolute: Boolean = false )
-case class AddressYModeAST( a: ExpressionAST, var absolute: Boolean = false )
-case class IndirectXModeAST( a: ExpressionAST )
-case class IndirectYModeAST( a: ExpressionAST )
+case object ImplicitModeAST extends ModeAST
+case object AccumulatorModeAST extends ModeAST
+case class ImmediateModeAST( v: ExpressionAST ) extends ModeAST
+case class DirectModeAST( a: ExpressionAST, var absolute: Boolean = false ) extends ModeAST
+case class DirectXModeAST( a: ExpressionAST, var absolute: Boolean = false ) extends ModeAST
+case class DirectYModeAST( a: ExpressionAST, var absolute: Boolean = false ) extends ModeAST
+case class IndirectModeAST( v: ExpressionAST ) extends ModeAST
+case class IndirectXModeAST( a: ExpressionAST ) extends ModeAST
+case class IndirectYModeAST( a: ExpressionAST ) extends ModeAST
 
 
 trait StatementAST extends AST
@@ -28,4 +30,4 @@ trait AllocationAST extends StatementAST
 
 trait DataAST extends AllocationAST
 
-case class InstructionAST( label: Option[String], inst: String, mode: ModeAST ) extends AllocationAST
+case class InstructionAST( label: Option[String], mnemonic: String, mode: ModeAST ) extends AllocationAST
