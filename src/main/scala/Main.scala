@@ -23,8 +23,9 @@ object Main extends App with Flags {
 	options get "-f" match {
 		case None => monitor
 		case Some( file ) =>
-			SREC( mem, new File(file) )
+			load( file )
 			cpu.reset
+			cpu.run
 	}
 	
 	def ishex( s: String ) = !s.isEmpty && s.forall( c => "012345679abcdefABCDEF" contains c )
@@ -67,7 +68,7 @@ object Main extends App with Flags {
 				else
 					Some( mem.readByte(addr) )
 					
-			for (line <- addr until (addr + 16*lines min 0x10000) by 16) {
+			for (line <- addr until ((addr + 16*lines) min 0x10000) by 16) {
 				out.print( "%4x  ".format(line).toUpperCase )
 				
 				for (i <- line until ((line + 16) min 0x10000)) {
@@ -110,7 +111,7 @@ object Main extends App with Flags {
 							dumpcur = hex( com(1) )
 							
 						dump( dumpcur, 8 )
-						dumpcur = dumpcur + 16*8 min 0x10000
+						dumpcur = (dumpcur + 16*8) min 0x10000
 					case "execute"|"e" =>
 						if (com.length > 1)
 							if (ishex( com(1) ))
@@ -123,19 +124,21 @@ object Main extends App with Flags {
 						cpu.run
 						registers
 					case "help"|"h" =>
-						out.println( "drop (dr) <region>           drop memory <region>" )
-						out.println( "dump (d) [<addr>]            dump memory at <addr> or where left off" )
-						out.println( "execute (e) [<start>]        execute instructions starting from current PC or <start>" )
-						out.println( "execute (e) <file>           clear ROM, load SREC <file>, reset, run" )
-						out.println( "help (h)                     print this summary" )
-						out.println( "load (l) <file>              clear ROM, load SREC <file>, reset" )
-						out.println( "memory (m)                   print memory map" )
-						out.println( "memory (m) <addr> <data>...  write <data> (space separated bytes) to memory at <addr>" )
-						out.println( "quit (q)                     exit the REPL" )
-						out.println( "registers (r)                print CPU registers" )
-						out.println( "registers (r) [<reg> <val>]  set CPU <reg>ister to <val>ue" )
-						out.println( "reset (re)                   reset CPU registers setting PC from reset vector" )
-						out.println( "step (s) [<start>]           execute only next instruction at current PC or <start>" )
+						"""
+						|drop (dr) <region>           drop memory <region>
+						|dump (d) [<addr>]            dump memory at <addr> or where left off
+						|execute (e) [<start>]        execute instructions starting from current PC or <start>
+						|execute (e) <file>           clear ROM, load SREC <file>, reset, run
+						|help (h)                     print this summary
+						|load (l) <file>              clear ROM, load SREC <file>, reset
+						|memory (m)                   print memory map
+						|memory (m) <addr> <data>...  write <data> (space separated bytes) to memory at <addr>
+						|quit (q)                     exit the REPL
+						|registers (r)                print CPU registers
+						|registers (r) [<reg> <val>]  set CPU <reg>ister to <val>ue
+						|reset (re)                   reset CPU registers setting PC from reset vector
+						|step (s) [<start>]           execute only next instruction at current PC or <start>
+						""".trim.stripMargin.lines foreach out.println
 					case "load"|"l" =>
 						load( com(1) )
 					case "memory"|"m" =>
