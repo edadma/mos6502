@@ -72,11 +72,17 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 	}
 	
 	def push( a: Int ) {
+		if (SP < 0)
+			sys.error( "stack overflow" )
+			
 		mem.writeByte( SP, a )
 		SP -= 1
 	}
 	
 	def pull = {
+		if (SP == 0x1FF)
+			sys.error( "stack underflow" )
+			
 		SP += 1
 		mem.readByte( SP )
 	}
@@ -103,10 +109,9 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 		A = 0
 		X = 0
 		Y = 0
-		SP = 0	
+		SP = 0x1FD
 		PC = mem.readWord( RESET_VECTOR )
 		S = 0
-		run
 	}
 	
 }
@@ -132,17 +137,23 @@ object CPU {
 	import Instructions._
 	import AddressModes._
 	
-	def populate( table: Array[Instruction], instructions: Seq[(CPU, Int) => Unit], modes: Seq[CPU => Int], cc: Int, exceptions: Int* ) {
+	def populate( table: Array[Instruction], instructions: Seq[((CPU, Int) => Unit, String)], modes: Seq[(CPU => Int, Symbol)], cc: Int, exceptions: Int* ) {
 		for (aaa <- 0 to 7; bbb <- 0 to 7) {
 			val opcode = aaa<<5 | bbb<<2 | cc
-			val inst = instructions(aaa)
-			val mode = modes(bbb)
 			
-			if (!exceptions.contains( opcode ) && inst != null && mode != null) {
-				if (table(opcode) ne IllegalInstruction)
-					sys.error( "opcode already populated: " + opcode.toHexString )
+			if (!exceptions.contains( opcode )) {
+				if (instructions(aaa) ne null) {
+					val inst = instructions(aaa)._1
 					
-				table(opcode) = new AddressModeInstruction( inst, mode )
+					if (modes(bbb) ne null) {
+						val mode = modes(bbb)._1
+				
+						if (table(opcode) ne IllegalInstruction)
+							sys.error( "opcode already populated: " + opcode.toHexString )
+							
+						table(opcode) = new AddressModeInstruction( inst, mode )
+					}
+				}
 			}
 		}
 	}
@@ -153,42 +164,52 @@ object CPU {
 		opcodes(0) = BRK
 		
 		List(
-			0x18 -> clc,
-			0xD8 -> cld,
-			0x58 -> cli,
-			0xB8 -> clv,
-			0xCA -> dex,
-			0x88 -> dey,
-			0xE8 -> inx,
-			0xC8 -> iny,
-			0x4C -> jmp,
-			0x6C -> jmpind,
-			0x20 -> jsr,
-			0x48 -> pha,
-			0x08 -> php,
-			0x68 -> pla,
-			0x28 -> plp,
-			0x40 -> rti,
-			0x60 -> rts,
-			0x38 -> sec,
-			0xF8 -> sed,
-			0x78 -> sei,
-			0xAA -> tax,
-			0xA8 -> tay,
-			0xBA -> tsx,
-			0x9A -> txs,
-			0x8A -> txa,
-			0x98 -> tya,
-			0xEA -> ((_: CPU) => ())
-			) foreach {case (opcode, computation) => opcodes(opcode) = new SimpleInstruction( computation )}
-		populate( opcodes, Seq(ora, and, eor, adc, sta, lda, cmp, sbc),
-							Seq(indirectX, zeroPage, immediate, absolute, indirectY, zeroPageIndexedX, absoluteIndexedY, absoluteIndexedX), 1, 0x89 )
-		populate( opcodes, Seq(asl, rol, lsr, ror, null, null, dec, inc),
-							Seq(null, zeroPage, accumulator, absolute, null, zeroPageIndexedX, null, absoluteIndexedX), 2, 0xCA, 0xEA )
-		populate( opcodes, Seq(null, null, null, null, stx, ldx, null, null),
-							Seq(immediate, zeroPage, null, absolute, null, zeroPageIndexedY, null, absoluteIndexedY), 2, 0x82, 0x9E )
-		populate( opcodes, Seq(null, bit, null, null, sty, ldy, cpx, cpy),
-							Seq(immediate, zeroPage, null, absolute, null, zeroPageIndexedX, null, absoluteIndexedX), 0, 0x20, 0x24, 0x2C, 0x80, 0x9C, 0xD4, 0xDC, 0xF4, 0xFC )
+			(0x18, clc, "clc"),
+			(0xD8, cld, "cld"),
+			(0x58, cli, "cli"),
+			(0xB8, clv, "clv"),
+			(0xCA, dex, "dex"),
+			(0x88, dey, "dey"),
+			(0xE8, inx, "inx"),
+			(0xC8, iny, "iny"),
+			(0x48, pha, "pha"),
+			(0x08, php, "php"),
+			(0x68, pla, "pla"),
+			(0x28, plp, "plp"),
+			(0x40, rti, "rti"),
+			(0x60, rts, "rts"),
+			(0x38, sec, "sec"),
+			(0xF8, sed, "sed"),
+			(0x78, sei, "sei"),
+			(0xAA, tax, "tax"),
+			(0xA8, tay, "tay"),
+			(0xBA, tsx, "tsx"),
+			(0x9A, txs, "txs"),
+			(0x8A, txa, "txa"),
+			(0x98, tya, "tya"),
+			(0xEA, nop, "nop")
+			) foreach {
+				case (opcode, computation, mnemonic) =>
+					opcodes(opcode) = new SimpleInstruction( computation )
+			}
+			
+		List(
+			(0x4C, jmp, "jmp", 'absolute),
+			(0x6C, jmpind, "jmp", 'indirect),
+			(0x20, jsr, "jsr", 'absolute)
+			) foreach {
+				case (opcode, computation, mnemonic, mode) =>
+					opcodes(opcode) = new SimpleInstruction( computation )
+			}
+		
+		populate( opcodes, IndexedSeq((ora, "ora"), (and, "and"), (eor, "eor"), (adc, "adc"), (sta, "sta"), (lda, "lda"), (cmp, "cmp"), (sbc, "sbc")),
+							IndexedSeq((indirectX, 'indirectX), (zeroPage, 'zeroPage), (immediate, 'immediate), (absolute, 'absolute), (indirectY, 'indirectY), (zeroPageIndexedX, 'zeroPageIndexedX), (absoluteIndexedY, 'absoluteIndexedY), (absoluteIndexedX, 'absoluteIndexedX)), 1, 0x89 )
+		populate( opcodes, IndexedSeq((asl, "asl"), (rol, "rol"), (lsr, "lsr"), (ror, "ror"), null, null, (dec, "dec"), (inc, "inc")),
+							IndexedSeq(null, (zeroPage, 'zeroPage), (accumulator, 'accumulator), (absolute, 'absolute), null, (zeroPageIndexedX, 'zeroPageIndexedX), null, (absoluteIndexedX, 'absoluteIndexedX)), 2, 0xCA, 0xEA )
+		populate( opcodes, IndexedSeq(null, null, null, null, (stx, "stx"), (ldx, "ldx"), null, null),
+							IndexedSeq((immediate, 'immediate), (zeroPage, 'zeroPage), null, (absolute, 'absolute), null, (zeroPageIndexedY, 'zeroPageIndexedY), null, (absoluteIndexedY, 'absoluteIndexedY)), 2, 0x82, 0x9E )
+		populate( opcodes, IndexedSeq(null, (bit, "bit"), null, null, (sty, "sty"), (ldy, "ldy"), (cpx, "cpx"), (cpy, "cpy")),
+							IndexedSeq((immediate, 'immediate), (zeroPage, 'zeroPage), null, (absolute, 'absolute), null, (zeroPageIndexedX, 'zeroPageIndexedX), null, (absoluteIndexedX, 'absoluteIndexedX)), 0, 0x20, 0x24, 0x2C, 0x80, 0x9C, 0xD4, 0xDC, 0xF4, 0xFC )
 		
 		for (xx <- 0 to 3; y <- 0 to 1)
 			opcodes(xx<<6 | y<<5 | 0x10) = new BranchInstruction( xx, if (y == 0) false else true )
