@@ -97,13 +97,15 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 		cont
 	}
 	
-	def run {
-		if (step)
-			run
-	}
+	def run = while (step) {}
 	
 	def reset {
+		A = 0
+		X = 0
+		Y = 0
+		SP = 0	
 		PC = mem.readWord( RESET_VECTOR )
+		S = 0
 		run
 	}
 	

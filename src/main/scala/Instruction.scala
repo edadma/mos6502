@@ -16,11 +16,14 @@ object IllegalInstruction extends Instruction {
 object BRK extends Instruction {
 	
 	def perform( cpu: CPU ) = {
-		val addr = cpu.readWord( BRK_VECTOR )
-		
-		if (addr > 0) {
-			cpu.PC = addr
-			// to be completed
+		if (cpu.mem.addressable( BRK_VECTOR )) {
+			cpu.PC += 1	// BRK is really a two byte instruction, operand byte is not used
+			cpu.push( cpu.PC >> 8 )
+			cpu.push( cpu.PC )
+			cpu.set( B )
+			cpu.push( cpu.S )
+			cpu.set( I )
+			cpu.PC = cpu.readWord( BRK_VECTOR )
 			true
 		} else
 			false

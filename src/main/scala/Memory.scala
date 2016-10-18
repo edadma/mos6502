@@ -20,6 +20,8 @@ trait Addressable {
 	
 	def writeByte( addr: Int, value: Int )
 	
+	def program( addr: Int, value: Int ) = writeByte( addr, value )
+	
 	def readWord( addr: Int ) = readByte( addr ) + (readByte( addr + 1 )<<8)
 	
 	def writeWord( addr: Int, value: Int ) {
@@ -57,7 +59,7 @@ class ROM( val name: String, val start: Int, vals: Seq[Byte] ) extends Addressab
 	
 	def writeByte( addr: Int, value: Int ) = sys.error( "read only memory" )
 	
-	def program( addr: Int, value: Int ) = mem( addr - start ) = value.toByte
+	override def program( addr: Int, value: Int ) = mem( addr - start ) = value.toByte
 	
 	override def toString = s"$name ROM: ${hexWord(start)}-${hexWord(start + size - 1)}"
 	
