@@ -12,12 +12,9 @@ object Main extends App with Flags {
 	val mem = new Memory
 	val cpu = new CPU6502( mem )
 	
-	mem add new RAM( "zero-page", 0x0000, 0x00DF )
-	mem add new RAM( "stack", 0x0100, 0x01FF )
-	mem add new VideoRAM( 0x0200 )
-	mem add new RAM( "main", 0x1000, 0x2FFF )
-	mem add new StdIOChar( 0xE0 )
-	mem add new StdIOInt( 0xE1 )
+	mem add new RAM( "main", 0x0000, 0x7FFF )
+	mem add new StdIOChar( 0x8000 )
+	mem add new StdIOInt( 0x8001 )
 	
 	val options = new Options( List(), List("-f"), Nil )
 	
@@ -114,9 +111,9 @@ object Main extends App with Flags {
 					case "help"|"h" =>
 						out.println( "drop (dr) <region>             drop memory <region>" )
 						out.println( "dump (d) [<addr>]              dump memory at <addr> or where left off" )
-						out.println( "execute (e)                    clear ROM, load <file>, and reset" )
+						out.println( "execute (e)                    clear ROM, load SREC <file>, and reset" )
 						out.println( "help (h)                       print this summary" )
-						out.println( "load (l) <file>                clear ROM and load <file>" )
+						out.println( "load (l) <file>                clear ROM and load SREC <file>" )
 						out.println( "memory (m) [<addr> <data>...]  print memory map, or write <data> to memory at <addr>" )
 						out.println( "quit (q)                       exit the REPL" )
 						out.println( "registers (r) [<reg> <val>]    print CPU registers or set <reg>ister to <val>ue" )
