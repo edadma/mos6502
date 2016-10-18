@@ -20,7 +20,11 @@ object Assembler extends RegexParsers {
 			)
 	}
 
-	def label = "[_0-9a-zA-Z]+".r ^^ {LabelExpressionAST}
+	def string = """".*"""".r ^^ {s => StringExpressionAST( s.substring(1, s.length - 1) )}
+	
+	def label = "[_0-9a-zA-Z]+".r
+	
+	def reference = label ^^ {ReferenceExpressionAST}
 	
 	def space = "[ \t]+".r
 	
@@ -32,33 +36,47 @@ object Assembler extends RegexParsers {
 	
 	def blank = os ~ opt(comment) ~ nl
 	
-	def source/*: Parser[List[InstructionAST]]*/ = rep(blank) ~> rep1sep(statement, nl) <~ rep(blank)
+	def source = rep(blank) ~> repsep(statement, rep(blank)) <~ (rep(blank) ~ opt(os ~ opt(comment)))
 	
-	def statement = instruction <~ (os ~ opt(comment))
+	def statement =
+		instruction |
+		directive
 	
 	def expression: Parser[ExpressionAST] =
 		"<" ~> expression ^^ {UnaryExpressionAST( "<", _ )} |
 		">" ~> expression ^^ {UnaryExpressionAST( ">", _ )} |
 		number |
-		label
+		reference
 		
 	def mode =
 		"#" ~> expression ^^ {ImmediateModeAST} |
 		"a|A".r <~ guard(not("[a-zA-Z]"r)) ^^^ AccumulatorModeAST |
-		label <~ ("," ~ os ~ "x|X".r) ^^ {DirectXModeAST(_)} |
- 		label <~ ("," ~ os ~ "y|Y".r) ^^ {DirectYModeAST(_)} |
-		label ^^ {DirectModeAST(_)} |
-		"(" ~> label <~ ")" ^^ {IndirectModeAST} |
-		"(" ~> label <~ ("," ~ os ~ "x|X".r ~ ")") ^^ {IndirectXModeAST} |
-		"(" ~> label <~ (")," ~ os ~ "y|Y".r) ^^ {IndirectModeAST}
+		expression <~ ("," ~ os ~ "x|X".r) ^^ {DirectXModeAST(_)} |
+ 		expression <~ ("," ~ os ~ "y|Y".r) ^^ {DirectYModeAST(_)} |
+		expression ^^ {DirectModeAST(_)} |
+		"(" ~> expression <~ ")" ^^ {IndirectModeAST} |
+		"(" ~> expression <~ ("," ~ os ~ "x|X".r ~ ")") ^^ {IndirectXModeAST} |
+		"(" ~> expression <~ (")," ~ os ~ "y|Y".r) ^^ {IndirectModeAST}
 		
-	def instruction = space ~> mnemonic ~ opt(space ~> mode) ^^ {
-		case mnemonic ~ None =>
-			InstructionAST( None, mnemonic, ImplicitModeAST )
-		case mnemonic ~ Some( mode ) =>
-			InstructionAST( None, mnemonic, mode )
-	}
+	def instruction =
+		(opt(label) <~ space) ~ mnemonic ~ opt(space ~> mode) ^^ {
+			case label ~ mnemonic ~ None =>
+				InstructionAST( label, mnemonic, ImplicitModeAST )
+			case label ~ mnemonic ~ Some( mode ) =>
+				InstructionAST( label, mnemonic, mode )}
 	
+	def directive =
+		(space ~ "org|ORG".r ~ space) ~> expression ^^ {OriginDirectiveAST} |
+		(opt(label) <~ (space ~ "db|DB".r ~ space)) ~ rep1sep(expression | string, os ~ "," ~ os) ^^ {
+			case label ~ exprs => DataByteAST( label, exprs )} |
+		(opt(label) <~ (space ~ "dw|DW".r ~ space)) ~ rep1sep(expression, os ~ "," ~ os) ^^ {
+			case label ~ exprs => DataWordAST( label, exprs )} |
+		(opt(label) <~ (space ~ "rb|RB".r)) ~ opt(space ~> expression) ^^ {
+			case label ~ expr => ReserveByteAST( label, expr )} |
+		(opt(label) <~ (space ~ "rw|RW".r)) ~ opt(space ~> expression) ^^ {
+			case label ~ expr => ReserveWordAST( label, expr )} |
+		label ^^ {LabelDirectiveAST}
+		
 	def apply( input: String ) = parseAll( source, input ) match {
 		case Success( result, _ ) => println( result )
 		case failure: NoSuccess => scala.sys.error( failure.msg )

@@ -9,7 +9,18 @@ object TestMain extends App {
 		"""
 		|     ; asdf
 		|
-		|	ldx	a
+		|    org   $9000
+		|     ; asdf
+		|
+		|l1	ldx	a	;wert
+		|     ; asdf
+		|
+		|	stx	asdf
+		|     ; asdf
+		|v1 db 5,"asdf"
+		|v2 rb 3
+		|v3 rb
+		|l2  ;asdf
 		|     ; asdf
 		|
 		""".trim.stripMargin
