@@ -10,7 +10,7 @@ case class ReferenceExpressionAST( l: String ) extends ExpressionAST
 case class BinaryExpressionAST( left: ExpressionAST, op: String, right: ExpressionAST ) extends ExpressionAST
 case class UnaryExpressionAST( op: String, exp: ExpressionAST ) extends ExpressionAST
 
-trait ModeAST
+trait ModeAST extends AST
 case object ImplicitModeAST extends ModeAST
 case object AccumulatorModeAST extends ModeAST
 case class ImmediateModeAST( v: ExpressionAST ) extends ModeAST
@@ -21,6 +21,7 @@ case class IndirectModeAST( a: ExpressionAST ) extends ModeAST
 case class IndirectXModeAST( a: ExpressionAST ) extends ModeAST
 case class IndirectYModeAST( a: ExpressionAST ) extends ModeAST
 
+case class SourceAST( s: List[StatementAST] ) extends AST
 
 trait StatementAST extends AST
 

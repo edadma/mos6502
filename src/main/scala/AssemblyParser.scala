@@ -1,10 +1,19 @@
 package xyz.hyperreal.mos6502
 
+import java.io.File
+
+import collection.immutable.PagedSeq
+
 import util.parsing.combinator.RegexParsers
+import util.parsing.input.PagedSeqReader
 
 
-object Assembler extends RegexParsers {
+class AssemblyParser( input: PagedSeqReader ) extends RegexParsers {
 
+	def this( input: String ) = this( new PagedSeqReader(PagedSeq.fromStrings(Iterator(input))) )
+
+	def this( input: File ) = this( new PagedSeqReader(PagedSeq.fromFile(input)) )
+	
 	override val skipWhitespace = false
 	
  	def mnemonic: Parser[String] =
@@ -36,7 +45,7 @@ object Assembler extends RegexParsers {
 	
 	def blank = os ~ opt(comment) ~ nl
 	
-	def source = rep(blank) ~> repsep(statement, rep(blank)) <~ (rep(blank) ~ opt(os ~ opt(comment)))
+	def source = rep(blank) ~> repsep(statement, rep(blank)) <~ (rep(blank) ~ opt(os ~ opt(comment))) ^^ {SourceAST}
 	
 	def statement =
 		instruction |
@@ -77,9 +86,9 @@ object Assembler extends RegexParsers {
 			case label ~ expr => ReserveWordAST( label, expr )} |
 		label ^^ {LabelDirectiveAST}
 		
-	def apply( input: String ) = parseAll( source, input ) match {
-		case Success( result, _ ) => println( result )
-		case failure: NoSuccess => scala.sys.error( failure.msg )
+	def parse = parseAll( source, input ) match {
+		case Success( result, _ ) => result
+		case failure: NoSuccess => sys.error( failure.msg )
 	}
 	
 }

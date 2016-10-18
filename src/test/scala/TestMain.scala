@@ -5,27 +5,28 @@ import java.io.File
 
 object TestMain extends App {
 	
-	Assembler(
-		"""
-		|     ; asdf
-		|
-		|    org   $9000
-		|     ; asdf
-		|
-		|l1	ldx	a	;wert
-		|     ; asdf
-		|
-		|	stx	asdf
-		|     ; asdf
-		|v1 db 5,"asdf"
-		|v2 rb 3
-		|v3 rb
-		|l2  ;asdf
-		|     ; asdf
-		|
-		""".trim.stripMargin
+	println(
+		new AssemblyParser(
+			"""
+			|     ; asdf
+			|
+			|    org   $9000
+			|     ; asdf
+			|
+			|l1	ldx	a	;wert
+			|     ; asdf
+			|
+			|	stx	asdf
+			|     ; asdf
+			|v1 db 5,"asdf"
+			|v2 rb 3
+			|v3 rb
+			|l2  ;asdf
+			|     ; asdf
+			|
+			""".trim.stripMargin
+		).parse
 	)
-	
 }
 
 // 	val mem = new Memory
