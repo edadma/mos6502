@@ -169,6 +169,8 @@ object Instructions extends Flags {
 		cpu.PC = cpu.nextWord
 	}
 	
+	val nop = (_: CPU) => ()
+	
 	val pha = (cpu: CPU) => cpu.push( cpu.A )
 	
 	val php = (cpu: CPU) => cpu.push( cpu.S )

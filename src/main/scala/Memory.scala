@@ -144,7 +144,7 @@ class Memory extends Addressable {
 		}
 	}
 	
-	def clear =
+	def clearROM =
 		for (r <- regions filter (r => r.isInstanceOf[ROM]))
 			regions -= r
 			
