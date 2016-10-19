@@ -8,21 +8,22 @@ object TestMain extends App {
 	Assembler(
 		new AssemblyParser(
 			"""
-			|     ; asdf
+			|; zero page definitions
 			|
-			|    org   $9000
-			|     ; asdf
+			|r
+			|r0		rb
+			|r1		rb
+			|wr
+			|wr0	rw
+			|wr1	rw
 			|
-			|l1	ldx	a	;wert
-			|     ; asdf
+			|			org $9000
 			|
-			|	stx	asdf
-			|     ; asdf
-			|v1 db 5,"asdf"
-			|v2 rb 3
-			|v3 rb
-			|l2  ;asdf
-			|     ; asdf
+			|			ldx	#$ff
+			|			txs
+			|
+			|			lda	#$12
+			|			sta r0
 			|
 			""".trim.stripMargin
 		).parse

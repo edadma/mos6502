@@ -12,6 +12,7 @@ object Assembler {
 		val symbols = new HashMap[String, Option[Int]]
 		var pointer = 0
 		var pointerExact = true
+		var allknown = true
 		
 		def check( cond: Boolean, msg: String ) =
 			if (cond)
@@ -24,15 +25,30 @@ object Assembler {
 			
 			check( v != Some( None ) && v != None, "duplicate symbol: " + symbol )
 			symbols(symbol) = target
+			
+			if (target == None)
+				allknown = false
+				
 			target != None
 		}
 		
 		def defineHere( symbol: String ) = define( symbol, if (pointerExact) Some(pointer) else None )
 		
+		def eval: ExpressionAST => Know[Int] = {
+			case NumberExpressionAST( n ) => Known( n )
+			case ReferenceExpressionAST( r ) =>
+				symbols get r match {
+					case None => Unknown
+					case Some( None ) => Knowable
+					case Some( Some(a) ) => Known( a )
+				}
+		}
+		
 		def pass1 {
 			
 			pointer = 0
 			pointerExact = true
+			allknown = true
 			
 			ast.statements foreach {
 				case lab@LabelDirectiveAST( label, false ) =>
@@ -54,8 +70,21 @@ object Assembler {
 				case inst@InstructionAST( "jmp"|"jsr", _, None ) =>
 					inst.size = Some( 3 )
 					pointer += 3
-				case inst@InstructionAST( mnemonic, mode, None ) =>
-					
+				case inst@InstructionAST( _, OperandModeAST(_, expr), None ) =>
+					eval( expr ) match {
+						case Known( a ) =>
+							if (a < 0x100) {
+								inst.size = Some( 2 )
+								pointer += 2
+							} else {
+								inst.size = Some( 3 )
+								pointer += 3
+							}
+						case Knowable =>
+							inst.size = Some( 3 )
+							pointer += 3
+						case Unknown => 
+					}
 				case DataByteAST( data ) =>
 					pointer += data.length
 				case ReserveByteAST( count ) =>
@@ -64,10 +93,14 @@ object Assembler {
 					pointer += 2
 			}
 		
+			if (!allknown)
+				pass1
 		}
 		
 		def pass2 {
 			
+// 			println( ast )
+// 			println( symbols )
 			pointer = 0
 			pointerExact = true
 			
