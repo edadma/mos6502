@@ -101,7 +101,10 @@ object Assembler {
 				case inst@InstructionAST( "jmp"|"jsr", _, None ) =>
 					inst.size = Some( 3 )
 					pointer += 3
-				case inst@InstructionAST( _, mode@OperandModeAST(_, expr, _), None ) =>
+				case inst@InstructionAST( "bcc"|"bcs"|"beq"|"bmi"|"bne"|"bpl"|"bvc"|"bvs", _, None ) =>
+					inst.size = Some( 2 )
+					pointer += 2
+		case inst@InstructionAST( _, mode@OperandModeAST(_, expr, _), None ) =>
 					eval( expr, false ) match {
 						case Known( a ) =>
 							if (a < 0x100) {
@@ -182,9 +185,9 @@ object Assembler {
 						case Some( t ) => t
 					}
 					
+					pointer += 2
 					opcode( mnemonic, mode )
 					segment += (target - pointer).toByte
-					pointer += 2
 				case InstructionAST( mnemonic, OperandModeAST(mode@('immediate|'indirectX|'indirectY), expr, operand), _ ) =>
 					pointer += 2
 					opcode( mnemonic, mode )

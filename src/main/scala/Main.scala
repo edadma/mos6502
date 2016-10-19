@@ -103,6 +103,7 @@ object Main extends App with Flags {
 			{
 				com.head match {
 					case "assemble"|"a" =>
+						mem.clearROM
 						Assembler( mem, io.Source.fromFile(com(1)) )
 						cpu.reset
 					case "drop"|"dr" =>
