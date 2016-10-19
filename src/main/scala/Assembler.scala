@@ -35,15 +35,26 @@ object Assembler {
 			pointerExact = true
 			
 			ast.statements foreach {
-				case LabelDirectiveAST( label ) =>
-					defineHere( label )
+				case lab@LabelDirectiveAST( label, false ) =>
+					lab.definite = defineHere( label )
 				case OriginDirectiveAST( NumberExpressionAST(org) ) =>
 					check( org < 0 || org >= 0x10000, "origin must be less than 0x10000" )
 					pointer = org
 					pointerExact = true
 				case OriginDirectiveAST( _ ) =>
 					problem( "origin must be literal" )
-				case InstructionAST( mnemonic, mode ) =>
+				case InstructionAST( _, _, Some(size) ) =>
+					pointer += size
+				case inst@InstructionAST( _, ImplicitModeAST|AccumulatorModeAST, None ) =>
+					inst.size = Some( 1 )
+					pointer += 1
+				case inst@InstructionAST( _, ImmediateModeAST(_)|IndirectXModeAST(_)|IndirectYModeAST(_), None ) =>
+					inst.size = Some( 2 )
+					pointer += 2
+				case inst@InstructionAST( _, IndirectModeAST(_)|DirectModeAST(_), None ) =>
+					inst.size = Some( 3 )
+					pointer += 3
+				case inst@InstructionAST( mnemonic, mode, None ) =>
 					
 				case DataByteAST( data ) =>
 					pointer += data.length

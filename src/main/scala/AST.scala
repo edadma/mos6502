@@ -29,14 +29,14 @@ case class SourceAST( statements: List[StatementAST] ) extends AST
 trait StatementAST extends AST
 
 trait DirectiveAST extends StatementAST
-case class LabelDirectiveAST( label: String ) extends DirectiveAST
+case class LabelDirectiveAST( label: String, var definite: Boolean = false ) extends DirectiveAST
 case class OriginDirectiveAST( org: ExpressionAST ) extends DirectiveAST
 
 abstract class AllocationAST extends StatementAST {
-	var size: Option[Int] = None
+//	var size: Option[Int] = None
 }
 
-case class InstructionAST( mnemonic: String, mode: ModeAST ) extends AllocationAST
+case class InstructionAST( mnemonic: String, mode: ModeAST, var size: Option[Int] = None ) extends AllocationAST
 case class DataByteAST( data: Seq[ExpressionAST] ) extends AllocationAST
 case class DataWordAST( data: Seq[ExpressionAST] ) extends AllocationAST
 case class ReserveByteAST( count: Option[ExpressionAST] ) extends AllocationAST
