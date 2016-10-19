@@ -45,13 +45,13 @@ object Assembler {
 					problem( "origin must be literal" )
 				case InstructionAST( _, _, Some(size) ) =>
 					pointer += size
-				case inst@InstructionAST( _, ImplicitModeAST|AccumulatorModeAST, None ) =>
+				case inst@InstructionAST( _, SimpleModeAST(_), None ) =>
 					inst.size = Some( 1 )
 					pointer += 1
-				case inst@InstructionAST( _, ImmediateModeAST(_)|IndirectXModeAST(_)|IndirectYModeAST(_), None ) =>
+				case inst@InstructionAST( _, OperandModeAST('immediate|'indirectX|'indirectY, _), None ) =>
 					inst.size = Some( 2 )
 					pointer += 2
-				case inst@InstructionAST( _, IndirectModeAST(_)|DirectModeAST(_), None ) =>
+				case inst@InstructionAST( "jmp"|"jsr", _, None ) =>
 					inst.size = Some( 3 )
 					pointer += 3
 				case inst@InstructionAST( mnemonic, mode, None ) =>

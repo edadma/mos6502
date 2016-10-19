@@ -52,25 +52,25 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 		">" ~> expression ^^ {UnaryExpressionAST( ">", _ )} |
 		number |
 		reference
-		
+	
 	def mode =
-		"#" ~> expression ^^ {ImmediateModeAST} |
-		"a|A".r <~ guard(not("[a-zA-Z]"r)) ^^^ AccumulatorModeAST |
-		expression <~ ("," ~ os ~ "x|X".r) ^^ {DirectXModeAST} |
- 		expression <~ ("," ~ os ~ "y|Y".r) ^^ {DirectYModeAST} |
-		expression ^^ {DirectModeAST} |
-		"(" ~> expression <~ ")" ^^ {IndirectModeAST} |
-		"(" ~> expression <~ ("," ~ os ~ "x|X".r ~ ")") ^^ {IndirectXModeAST} |
-		"(" ~> expression <~ (")," ~ os ~ "y|Y".r) ^^ {IndirectModeAST}
+		"#" ~> expression ^^ {OperandModeAST( 'immediate, _ )} |
+		"a|A".r <~ guard(not("[a-zA-Z]"r)) ^^^ SimpleModeAST( 'accumulator ) |
+		expression <~ ("," ~ os ~ "x|X".r) ^^ {OperandModeAST( 'directX, _ )} |
+ 		expression <~ ("," ~ os ~ "y|Y".r) ^^ {OperandModeAST( 'directY, _ )} |
+		expression ^^ {OperandModeAST( 'direct, _ )} |
+		"(" ~> expression <~ ")" ^^ {OperandModeAST( 'indirect, _ )} |
+		"(" ~> expression <~ ("," ~ os ~ "x|X".r ~ ")") ^^ {OperandModeAST( 'indirectX, _ )} |
+		"(" ~> expression <~ (")," ~ os ~ "y|Y".r) ^^ {OperandModeAST( 'indirectY, _ )}
 		
 	def instruction =
 		(opt(label) <~ space) ~ mnemonic ~ opt(space ~> mode) ^^ {
 			case None ~ mnemonic ~ None =>
-				List( InstructionAST(mnemonic, ImplicitModeAST) )
+				List( InstructionAST(mnemonic, SimpleModeAST('implicit)) )
 			case None ~ mnemonic ~ Some( mode ) =>
 				List( InstructionAST(mnemonic, mode) )
 			case Some( label ) ~ mnemonic ~ None =>
-				List( LabelDirectiveAST(label), InstructionAST(mnemonic, ImplicitModeAST) )
+				List( LabelDirectiveAST(label), InstructionAST(mnemonic, SimpleModeAST('implicit)) )
 			case Some( label ) ~ mnemonic ~ Some( mode ) =>
 				List( LabelDirectiveAST(label), InstructionAST(mnemonic, mode) )
 		}

@@ -10,19 +10,13 @@ case class ReferenceExpressionAST( l: String ) extends ExpressionAST
 case class BinaryExpressionAST( left: ExpressionAST, op: String, right: ExpressionAST ) extends ExpressionAST
 case class UnaryExpressionAST( op: String, exp: ExpressionAST ) extends ExpressionAST
 
-abstract class ModeAST extends AST {
+trait ModeAST extends AST
+
+case class SimpleModeAST( mode: Symbol ) extends ModeAST	// 'implicit, 'accumulator
+
+case class OperandModeAST( mode: Symbol, a: ExpressionAST ) extends ModeAST {
 	var operand: Option[Int] = None
 }
-
-case object ImplicitModeAST extends ModeAST
-case object AccumulatorModeAST extends ModeAST
-case class ImmediateModeAST( v: ExpressionAST ) extends ModeAST
-case class DirectModeAST( a: ExpressionAST ) extends ModeAST
-case class DirectXModeAST( a: ExpressionAST ) extends ModeAST
-case class DirectYModeAST( a: ExpressionAST ) extends ModeAST
-case class IndirectModeAST( a: ExpressionAST ) extends ModeAST
-case class IndirectXModeAST( a: ExpressionAST ) extends ModeAST
-case class IndirectYModeAST( a: ExpressionAST ) extends ModeAST
 
 case class SourceAST( statements: List[StatementAST] ) extends AST
 
