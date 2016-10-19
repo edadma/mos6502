@@ -129,6 +129,7 @@ object Assembler {
 			
 			val segments = new ListBuffer[(Int, List[Byte])]
 			val segment = new ListBuffer[Byte]
+			var base = 0
 			
 			def word( w: Int ) {
 				segment += w.toByte
@@ -141,24 +142,22 @@ object Assembler {
 					case Some( op ) => segment += op
 				}
 
-			var base = 0
-			
-// 			println( ast )
-// 			println( symbols )
+			def append =
+				if (!segment.isEmpty) {
+					segments += (base -> segment.toList)
+					segment.clear
+				}
+
 			pointer = 0
 			pointerExact = true
 			
 			ast.statements foreach {
 				case OriginDirectiveAST( expr ) =>
-					if (!segment.isEmpty) {
-						segments += (base -> segment.toList)
-						segment.clear
-					}
-					
+					append
 					pointer = eval( expr, false ).get
 					base = pointer
 				case InstructionAST( mnemonic, SimpleModeAST(mode), _ ) =>
-					pointer += 1					
+					pointer += 1
 					opcode( mnemonic, mode )
 				case InstructionAST( mnemonic@("jmp"|"jsr"), OperandModeAST(mode, expr, operand), _ ) =>
 					pointer += 3
@@ -192,9 +191,11 @@ object Assembler {
 						}
 						
 						opcode( mnemonic, m )
+						segment += o.toByte
 					} else {
 						pointer += 3
 						opcode( mnemonic, mode )
+						word( o )
 					}
 				case InstructionAST( mnemonic, mode, _ ) =>
 					problem( "pass2: uncaught instruction: " + (mnemonic, mode) )
@@ -215,6 +216,7 @@ object Assembler {
 				case _ =>
 			}
 			
+			append
 			AssemblerResult( symbols map {case (k, v) => k -> v.get} toMap, segments.toList )
 			
 		}

@@ -5,6 +5,7 @@ import java.io.File
 
 object TestMain extends App {
 	
+	println(
 	Assembler(
 		"""
 		|; zero page definitions
@@ -28,6 +29,7 @@ object TestMain extends App {
 		|
 		|			brk
 		""".trim.stripMargin
+	).segments.head._2 map ((b: Byte) => (b&0xff).toHexString)
 	)
 }
 
