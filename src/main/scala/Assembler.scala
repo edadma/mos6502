@@ -9,7 +9,14 @@ case class AssemblerResult( symbols: Map[String,Int], segments: List[(Int, List[
 
 object Assembler {
 	
-	def apply( src: String ): AssemblerResult = apply( io.Source.fromString(src) )
+	def apply( mem: Memory, src: String ) {apply( mem, io.Source.fromString(src) )}
+	
+	def apply( mem: Memory, src: io.Source ) {
+		val AssemblerResult(symbols, segments) = apply( src )
+		
+		for (((base, data), ind) <- segments zipWithIndex)
+			mem add new ROM( "asm" + ind, base, data )
+	}
 	
 	def apply( src: io.Source ): AssemblerResult = apply( new AssemblyParser(src).parse )
 	
@@ -74,6 +81,7 @@ object Assembler {
 			ast.statements foreach {
 				case lab@LabelDirectiveAST( label, false ) =>
 					lab.definite = defineHere( label )
+				case LabelDirectiveAST( _, true ) =>
 				case OriginDirectiveAST( expr ) =>
 					eval( expr, false ) match {
 						case Known( org ) =>
@@ -93,7 +101,10 @@ object Assembler {
 				case inst@InstructionAST( "jmp"|"jsr", _, None ) =>
 					inst.size = Some( 3 )
 					pointer += 3
-				case inst@InstructionAST( _, mode@OperandModeAST(_, expr, _), None ) =>
+				case inst@InstructionAST( "bcc"|"bcs"|"beq"|"bmi"|"bne"|"bpl"|"bvc"|"bvs", _, None ) =>
+					inst.size = Some( 2 )
+					pointer += 2
+		case inst@InstructionAST( _, mode@OperandModeAST(_, expr, _), None ) =>
 					eval( expr, false ) match {
 						case Known( a ) =>
 							if (a < 0x100) {
@@ -168,6 +179,15 @@ object Assembler {
 					} )
 				case InstructionAST( mnemonic, OperandModeAST('indirect, _, _), _ ) =>
 					problem( "illegal instruction: " + (mnemonic, 'indirect) )
+				case InstructionAST( mnemonic@("bcc"|"bcs"|"beq"|"bmi"|"bne"|"bpl"|"bvc"|"bvs"), OperandModeAST(mode, expr, operand), _ ) =>
+					val target = operand match {
+						case None => eval( expr, true ).get
+						case Some( t ) => t
+					}
+					
+					pointer += 2
+					opcode( mnemonic, mode )
+					segment += (target - pointer).toByte
 				case InstructionAST( mnemonic, OperandModeAST(mode@('immediate|'indirectX|'indirectY), expr, operand), _ ) =>
 					pointer += 2
 					opcode( mnemonic, mode )
