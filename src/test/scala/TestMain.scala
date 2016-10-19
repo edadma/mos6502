@@ -5,7 +5,7 @@ import java.io.File
 
 object TestMain extends App {
 	
-	println(
+	Assembler(
 		new AssemblyParser(
 			"""
 			|     ; asdf

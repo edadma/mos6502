@@ -1,18 +1,14 @@
 package xyz.hyperreal.mos6502
 
-import java.io.File
-
 import collection.immutable.PagedSeq
 
 import util.parsing.combinator.RegexParsers
 import util.parsing.input.PagedSeqReader
 
 
-class AssemblyParser( input: PagedSeqReader ) extends RegexParsers {
+class AssemblyParser( input: io.Source ) extends RegexParsers {
 
-	def this( input: String ) = this( new PagedSeqReader(PagedSeq.fromStrings(Iterator(input))) )
-
-	def this( input: File ) = this( new PagedSeqReader(PagedSeq.fromFile(input)) )
+	def this( input: String ) = this( io.Source.fromString(input) )
 	
 	override val skipWhitespace = false
 	
@@ -45,7 +41,7 @@ class AssemblyParser( input: PagedSeqReader ) extends RegexParsers {
 	
 	def blank = os ~ opt(comment) ~ nl
 	
-	def source = rep(blank) ~> repsep(statement, rep(blank)) <~ (rep(blank) ~ opt(os ~ opt(comment))) ^^ {SourceAST}
+	def source = rep(blank) ~> repsep(statement, rep(blank)) <~ (rep(blank) ~ opt(os ~ opt(comment))) ^^ {l => SourceAST( l.flatten )}
 	
 	def statement =
 		instruction |
@@ -60,33 +56,54 @@ class AssemblyParser( input: PagedSeqReader ) extends RegexParsers {
 	def mode =
 		"#" ~> expression ^^ {ImmediateModeAST} |
 		"a|A".r <~ guard(not("[a-zA-Z]"r)) ^^^ AccumulatorModeAST |
-		expression <~ ("," ~ os ~ "x|X".r) ^^ {DirectXModeAST(_)} |
- 		expression <~ ("," ~ os ~ "y|Y".r) ^^ {DirectYModeAST(_)} |
-		expression ^^ {DirectModeAST(_)} |
+		expression <~ ("," ~ os ~ "x|X".r) ^^ {DirectXModeAST} |
+ 		expression <~ ("," ~ os ~ "y|Y".r) ^^ {DirectYModeAST} |
+		expression ^^ {DirectModeAST} |
 		"(" ~> expression <~ ")" ^^ {IndirectModeAST} |
 		"(" ~> expression <~ ("," ~ os ~ "x|X".r ~ ")") ^^ {IndirectXModeAST} |
 		"(" ~> expression <~ (")," ~ os ~ "y|Y".r) ^^ {IndirectModeAST}
 		
 	def instruction =
 		(opt(label) <~ space) ~ mnemonic ~ opt(space ~> mode) ^^ {
-			case label ~ mnemonic ~ None =>
-				InstructionAST( label, mnemonic, ImplicitModeAST )
-			case label ~ mnemonic ~ Some( mode ) =>
-				InstructionAST( label, mnemonic, mode )}
+			case None ~ mnemonic ~ None =>
+				List( InstructionAST(mnemonic, ImplicitModeAST) )
+			case None ~ mnemonic ~ Some( mode ) =>
+				List( InstructionAST(mnemonic, mode) )
+			case Some( label ) ~ mnemonic ~ None =>
+				List( LabelDirectiveAST(label), InstructionAST(mnemonic, ImplicitModeAST) )
+			case Some( label ) ~ mnemonic ~ Some( mode ) =>
+				List( LabelDirectiveAST(label), InstructionAST(mnemonic, mode) )
+		}
 	
 	def directive =
-		(space ~ "org|ORG".r ~ space) ~> expression ^^ {OriginDirectiveAST} |
+		(space ~ "org|ORG".r ~ space) ~> expression ^^ {e => List( OriginDirectiveAST(e) )} |
 		(opt(label) <~ (space ~ "db|DB".r ~ space)) ~ rep1sep(expression | string, os ~ "," ~ os) ^^ {
-			case label ~ exprs => DataByteAST( label, exprs )} |
+			case None ~ exprs =>
+				List( DataByteAST(exprs) )
+			case Some( label ) ~ exprs =>
+				List( LabelDirectiveAST(label), DataByteAST(exprs) )
+			} |
 		(opt(label) <~ (space ~ "dw|DW".r ~ space)) ~ rep1sep(expression, os ~ "," ~ os) ^^ {
-			case label ~ exprs => DataWordAST( label, exprs )} |
+			case None ~ exprs =>
+				List( DataWordAST(exprs) )
+			case Some( label ) ~ exprs =>
+				List( LabelDirectiveAST(label), DataWordAST(exprs) )
+			} |
 		(opt(label) <~ (space ~ "rb|RB".r)) ~ opt(space ~> expression) ^^ {
-			case label ~ expr => ReserveByteAST( label, expr )} |
+			case None ~ expr =>
+				List( ReserveByteAST(expr) )
+			case Some( label ) ~ expr =>
+				List( LabelDirectiveAST(label), ReserveByteAST(expr) )
+			} |
 		(opt(label) <~ (space ~ "rw|RW".r)) ~ opt(space ~> expression) ^^ {
-			case label ~ expr => ReserveWordAST( label, expr )} |
-		label ^^ {LabelDirectiveAST}
+			case None ~ expr =>
+				List( ReserveWordAST(expr) )
+			case Some( label ) ~ expr =>
+				List( LabelDirectiveAST(label), ReserveWordAST(expr) )
+			} |
+		label ^^ {s => List( LabelDirectiveAST(s) )}
 		
-	def parse = parseAll( source, input ) match {
+	def parse = parseAll( source, new PagedSeqReader(PagedSeq.fromSource(input)) ) match {
 		case Success( result, _ ) => result
 		case failure: NoSuccess => sys.error( failure.msg )
 	}

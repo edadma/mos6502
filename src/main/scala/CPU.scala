@@ -210,13 +210,13 @@ object CPU {
 			}
 		
 		populate( opcodes, asmmap, IndexedSeq((ora, "ora"), (and, "and"), (eor, "eor"), (adc, "adc"), (sta, "sta"), (lda, "lda"), (cmp, "cmp"), (sbc, "sbc")),
-							IndexedSeq((indirectX, 'indirectX), (zeroPage, 'zeroPage), (immediate, 'immediate), (absolute, 'direct), (indirectY, 'indirectY), (zeroPageIndexedX, 'zeroPageIndexedX), (absoluteIndexedY, 'directIndexedY), (absoluteIndexedX, 'directIndexedX)), 1, 0x89 )
+							IndexedSeq((indirectX, 'indirectX), (zeroPage, 'zeroPage), (immediate, 'immediate), (absolute, 'direct), (indirectY, 'indirectY), (zeroPageIndexedX, 'zeroPageIndexedX), (absoluteIndexedY, 'absoluteIndexedY), (absoluteIndexedX, 'absoluteIndexedX)), 1, 0x89 )
 		populate( opcodes, asmmap, IndexedSeq((asl, "asl"), (rol, "rol"), (lsr, "lsr"), (ror, "ror"), null, null, (dec, "dec"), (inc, "inc")),
-							IndexedSeq(null, (zeroPage, 'zeroPage), (accumulator, 'accumulator), (absolute, 'direct), null, (zeroPageIndexedX, 'zeroPageIndexedX), null, (absoluteIndexedX, 'directIndexedX)), 2, 0xCA, 0xEA )
+							IndexedSeq(null, (zeroPage, 'zeroPage), (accumulator, 'accumulator), (absolute, 'direct), null, (zeroPageIndexedX, 'zeroPageIndexedX), null, (absoluteIndexedX, 'absoluteIndexedX)), 2, 0xCA, 0xEA )
 		populate( opcodes, asmmap, IndexedSeq(null, null, null, null, (stx, "stx"), (ldx, "ldx"), null, null),
-							IndexedSeq((immediate, 'immediate), (zeroPage, 'zeroPage), null, (absolute, 'direct), null, (zeroPageIndexedY, 'zeroPageIndexedY), null, (absoluteIndexedY, 'directIndexedY)), 2, 0x82, 0x9E )
+							IndexedSeq((immediate, 'immediate), (zeroPage, 'zeroPage), null, (absolute, 'direct), null, (zeroPageIndexedY, 'zeroPageIndexedY), null, (absoluteIndexedY, 'absoluteIndexedY)), 2, 0x82, 0x9E )
 		populate( opcodes, asmmap, IndexedSeq(null, (bit, "bit"), null, null, (sty, "sty"), (ldy, "ldy"), (cpx, "cpx"), (cpy, "cpy")),
-							IndexedSeq((immediate, 'immediate), (zeroPage, 'zeroPage), null, (absolute, 'direct), null, (zeroPageIndexedX, 'zeroPageIndexedX), null, (absoluteIndexedX, 'directIndexedX)), 0, 0x20, 0x24, 0x2C, 0x80, 0x9C, 0xD4, 0xDC, 0xF4, 0xFC )
+							IndexedSeq((immediate, 'immediate), (zeroPage, 'zeroPage), null, (absolute, 'direct), null, (zeroPageIndexedX, 'zeroPageIndexedX), null, (absoluteIndexedX, 'absoluteIndexedX)), 0, 0x20, 0x24, 0x2C, 0x80, 0x9C, 0xD4, 0xDC, 0xF4, 0xFC )
 		
 		val branches = Vector( "bpl", "bmi", "bvc", "bvs", "bcc", "bcs", "bne", "beq" )
 		
