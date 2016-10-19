@@ -25,7 +25,7 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 			)
 	}
 
-	def string = """".*"""".r ^^ {s => StringExpressionAST( s.substring(1, s.length - 1) )}
+	def string = """".*"""".r ^^ {s => StringExpressionAST( s.substring(1, s.length - 1).replaceAll("""\\0""", "\u0000").replaceAll("""\\n""", "\n") )}
 	
 	def label = "[_0-9a-zA-Z]+".r
 	

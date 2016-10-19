@@ -2,7 +2,7 @@ package xyz.hyperreal.mos6502
 
 import java.io.File
 
-import collection.mutable.HashMap
+import collection.mutable.{ListBuffer, HashMap}
 
 
 object Assembler {
@@ -34,14 +34,29 @@ object Assembler {
 		
 		def defineHere( symbol: String ) = define( symbol, if (pointerExact) Some(pointer) else None )
 		
-		def eval: ExpressionAST => Know[Int] = {
-			case NumberExpressionAST( n ) => Known( n )
-			case ReferenceExpressionAST( r ) =>
-				symbols get r match {
-					case None => Unknown
-					case Some( None ) => Knowable
-					case Some( Some(a) ) => Known( a )
-				}
+		def eval( expr: ExpressionAST, mustknow: Boolean ) =
+			expr match {
+				case NumberExpressionAST( n ) => Known( n )
+				case ReferenceExpressionAST( r ) =>
+					symbols get r match {
+						case None|Some( None ) if mustknow => problem( "undefined reference: " + r )
+						case None => Unknown
+						case Some( None ) => Knowable
+						case Some( Some(a) ) => Known( a )
+					}
+			}
+		
+		def dblength( data: Seq[ExpressionAST] ) = {
+			var length = 0
+			
+			data foreach {
+				case StringExpressionAST( s ) =>
+					length += s.length
+				case expr =>
+					length += 1
+			}
+			
+			length
 		}
 		
 		def pass1 {
@@ -53,12 +68,14 @@ object Assembler {
 			ast.statements foreach {
 				case lab@LabelDirectiveAST( label, false ) =>
 					lab.definite = defineHere( label )
-				case OriginDirectiveAST( NumberExpressionAST(org) ) =>
-					check( org < 0 || org >= 0x10000, "origin must be less than 0x10000" )
-					pointer = org
-					pointerExact = true
-				case OriginDirectiveAST( _ ) =>
-					problem( "origin must be literal" )
+				case OriginDirectiveAST( expr ) =>
+					eval( expr, false ) match {
+						case Known( org ) =>
+							check( org < 0 || org >= 0x10000, "origin must be less than 0x10000" )
+							pointer = org
+							pointerExact = true
+						case Knowable|Unknown => problem( "origin must be known when the directive is encountered" )
+					}
 				case InstructionAST( _, _, Some(size) ) =>
 					pointer += size
 				case inst@InstructionAST( _, SimpleModeAST(_), None ) =>
@@ -71,7 +88,7 @@ object Assembler {
 					inst.size = Some( 3 )
 					pointer += 3
 				case inst@InstructionAST( _, OperandModeAST(_, expr), None ) =>
-					eval( expr ) match {
+					eval( expr, false ) match {
 						case Known( a ) =>
 							if (a < 0x100) {
 								inst.size = Some( 2 )
@@ -83,10 +100,13 @@ object Assembler {
 						case Knowable =>
 							inst.size = Some( 3 )
 							pointer += 3
-						case Unknown => 
+						case Unknown =>
+							pointerExact = false
 					}
 				case DataByteAST( data ) =>
-					pointer += data.length
+					pointer += dblength( data )
+				case DataWordAST( data ) =>
+					pointer += data.length*2
 				case ReserveByteAST( count ) =>
 					pointer += 1
 				case ReserveWordAST( count ) =>
@@ -99,12 +119,52 @@ object Assembler {
 		
 		def pass2 {
 			
+			val segments = new ListBuffer[(Int, List[Byte])]
+			val segment = new ListBuffer[Byte]
+			
+			var base = 0
+			
 // 			println( ast )
 // 			println( symbols )
 			pointer = 0
 			pointerExact = true
 			
+			ast.statements foreach {
+				case OriginDirectiveAST( expr ) =>
+					if (!segment.isEmpty) {
+						segments += (base -> segment.toList)
+						segment.clear
+					}
+					
+					pointer = eval( expr, false ).get
+					base = pointer
+				case InstructionAST( mnemonic, mode, size ) =>
+					if (size != None)
+						pointer += size.get
+						
+					
+				case DataByteAST( data ) =>
+					data foreach {
+						case StringExpressionAST( s ) =>
+							segment ++= s.getBytes
+						case expr =>
+							segment += eval( expr, true ).get.toByte
+					}
+					
+					pointer += dblength( data )
+				case DataWordAST( data ) =>
+					for (d <- data) {
+						val w = eval( d, true ).get
+						
+						segment += w.toByte
+						segment += (w >> 8).toByte
+					}
+					
+					pointer += data.length*2
+				case _ =>
+			}
 			
+			(symbols map {case (k, v) => k -> v.get}, segments.toList)
 			
 		}
 		
