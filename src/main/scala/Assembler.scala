@@ -135,6 +135,12 @@ object Assembler {
 				segment += (w >> 8).toByte
 			}
 			
+			def opcode( mnemonic: String, mode: Symbol ) =
+				CPU.asm6502.get( (mnemonic, mode) ) match {
+					case None => problem( "illegal instruction: " + (mnemonic, mode) )
+					case Some( op ) => segment += op
+				}
+
 			var base = 0
 			
 // 			println( ast )
@@ -151,30 +157,47 @@ object Assembler {
 					
 					pointer = eval( expr, false ).get
 					base = pointer
-				case InstructionAST( mnemonic, SimpleModeAST(m), _ ) =>
-					pointer += 1
-					
-					CPU.asm6502.get( (mnemonic, m) ) match {
-						case None => problem( "illegal instruction: " + (mnemonic, m) )
-						case Some( opcode ) => segment += opcode
-					}
-				case InstructionAST( "jmp", OperandModeAST('indirect, expr, operand), _ ) =>
+				case InstructionAST( mnemonic, SimpleModeAST(mode), _ ) =>
+					pointer += 1					
+					opcode( mnemonic, mode )
+				case InstructionAST( mnemonic@("jmp"|"jsr"), OperandModeAST(mode, expr, operand), _ ) =>
 					pointer += 3
-					segment += CPU.asm6502( ("jmp", 'indirect) ).toByte
+					opcode( mnemonic, mode )					
 					word( operand match {
 						case None => eval( expr, true ).get
 						case Some( t ) => t
 					} )
-				case InstructionAST( mnemonic, OperandModeAST(m@('immediate|'indirectX|'indirectY|'indirect), expr, Some(operand)), Some(size) ) =>
-					pointer += size
+				case InstructionAST( mnemonic, OperandModeAST('indirect, _, _), _ ) =>
+					problem( "illegal instruction: " + (mnemonic, 'indirect) )
+				case InstructionAST( mnemonic, OperandModeAST(mode@('immediate|'indirectX|'indirectY), expr, operand), _ ) =>
+					pointer += 2
+					opcode( mnemonic, mode )
+					segment += (operand match {
+						case None => eval( expr, true ).get
+						case Some( t ) => t
+					}).toByte
+				case InstructionAST( mnemonic, OperandModeAST(mode, expr, operand), _ ) =>
+					val o = operand match {
+						case None => eval( expr, true ).get
+						case Some( t ) => t
+					}
 					
-				case InstructionAST( mnemonic, OperandModeAST(m, expr, operand), size ) =>
-					if (size != None)
-						pointer += size.get
-					
-					
-				case InstructionAST( mnemonic, mode, _ ) => problem( "pass2: uncaught instruction: " + (mnemonic, mode) )
-
+					if (o < 0x100) {
+						pointer += 2
+						
+						val m = mode match {
+							case 'direct => 'zeroPage
+							case 'directX => 'zeroPageX
+							case 'directY => 'zeroPageY
+						}
+						
+						opcode( mnemonic, m )
+					} else {
+						pointer += 3
+						opcode( mnemonic, mode )
+					}
+				case InstructionAST( mnemonic, mode, _ ) =>
+					problem( "pass2: uncaught instruction: " + (mnemonic, mode) )
 				case DataByteAST( data ) =>
 					data foreach {
 						case StringExpressionAST( s ) =>
@@ -201,7 +224,4 @@ object Assembler {
 		
 	}
 	
-// 	def apply( s: String ) = apply( io.Source.fromString(s) )
-//
-// 	def apply( s: io.Source ) = apply( new AssemblyParser(s).parse )
 }
