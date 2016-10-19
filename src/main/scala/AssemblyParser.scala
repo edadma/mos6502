@@ -8,8 +8,6 @@ import util.parsing.input.PagedSeqReader
 
 class AssemblyParser( input: io.Source ) extends RegexParsers {
 
-	def this( input: String ) = this( io.Source.fromString(input) )
-	
 	override val skipWhitespace = false
 	
  	def mnemonic: Parser[String] =

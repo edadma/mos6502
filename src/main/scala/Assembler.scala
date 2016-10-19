@@ -5,9 +5,15 @@ import java.io.File
 import collection.mutable.{ListBuffer, HashMap}
 
 
+case class AssemblerResult( symbols: Map[String,Int], segments: List[(Int, List[Byte])] )
+
 object Assembler {
 	
-	def apply( ast: SourceAST ) = {
+	def apply( src: String ): AssemblerResult = apply( io.Source.fromString(src) )
+	
+	def apply( src: io.Source ): AssemblerResult = apply( new AssemblyParser(src).parse )
+	
+	def apply( ast: SourceAST ): AssemblerResult = {
 		
 		val symbols = new HashMap[String, Option[Int]]
 		var pointer = 0
@@ -81,13 +87,13 @@ object Assembler {
 				case inst@InstructionAST( _, SimpleModeAST(_), None ) =>
 					inst.size = Some( 1 )
 					pointer += 1
-				case inst@InstructionAST( _, OperandModeAST('immediate|'indirectX|'indirectY, _), None ) =>
+				case inst@InstructionAST( _, OperandModeAST('immediate|'indirectX|'indirectY, _, _), None ) =>
 					inst.size = Some( 2 )
 					pointer += 2
 				case inst@InstructionAST( "jmp"|"jsr", _, None ) =>
 					inst.size = Some( 3 )
 					pointer += 3
-				case inst@InstructionAST( _, OperandModeAST(_, expr), None ) =>
+				case inst@InstructionAST( _, mode@OperandModeAST(_, expr, _), None ) =>
 					eval( expr, false ) match {
 						case Known( a ) =>
 							if (a < 0x100) {
@@ -97,6 +103,8 @@ object Assembler {
 								inst.size = Some( 3 )
 								pointer += 3
 							}
+							
+							mode.operand = Some( a )
 						case Knowable =>
 							inst.size = Some( 3 )
 							pointer += 3
@@ -117,10 +125,15 @@ object Assembler {
 				pass1
 		}
 		
-		def pass2 {
+		def pass2 = {
 			
 			val segments = new ListBuffer[(Int, List[Byte])]
 			val segment = new ListBuffer[Byte]
+			
+			def word( w: Int ) {
+				segment += w.toByte
+				segment += (w >> 8).toByte
+			}
 			
 			var base = 0
 			
@@ -138,11 +151,30 @@ object Assembler {
 					
 					pointer = eval( expr, false ).get
 					base = pointer
-				case InstructionAST( mnemonic, mode, size ) =>
+				case InstructionAST( mnemonic, SimpleModeAST(m), _ ) =>
+					pointer += 1
+					
+					CPU.asm6502.get( (mnemonic, m) ) match {
+						case None => problem( "illegal instruction: " + (mnemonic, m) )
+						case Some( opcode ) => segment += opcode
+					}
+				case InstructionAST( "jmp", OperandModeAST('indirect, expr, operand), _ ) =>
+					pointer += 3
+					segment += CPU.asm6502( ("jmp", 'indirect) ).toByte
+					word( operand match {
+						case None => eval( expr, true ).get
+						case Some( t ) => t
+					} )
+				case InstructionAST( mnemonic, OperandModeAST(m@('immediate|'indirectX|'indirectY|'indirect), expr, Some(operand)), Some(size) ) =>
+					pointer += size
+					
+				case InstructionAST( mnemonic, OperandModeAST(m, expr, operand), size ) =>
 					if (size != None)
 						pointer += size.get
-						
 					
+					
+				case InstructionAST( mnemonic, mode, _ ) => problem( "pass2: uncaught instruction: " + (mnemonic, mode) )
+
 				case DataByteAST( data ) =>
 					data foreach {
 						case StringExpressionAST( s ) =>
@@ -153,18 +185,14 @@ object Assembler {
 					
 					pointer += dblength( data )
 				case DataWordAST( data ) =>
-					for (d <- data) {
-						val w = eval( d, true ).get
-						
-						segment += w.toByte
-						segment += (w >> 8).toByte
-					}
+					for (d <- data)
+						word( eval(d, true).get )
 					
 					pointer += data.length*2
 				case _ =>
 			}
 			
-			(symbols map {case (k, v) => k -> v.get}, segments.toList)
+			AssemblerResult( symbols map {case (k, v) => k -> v.get} toMap, segments.toList )
 			
 		}
 		

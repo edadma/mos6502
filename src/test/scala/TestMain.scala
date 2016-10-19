@@ -6,27 +6,28 @@ import java.io.File
 object TestMain extends App {
 	
 	Assembler(
-		new AssemblyParser(
-			"""
-			|; zero page definitions
-			|
-			|r
-			|r0		rb
-			|r1		rb
-			|wr
-			|wr0	rw
-			|wr1	rw
-			|
-			|			org $9000
-			|
-			|			ldx	#$ff
-			|			txs
-			|
-			|			lda	#$12
-			|			sta r0
-			|
-			""".trim.stripMargin
-		).parse
+		"""
+		|; zero page definitions
+		|
+		|r
+		|r0		rb
+		|r1		rb
+		|wr
+		|wr0	rw
+		|wr1	rw
+		|
+		|			org $9000
+		|
+		|			ldx	#$ff
+		|			txs
+		|
+		|			lda	#$12
+		|			sta r0
+		|			lda	#$34
+		|			sta r1
+		|
+		|			brk
+		""".trim.stripMargin
 	)
 }
 

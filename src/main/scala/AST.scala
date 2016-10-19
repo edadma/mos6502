@@ -14,9 +14,7 @@ trait ModeAST extends AST
 
 case class SimpleModeAST( mode: Symbol ) extends ModeAST	// 'implicit, 'accumulator
 
-case class OperandModeAST( mode: Symbol, a: ExpressionAST ) extends ModeAST {
-	var operand: Option[Int] = None
-}
+case class OperandModeAST( mode: Symbol, a: ExpressionAST, var operand: Option[Int] = None ) extends ModeAST
 
 case class SourceAST( statements: List[StatementAST] ) extends AST
 
