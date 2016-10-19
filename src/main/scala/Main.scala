@@ -102,7 +102,9 @@ object Main extends App with Flags {
 			try
 			{
 				com.head match {
-					case "" =>
+					case "assemble"|"a" =>
+						Assembler( mem, io.Source.fromFile(com(1)) )
+						cpu.reset
 					case "drop"|"dr" =>
 						mem.remove( com(1) )
 						out.println( mem )
@@ -125,12 +127,14 @@ object Main extends App with Flags {
 						registers
 					case "help"|"h" =>
 						"""
+						|assemble (a) <file>          assemble <file> and reset CPU
+						|assemble (a) <org>           assemble REPL input into <org> and reset CPU
 						|drop (dr) <region>           drop memory <region>
 						|dump (d) [<addr>]            dump memory at <addr> or where left off
 						|execute (e) [<start>]        execute instructions starting from current PC or <start>
-						|execute (e) <file>           clear ROM, load SREC <file>, reset, run
+						|execute (e) <file>           clear ROM, load SREC <file>, reset CPU, and run
 						|help (h)                     print this summary
-						|load (l) <file>              clear ROM, load SREC <file>, reset
+						|load (l) <file>              clear ROM, load SREC <file>, and reset CPU
 						|memory (m)                   print memory map
 						|memory (m) <addr> <data>...  write <data> (space separated bytes) to memory at <addr>
 						|quit (q)                     exit the REPL
@@ -181,6 +185,7 @@ object Main extends App with Flags {
 							
 						cpu.step
 						registers
+					case "" =>
 					case c => out.println( "unrecognized command: " + c )
 				}
 			}
@@ -188,9 +193,9 @@ object Main extends App with Flags {
 			{
 				case e: Exception =>
 // 								if (trace)
-// 									e.printStackTrace( out )
+ 									e.printStackTrace( out )
 // 								else
-						out.println( e )
+//						out.println( e )
 			}
 			
 			out.println
