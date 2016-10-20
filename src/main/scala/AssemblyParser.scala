@@ -23,7 +23,32 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 			)
 	}
 
-	def string = """".*"""".r ^^ {s => StringExpressionAST( s.substring(1, s.length - 1).replaceAll("""\\0""", "\u0000").replaceAll("""\\n""", "\n") )}
+	def character = """'.*'""".r ^^ {
+		s =>
+			val clit = s.substring(1, s.length - 1).
+				replaceAll("""\\0""", "\u0000").
+				replaceAll("""\\\\""", "\\").
+				replaceAll("""\\'""", "'").
+				replaceAll("""\\b""", "\b").
+				replaceAll("""\\f""", "\f").
+				replaceAll("""\\t""", "\t").
+				replaceAll("""\\r""", "\r").
+				replaceAll("""\\n""", "\n")
+				
+			NumberExpressionAST( clit.head.toInt )
+	}
+
+	def string = """".*"""".r ^^ {
+		s =>
+			StringExpressionAST( s.substring(1, s.length - 1).
+				replaceAll("""\\0""", "\u0000").
+				replaceAll("""\\\\""", "\\").
+				replaceAll("""\\b""", "\b").
+				replaceAll("""\\f""", "\f").
+				replaceAll("""\\t""", "\t").
+				replaceAll("""\\r""", "\r").
+				replaceAll("""\\n""", "\n") )
+	}
 	
 	def label = "[_0-9a-zA-Z]+".r
 	
@@ -35,7 +60,7 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 	
 	def nl = "[\r\n]+".r
 	
-	def comment = ";.*".r
+	def comment = ";.*".r ^^ println
 	
 	def blank = os ~ opt(comment) ~ nl
 	
@@ -49,6 +74,7 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 		"<" ~> expression ^^ {UnaryExpressionAST( "<", _ )} |
 		">" ~> expression ^^ {UnaryExpressionAST( ">", _ )} |
 		number |
+		character |
 		reference
 	
 	def mode =

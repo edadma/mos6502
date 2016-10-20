@@ -14,7 +14,7 @@ l1			lda message,y
 				sta	cout
 				iny
 				bne l1
-l2			lda #$0a	;'\n' and local labels (#0a assembled as 00???)
+l2			lda #'\n' ;local labels (#0a assembled as 00???)
 				sta cout
 				brk
 
