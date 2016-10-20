@@ -14,11 +14,11 @@ l1      lda message,y
         sta	cout
         iny
         bne l1
-l2	      lda #'\n'
+l2      lda #'\n'
         sta cout
         brk
 
 message db  "This is a test.\0"
 				
-				org $FFFC
-				dw  $9000
+        org $FFFC
+        dw  $9000
