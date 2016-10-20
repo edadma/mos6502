@@ -12,6 +12,10 @@ object Main extends App with Flags {
 	val mem = new Memory
 	val cpu = new CPU6502( mem )
 	
+	var dumpcur = 0
+	var discur = 0
+	var symbols = Map[Int, String]()
+	
 	mem add new RAM( "main", 0x0000, 0x7FFF )
 	mem add new StdIOChar( 0x8000 )
 	mem add new StdIOInt( 0x8001 )
@@ -27,9 +31,6 @@ object Main extends App with Flags {
 			cpu.reset
 			cpu.run
 	}
-	
-	var dumpcur = 0
-	var discur = 0
 	
 	def ishex( s: String ) = !s.isEmpty && s.forall( c => "012345679abcdefABCDEF" contains c )
 	
@@ -93,38 +94,64 @@ object Main extends App with Flags {
 			}
 		}
 		
-		def disassemble( start: Int, lines: Int ) {
+		def reference( target: Int, zp: Boolean ) =
+			symbols get target match {
+				case None => "$" + (if (zp) hexByte( target ) else hexWord( target ))
+				case Some( l ) => l
+			}
+		
+		def disassemble( start: Int, lines: Int ): Int = {
 			var addr = start
 			
 			for (_ <- 1 to lines) {
+				if (!mem.addressable( addr ) || !mem.addressable( addr + 1 ) || !mem.addressable( addr + 2 ))
+					return addr
+					
 				val opcode = mem.readByte( addr )
-				val (mnemonic, mode) = CPU.dis6502(opcode)
-				
-				out.print( "%4x  ".format(addr).toUpperCase )
-				out.print( mnemonic.toUpperCase + " " )
-				
-				addr +=
-					(mode match {
-						case 'implicit => 1
-						case 'accumulator =>
-							out.print( "A" )
-							1
-						case 'immediate =>
-							out.print( "#" )
-							2
-						case 'relative => 2
-						case 'indirectX => 2
-						case 'indirectY => 2
-						case 'zeroPage => 2
-						case 'zeroPageIndexedX => 2
-						case 'zeroPageIndexedY => 2
-						case 'direct => 3
-						case 'directX => 3
-						case 'directY => 3
-						case 'indirect => 3
+				val label =
+					(symbols get addr match {
+						case None => ""
+						case Some( l ) => l
 					})
+					
+				out.print( hexWord(addr) + "  " + hexByte(opcode) + " " )
+				addr += 1
+				
+				CPU.dis6502 get opcode match {
+					case None => out.print( " "*(6 + 2 + 15 + 1) + "---" )
+					case Some( (mnemonic, mode) ) =>
+						val (display, size) =
+							(mode match {
+								case 'implicit => ("", 0)
+								case 'accumulator => ("A", 0)
+								case 'immediate => ("#" + "$" + hexByte(mem.readByte(addr)), 1)
+								case 'relative => (reference(mem.readByte(addr).toByte + addr + 1, false), 1)
+								case 'indirectX => ("(" + reference(mem.readByte(addr), true) + ",X)", 1)
+								case 'indirectY => ("(" + reference(mem.readByte(addr), true) + "),Y", 1)
+								case 'zeroPage => (reference(mem.readByte(addr), true), 1)
+								case 'zeroPageIndexedX => (reference(mem.readByte(addr), true) + ",X", 1)
+								case 'zeroPageIndexedY => (reference(mem.readByte(addr), true) + ",Y", 1)
+								case 'direct => (reference(mem.readWord(addr), false), 2)
+								case 'directX => (reference(mem.readWord(addr), false) + ",X", 2)
+								case 'directY => (reference(mem.readWord(addr), false) + ",Y", 2)
+								case 'indirect => ("(" + reference(mem.readWord(addr), false) + ")", 2)
+							})
+							
+						addr += size
+						
+						for (i <- 0 until size)
+							out.print( hexByte(mem.readByte(addr + i)) + " " )
+						
+						out.print( " "*((2 - size)*3 + 2) )
+						out.print( label + " "*(15 - label.length + 1) )
+						out.print( mnemonic.toUpperCase + " " )
+						out.print( display )
+				}
+
 				out.println
 			}
+			
+			addr
 		}
 		
 		out.println( "MOS 6502 emulator v0.1" )
@@ -140,14 +167,16 @@ object Main extends App with Flags {
 				com.head match {
 					case "assemble"|"a" =>
 						mem.clearROM
-						Assembler( mem, io.Source.fromFile(com(1)) )
+						
+						symbols = Assembler( mem, io.Source.fromFile(com(1)) ) map {case (s, t) => (t, s)}
+						
 						discur = mem.code
 						cpu.reset
 					case "disassemble"|"u" =>
 						if (com.length > 1)
 							discur = hex( com(1) )
 							
-						disassemble( discur, 10 )
+						discur = disassemble( discur, 15 )
 					case "drop"|"dr" =>
 						mem.remove( com(1) )
 						out.println( mem )
@@ -223,6 +252,7 @@ object Main extends App with Flags {
 						registers
 					case "reset"|"re" =>
 						cpu.reset
+						discur = mem.code
 					case "step"|"s" =>
 						if (com.length > 1)
 							cpu.PC = hex( com(1) )

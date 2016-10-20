@@ -11,11 +11,13 @@ object Assembler {
 	
 	def apply( mem: Memory, src: String ) {apply( mem, io.Source.fromString(src) )}
 	
-	def apply( mem: Memory, src: io.Source ) {
+	def apply( mem: Memory, src: io.Source ): Map[String,Int] = {
 		val AssemblerResult(symbols, segments) = apply( src )
 		
 		for (((base, data), ind) <- segments zipWithIndex)
 			mem add new ROM( "asm" + ind, base, data )
+			
+		symbols
 	}
 	
 	def apply( src: io.Source ): AssemblerResult = apply( new AssemblyParser(src).parse )
