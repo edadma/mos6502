@@ -47,7 +47,7 @@ will print
 	4
 	5
 
-The easiest way to try this out is to follow the build instructions below
+The easiest way to try this out is to follow the [build](https://github.com/edadma/mos6502#build-and-run-the-repl) instructions below
 
 License
 -------
@@ -58,7 +58,7 @@ License
 Documentation
 -------------
 
-Scaladoc library documentation can be found at http://edadma.github.io/mos6502.
+Scaladoc library documentation can be found at [here](http://edadma.github.io/mos6502).
 
 
 Usage
