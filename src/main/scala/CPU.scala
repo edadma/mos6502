@@ -138,7 +138,7 @@ object CPU {
 	import Instructions._
 	import AddressModes._
 	
-	def populate( opcodes: Array[Instruction], asmmap: HashMap[(String, Symbol), Byte], instructions: Seq[((CPU, Int) => Unit, String)], modes: Seq[(CPU => Int, Symbol)], cc: Int, exceptions: Int* ) {
+	def populate( opcodes: Array[Instruction], asmmap: HashMap[(String, Symbol), Byte], dismap: HashMap[Int, (String, Symbol)], instructions: Seq[((CPU, Int) => Unit, String)], modes: Seq[(CPU => Int, Symbol)], cc: Int, exceptions: Int* ) {
 		for (aaa <- 0 to 7; bbb <- 0 to 7) {
 			val opcode = aaa<<5 | bbb<<2 | cc
 			
@@ -155,18 +155,21 @@ object CPU {
 							
 						opcodes(opcode) = new AddressModeInstruction( inst._1, mode._1 )
 						asmmap((inst._2, mode._2)) = opcode.toByte
+						dismap(opcode) = (inst._2, mode._2)
 					}
 				}
 			}
 		}
 	}
 	
-	val (opcodes6502, asm6502, mnemonics6502) = {
+	val (opcodes6502, asm6502, dis6502) = {
 		val opcodes = Array.fill[Instruction]( 256 )( IllegalInstruction )
 		val asmmap = new HashMap[(String, Symbol), Byte]
+		val dismap = new HashMap[Int, (String, Symbol)]
 		
 		opcodes(0) = BRK
 		asmmap(("brk", 'implicit)) = 0
+		dismap(0) = ("brk", 'implicit)
 		
 		List(
 			(0x18, clc, "clc"),
@@ -197,6 +200,7 @@ object CPU {
 				case (opcode, computation, mnemonic) =>
 					opcodes(opcode) = new SimpleInstruction( computation )
 					asmmap((mnemonic, 'implicit)) = opcode.toByte
+					dismap(opcode) = (mnemonic, 'implicit)
 			}
 			
 		List(
@@ -207,15 +211,16 @@ object CPU {
 				case (opcode, computation, mnemonic, mode) =>
 					opcodes(opcode) = new SimpleInstruction( computation )
 					asmmap((mnemonic, mode)) = opcode.toByte
+					dismap(opcode) = (mnemonic, mode)
 			}
 		
-		populate( opcodes, asmmap, IndexedSeq((ora, "ora"), (and, "and"), (eor, "eor"), (adc, "adc"), (sta, "sta"), (lda, "lda"), (cmp, "cmp"), (sbc, "sbc")),
+		populate( opcodes, asmmap, dismap, IndexedSeq((ora, "ora"), (and, "and"), (eor, "eor"), (adc, "adc"), (sta, "sta"), (lda, "lda"), (cmp, "cmp"), (sbc, "sbc")),
 							IndexedSeq((indirectX, 'indirectX), (zeroPage, 'zeroPage), (immediate, 'immediate), (absolute, 'direct), (indirectY, 'indirectY), (zeroPageIndexedX, 'zeroPageIndexedX), (absoluteIndexedY, 'directY), (absoluteIndexedX, 'directX)), 1, 0x89 )
-		populate( opcodes, asmmap, IndexedSeq((asl, "asl"), (rol, "rol"), (lsr, "lsr"), (ror, "ror"), null, null, (dec, "dec"), (inc, "inc")),
+		populate( opcodes, asmmap, dismap, IndexedSeq((asl, "asl"), (rol, "rol"), (lsr, "lsr"), (ror, "ror"), null, null, (dec, "dec"), (inc, "inc")),
 							IndexedSeq(null, (zeroPage, 'zeroPage), (accumulator, 'accumulator), (absolute, 'direct), null, (zeroPageIndexedX, 'zeroPageIndexedX), null, (absoluteIndexedX, 'directX)), 2, 0xCA, 0xEA )
-		populate( opcodes, asmmap, IndexedSeq(null, null, null, null, (stx, "stx"), (ldx, "ldx"), null, null),
+		populate( opcodes, asmmap, dismap, IndexedSeq(null, null, null, null, (stx, "stx"), (ldx, "ldx"), null, null),
 							IndexedSeq((immediate, 'immediate), (zeroPage, 'zeroPage), null, (absolute, 'direct), null, (zeroPageIndexedY, 'zeroPageIndexedY), null, (absoluteIndexedY, 'directY)), 2, 0x82, 0x9E )
-		populate( opcodes, asmmap, IndexedSeq(null, (bit, "bit"), null, null, (sty, "sty"), (ldy, "ldy"), (cpx, "cpx"), (cpy, "cpy")),
+		populate( opcodes, asmmap, dismap, IndexedSeq(null, (bit, "bit"), null, null, (sty, "sty"), (ldy, "ldy"), (cpx, "cpx"), (cpy, "cpy")),
 							IndexedSeq((immediate, 'immediate), (zeroPage, 'zeroPage), null, (absolute, 'direct), null, (zeroPageIndexedX, 'zeroPageIndexedX), null, (absoluteIndexedX, 'directX)), 0, 0x20, 0x24, 0x2C, 0x80, 0x9C, 0xD4, 0xDC, 0xF4, 0xFC )
 		
 		val branches = Vector( "bpl", "bmi", "bvc", "bvs", "bcc", "bcs", "bne", "beq" )
@@ -225,9 +230,10 @@ object CPU {
 			
 			opcodes(opcode) = new BranchInstruction( xx, if (y == 0) false else true )
 			asmmap((branches(xx<<1 | y), 'direct)) = opcode.toByte
+			dismap(opcode) = (branches(xx<<1 | y), 'direct)
 		}
 		
-		(opcodes.toVector, asmmap.toMap, asmmap.keysIterator map {case (m, _) => m} toSet)
+		(opcodes.toVector, asmmap.toMap, dismap.toMap)
 	}
 	
 }

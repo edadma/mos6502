@@ -28,6 +28,9 @@ object Main extends App with Flags {
 			cpu.run
 	}
 	
+	var dumpcur = 0
+	var discur = 0
+	
 	def ishex( s: String ) = !s.isEmpty && s.forall( c => "012345679abcdefABCDEF" contains c )
 	
 	def hex( s: String ) = Integer.parseInt( s, 16 )
@@ -35,6 +38,7 @@ object Main extends App with Flags {
 	def load( file: String ) {
 		mem.clearROM
 		SREC( mem, new File(file) )
+		discur = mem.code
 	}
 	
 	def monitor {
@@ -89,7 +93,22 @@ object Main extends App with Flags {
 			}
 		}
 		
-		var dumpcur = 0
+		def disassemble( start: Int, lines: Int ) {
+			var addr = start
+			
+			for (_ <- 1 to lines) {
+				val opcode = mem.readByte( addr )
+				val (mnemonic, mode) = CPU.dis6502(opcode)
+				
+				out.println( (addr.toHexString, mnemonic, mode) )
+				
+				addr +=
+					(mode match {
+						case 'implicit => 1
+						case 'accumulator => 1
+					})
+			}
+		}
 		
 		out.println( "MOS 6502 emulator v0.1" )
 		out.println( "Type 'help' for list of commands." )
@@ -105,7 +124,13 @@ object Main extends App with Flags {
 					case "assemble"|"a" =>
 						mem.clearROM
 						Assembler( mem, io.Source.fromFile(com(1)) )
+						discur = mem.code
 						cpu.reset
+					case "disassemble"|"u" =>
+						if (com.length > 1)
+							discur = hex( com(1) )
+							
+						disassemble( discur, 10 )
 					case "drop"|"dr" =>
 						mem.remove( com(1) )
 						out.println( mem )
@@ -130,9 +155,10 @@ object Main extends App with Flags {
 						"""
 						|assemble (a) <file>          assemble <file> and reset CPU
 						|assemble (a) <org>           assemble REPL input into <org> and reset CPU
+						|disassemble (u) [<addr>]     print disassembled code at <addr> or where left off
 						|drop (dr) <region>           drop memory <region>
-						|dump (d) [<addr>]            dump memory at <addr> or where left off
-						|execute (e) [<start>]        execute instructions starting from current PC or <start>
+						|dump (d) [<addr>]            print memory at <addr> or where left off
+						|execute (e) [<addr>]         execute instructions starting from current PC or <addr>
 						|execute (e) <file>           clear ROM, load SREC <file>, reset CPU, and run
 						|help (h)                     print this summary
 						|load (l) <file>              clear ROM, load SREC <file>, and reset CPU
@@ -142,7 +168,7 @@ object Main extends App with Flags {
 						|registers (r)                print CPU registers
 						|registers (r) [<reg> <val>]  set CPU <reg>ister to <val>ue
 						|reset (re)                   reset CPU registers setting PC from reset vector
-						|step (s) [<start>]           execute only next instruction at current PC or <start>
+						|step (s) [<addr>]            execute only next instruction at current PC or <addr>
 						""".trim.stripMargin.lines foreach out.println
 					case "load"|"l" =>
 						load( com(1) )
