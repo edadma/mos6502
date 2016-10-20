@@ -148,6 +148,15 @@ class Memory extends Addressable {
 		for (r <- regions filter (r => r.isInstanceOf[ROM]))
 			regions -= r
 			
+	def code = {
+		val roms = regions filter (r => r.isInstanceOf[ROM])
+		
+		if (roms isEmpty)
+			0
+		else
+			roms.head.start
+	}
+	
 	def add( region: Addressable ) {
 		regions find (r => r.start <= region.start && region.start < r.start + r.size) match {
 			case Some(r) => sys.error( hexWord(region.start) + ", " + hexWord(region.size) + " overlaps " + hexWord(r.start) + ", " + hexWord(r.size) )
