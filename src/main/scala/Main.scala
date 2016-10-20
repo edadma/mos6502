@@ -136,11 +136,11 @@ object Main extends App with Flags {
 								case 'directY => (reference(mem.readWord(addr), false) + ",Y", 2)
 								case 'indirect => ("(" + reference(mem.readWord(addr), false) + ")", 2)
 							})
-							
-						addr += size
 						
 						for (i <- 0 until size)
 							out.print( hexByte(mem.readByte(addr + i)) + " " )
+							
+						addr += size
 						
 						out.print( " "*((2 - size)*3 + 2) )
 						out.print( label + " "*(15 - label.length + 1) )
