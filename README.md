@@ -47,6 +47,7 @@ will print
 	4
 	5
 
+The easiest way to try this out is to follow the build instructions below
 
 License
 -------
@@ -62,8 +63,16 @@ Scaladoc library documentation can be found at http://edadma.github.io/mos6502.
 
 Usage
 -----
+	
+### Executable
 
-Use the following elements to use *mos6502* in your Maven project:
+If you just want to download the executable so that you can run 6502 programs or use the REPL, you can download it from [here]. *You do not need* the Scala library for it to work because the JAR already contains all dependencies. You just need Java 7+ installed.
+
+Run it as a normal Java executable JAR with the command `java -jar [emulator].jar` in the folder where you downloaded the file.
+
+### Library
+
+Use the following definition to use *mos6502* in your Maven project:
 
 	<repository>
 		<id>hyperreal</id>
@@ -81,14 +90,15 @@ Add the following to your `build.sbt` file to use *mos6502* in your SBT project:
 	resolvers += "Hyperreal Repository" at "https://dl.bintray.com/edadma/maven"
 
 	libraryDependencies += "xyz.hyperreal" %% "mos6502" % "0.1"
-	
 
-## Building
+
+Building
+--------
 
 ### Requirements
 
-- SBT 0.13.12+
 - Java 7+
+- SBT 0.13.12+
 - Scala 2.11.8+
 
 ### Build and Run the REPL
