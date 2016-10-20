@@ -98,7 +98,7 @@ Usage
 	
 ### Executable
 
-If you just want to download the executable so that you can run 6502 programs or use the REPL, you can download it from [here](https://dl.bintray.com/edadma/generic/mos6502-0.1.jar). *You do not need* the Scala library for it to work because the JAR already contains all dependencies. You just need Java 7+ installed.
+If you just want to download the executable so that you can run 6502 programs or use the REPL, you can download it from [here](https://dl.bintray.com/edadma/generic/0.1/mos6502-0.1.jar). *You do not need* the Scala library for it to work because the JAR already contains all dependencies. You just need Java 7+ installed.
 
 Run it as a normal Java executable JAR with the command `java -jar mos6502-0.1.jar` in the folder where you downloaded the file.
 
