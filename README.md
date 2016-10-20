@@ -17,7 +17,7 @@ All the examples with a file name ending with `.asm` will assemble using the bui
 Try it out
 ----------
 
-The following code (assembled using built-in assembler)
+The following code (assembled using the built-in assembler)
 
     COUNTER RB          ; zero page counter variable
 
@@ -91,7 +91,8 @@ Documentation
 -------------
 
 - [Scaladoc library documentation](http://edadma.github.io/mos6502)
-
+- Type `java -jar mos6502-0.1.jar --help` for executable options
+- Type `help` inside the REPL for commands
 
 Usage
 -----

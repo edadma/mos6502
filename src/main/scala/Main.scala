@@ -49,10 +49,8 @@ object Main extends App with Flags {
 			println( "bad option: " + o )
 			sys.exit
 			Nil
-		case f :: _ =>
-			println( "don't know what to do with: " + f )
-			sys.exit
-			Nil
+		case _ :: t =>
+			t
 	}
 
 	repl
