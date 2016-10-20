@@ -90,7 +90,7 @@ License
 Documentation
 -------------
 
-- [Scaladoc library documentation](http://edadma.github.io/mos6502).
+- [Scaladoc library documentation](http://edadma.github.io/mos6502)
 
 
 Usage

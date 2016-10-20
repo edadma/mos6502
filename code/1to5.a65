@@ -1,7 +1,7 @@
 				cpu	6502
-				start = $600
-				cout = $E0
-				iout = $E1
+				start = $9000
+				cout = $8000
+				iout = $8001
 				* = start
 
 				LDA #$00
@@ -18,4 +18,3 @@ PRINT		STA iout
 				
 				* = $FFFC
 				dw	start
-				dw	0

@@ -4,8 +4,6 @@ import java.io.{File, PrintWriter}
 
 import jline.console.ConsoleReader
 
-import xyz.hyperreal.options._
-
 
 object Main extends App with Flags {
 	
@@ -19,18 +17,45 @@ object Main extends App with Flags {
 	mem add new RAM( "main", 0x0000, 0x7FFF )
 	mem add new StdIOChar( 0x8000 )
 	mem add new StdIOInt( 0x8001 )
-	
-	val options = new Options( List(), List("-f"), Nil )
-	
-	options parse args
-	
-	options get "-f" match {
-		case None => monitor
-		case Some( file ) =>
+			
+	Options( args )
+	{
+		case "--help" :: _ =>
+			println( "MOS 6502 emulator v0.1" )
+			println( "Usage:  --help      display this help and exit" )
+			println( "        -l <file>   load SREC <file> and enter REPL" )
+			println( "        -le <file>  load SREC <file> and execute" )
+			println( "        -a <file>   assemble source <file> and enter REPL" )
+			println( "        -ae <file>  assemble source <file> and execute" )
+			sys.exit
+			Nil
+		case "-l" :: file :: _ =>
 			load( file )
-			cpu.reset
+			Nil
+		case "-le" :: file :: _ =>
+			load( file )
 			cpu.run
+			sys.exit
+			Nil
+		case "-a" :: file :: _ =>
+			assemble( file )
+			Nil
+		case "-ae" :: file :: _ =>
+			assemble( file )
+			cpu.run
+			sys.exit
+			Nil
+		case o :: _ if o startsWith "-" =>
+			println( "bad option: " + o )
+			sys.exit
+			Nil
+		case f :: _ =>
+			println( "don't know what to do with: " + f )
+			sys.exit
+			Nil
 	}
+
+	repl
 	
 	def ishex( s: String ) = !s.isEmpty && s.forall( c => "012345679abcdefABCDEF" contains c )
 	
@@ -40,9 +65,17 @@ object Main extends App with Flags {
 		mem.clearROM
 		SREC( mem, new File(file) )
 		discur = mem.code
+		cpu.reset
+	}
+
+	def assemble( file: String ) {
+		mem.clearROM
+		symbols = Assembler( mem, io.Source.fromFile(file) ) map {case (s, t) => (t, s)}
+		discur = mem.code
+		cpu.reset
 	}
 	
-	def monitor {
+	def repl {
 		val reader = new ConsoleReader
 		val out = new PrintWriter( reader.getTerminal.wrapOutIfNeeded(System.out), true )
 		var line: String = null
@@ -166,12 +199,7 @@ object Main extends App with Flags {
 			{
 				com.head match {
 					case "assemble"|"a" =>
-						mem.clearROM
-						
-						symbols = Assembler( mem, io.Source.fromFile(com(1)) ) map {case (s, t) => (t, s)}
-						
-						discur = mem.code
-						cpu.reset
+						assemble( com(1) )
 					case "disassemble"|"u" =>
 						if (com.length > 1)
 							discur = hex( com(1) )
@@ -192,7 +220,7 @@ object Main extends App with Flags {
 								cpu.PC = hex( com(1) )
 							else {
 								load( com(1) )
-								cpu.reset
+								cpu.run
 							}
 						
 						cpu.run
