@@ -90,12 +90,12 @@ License
 Documentation
 -------------
 
-	- [Scaladoc library documentation](http://edadma.github.io/mos6502).
+- [Scaladoc library documentation](http://edadma.github.io/mos6502).
 
 
 Usage
 -----
-	
+
 ### Executable
 
 If you just want to download the executable so that you can run 6502 programs or use the REPL, you can download it from [here](https://dl.bintray.com/edadma/generic/mos6502-0.1.jar). *You do not need* the Scala library for it to work because the JAR already contains all dependencies. You just need Java 7+ installed.
