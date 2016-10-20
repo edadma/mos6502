@@ -229,8 +229,8 @@ object CPU {
 			val opcode = xx<<6 | y<<5 | 0x10
 			
 			opcodes(opcode) = new BranchInstruction( xx, if (y == 0) false else true )
-			asmmap((branches(xx<<1 | y), 'direct)) = opcode.toByte
-			dismap(opcode) = (branches(xx<<1 | y), 'direct)
+			asmmap((branches(xx<<1 | y), 'relative)) = opcode.toByte
+			dismap(opcode) = (branches(xx<<1 | y), 'relative)
 		}
 		
 		(opcodes.toVector, asmmap.toMap, dismap.toMap)

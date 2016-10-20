@@ -179,14 +179,14 @@ object Assembler {
 					} )
 				case InstructionAST( mnemonic, OperandModeAST('indirect, _, _), _ ) =>
 					problem( "illegal instruction: " + (mnemonic, 'indirect) )
-				case InstructionAST( mnemonic@("bcc"|"bcs"|"beq"|"bmi"|"bne"|"bpl"|"bvc"|"bvs"), OperandModeAST(mode, expr, operand), _ ) =>
+				case InstructionAST( mnemonic@("bcc"|"bcs"|"beq"|"bmi"|"bne"|"bpl"|"bvc"|"bvs"), OperandModeAST(_, expr, operand), _ ) =>
 					val target = operand match {
 						case None => eval( expr, true ).get
 						case Some( t ) => t
 					}
 					
 					pointer += 2
-					opcode( mnemonic, mode )
+					opcode( mnemonic, 'relative )
 					segment += (target - pointer).toByte
 				case InstructionAST( mnemonic, OperandModeAST(mode@('immediate|'indirectX|'indirectY), expr, operand), _ ) =>
 					pointer += 2

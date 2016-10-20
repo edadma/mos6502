@@ -100,13 +100,30 @@ object Main extends App with Flags {
 				val opcode = mem.readByte( addr )
 				val (mnemonic, mode) = CPU.dis6502(opcode)
 				
-				out.println( (addr.toHexString, mnemonic, mode) )
+				out.print( "%4x  ".format(addr).toUpperCase )
+				out.print( mnemonic.toUpperCase + " " )
 				
 				addr +=
 					(mode match {
 						case 'implicit => 1
-						case 'accumulator => 1
+						case 'accumulator =>
+							out.print( "A" )
+							1
+						case 'immediate =>
+							out.print( "#" )
+							2
+						case 'relative => 2
+						case 'indirectX => 2
+						case 'indirectY => 2
+						case 'zeroPage => 2
+						case 'zeroPageIndexedX => 2
+						case 'zeroPageIndexedY => 2
+						case 'direct => 3
+						case 'directX => 3
+						case 'directY => 3
+						case 'indirect => 3
 					})
+				out.println
 			}
 		}
 		
