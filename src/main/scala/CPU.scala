@@ -17,6 +17,7 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 	
 	var trace = false
 	var opcode = 0
+	var cont = true
 	
 	def status( flag: Int ) = (S&flag) != 0
 	
@@ -91,21 +92,25 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 	
 	def step = {
 		
+		cont = true
+		
 		if (trace)
 			println( hexWord(PC) + ' ' + hexByte(mem.readByte(PC)) )
 			
-		opcode = nextByte
-		
-		val cont = opcodes(opcode) perform this
+		opcodes(nextByte) perform this
 		
 		if (trace)
 			printf( "A:%s X:%s Y:%s SP:%s PC:%s N:%d V:%d B:%d D:%d I:%d Z:%d C:%d\n\n", hexByte(A), hexByte(X), hexByte(Y), hexWord(SP), hexWord(PC),
 							read(N), read(V), read(B), read(D), read(I), read(Z), read(C) )
-			
+		
 		cont
 	}
 	
 	def run = while (step) {}
+	
+	def stop {
+		cont = false
+	}
 	
 	def reset {
 		A = 0

@@ -47,10 +47,11 @@ class RNG( val start: Int ) extends ReadOnlyPort {
 // 	
 // }
 
-class VideoRAM( start: Int, width: Int, height: Int, palette: Seq[Int] ) extends RAM( "video", start, start + width*height - 1 ) {
+class VideoRAM( start: Int, width: Int, height: Int, cpu: CPU, palette: Seq[Int] ) extends RAM( "video", start, start + width*height - 1 ) {
 
 	import scala.swing._
 	import Swing._
+	import BorderPanel.Position._
 	
 	require( start >= 0 )
 	require( width > 0 )
@@ -75,7 +76,15 @@ class VideoRAM( start: Int, width: Int, height: Int, palette: Seq[Int] ) extends
 	
 	new Frame {
 		title = "Video"
-		contents = panel
+		contents =
+			new BorderPanel {
+				layout(panel) = Center
+				layout(
+					Button( "Stop" ) {
+						cpu.stop
+					}
+				) = South
+			}
 		pack
 		visible = true
 		

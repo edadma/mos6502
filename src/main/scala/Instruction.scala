@@ -26,6 +26,7 @@ object BRK extends Instruction {
 			cpu.PC = cpu.readWord( BRK_VECTOR )
 			true
 		} else
+			cpu.stop
 			false
 	}
 	
