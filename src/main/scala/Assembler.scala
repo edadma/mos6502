@@ -51,7 +51,7 @@ object Assembler {
 		
 		def defineHere( symbol: String ) = define( symbol, if (pointerExact) Some(pointer) else None )
 		
-		def eval( expr: ExpressionAST, mustknow: Boolean ) =
+		def eval( expr: ExpressionAST, mustknow: Boolean ): Know[Int] =
 			expr match {
 				case NumberExpressionAST( n ) => Known( n )
 				case ReferenceExpressionAST( r ) =>
@@ -61,6 +61,8 @@ object Assembler {
 						case Some( None ) => Knowable
 						case Some( Some(a) ) => Known( a )
 					}
+				case UnaryExpressionAST( ">", expr ) => eval( expr, mustknow ) map (_ >> 8)
+				case UnaryExpressionAST( "<", expr ) => eval( expr, mustknow ) map (_&0xFF)
 			}
 		
 		def dblength( data: Seq[ExpressionAST] ) = {
@@ -83,8 +85,8 @@ object Assembler {
 			allknown = true
 			
 			ast.statements foreach {
-				case lab@LabelDirectiveAST( label, false ) =>
-					lab.definite = defineHere( label )
+				case dir@LabelDirectiveAST( label, false ) =>
+					dir.definite = defineHere( label )
 				case LabelDirectiveAST( _, true ) =>
 				case OriginDirectiveAST( expr ) =>
 					eval( expr, false ) match {
@@ -93,6 +95,13 @@ object Assembler {
 							pointer = org
 							pointerExact = true
 						case Knowable|Unknown => problem( "origin must be known when the directive is encountered" )
+					}
+				case dir@EquateDirectiveAST( equ, expr, None ) =>
+					eval( expr, false ) match {
+						case Known( v ) =>
+							dir.value = Some( v )
+							define( equ, dir.value )
+						case Knowable|Unknown => problem( "equate must be known when the directive is encountered" )
 					}
 				case InstructionAST( _, _, Some(size) ) =>
 					pointer += size

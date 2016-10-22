@@ -22,6 +22,7 @@ trait StatementAST extends AST
 
 trait DirectiveAST extends StatementAST
 case class LabelDirectiveAST( label: String, var definite: Boolean = false ) extends DirectiveAST
+case class EquateDirectiveAST( equ: String, expr: ExpressionAST, var value: Option[Int] = None ) extends DirectiveAST
 case class OriginDirectiveAST( org: ExpressionAST ) extends DirectiveAST
 
 abstract class AllocationAST extends StatementAST {

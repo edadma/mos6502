@@ -100,14 +100,18 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 		}
 	
 	def directive =
-		(space ~ "org|ORG".r ~ space) ~> expression ^^ {e => List( OriginDirectiveAST(e) )} |
-		(opt(label) <~ (space ~ "db|DB|dcb|DCB".r ~ space)) ~ rep1sep(expression | string, os ~ "," ~ os) ^^ {
+		(space ~ "org|ORG|.org|.ORG".r ~ space) ~> expression ^^ {e => List( OriginDirectiveAST(e) )} |
+		(label <~ (space ~ "equ|EQU|=".r ~ space)) ~ expression ^^ {
+			case equ ~ expr =>
+				List( EquateDirectiveAST(equ, expr) )
+			} |
+		(opt(label) <~ (space ~ "db|DB|dcb|DCB|.byte|.BYTE".r ~ space)) ~ rep1sep(expression | string, os ~ "," ~ os) ^^ {
 			case None ~ exprs =>
 				List( DataByteAST(exprs) )
 			case Some( label ) ~ exprs =>
 				List( LabelDirectiveAST(label), DataByteAST(exprs) )
 			} |
-		(opt(label) <~ (space ~ "dw|DW|dcw|DCW".r ~ space)) ~ rep1sep(expression, os ~ "," ~ os) ^^ {
+		(opt(label) <~ (space ~ "dw|DW|dcw|DCW|.word|.WORD".r ~ space)) ~ rep1sep(expression, os ~ "," ~ os) ^^ {
 			case None ~ exprs =>
 				List( DataWordAST(exprs) )
 			case Some( label ) ~ exprs =>

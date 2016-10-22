@@ -7,6 +7,7 @@ abstract class Know[+A] {
 	
 	def isDefined = !isEmpty
 	def getOrElse[B >: A]( default: => B ) = if (isEmpty) default else get
+	def map[B]( f: A => B ) = if (isEmpty) this.asInstanceOf[Know[Nothing]] else Known( f(get) )
 }
 
 case class Known[+A]( x: A ) extends Know[A] {
@@ -16,10 +17,10 @@ case class Known[+A]( x: A ) extends Know[A] {
 
 case object Unknown extends Know[Nothing] {
 	def isEmpty = true
-	def get = throw new NoSuchElementException("Unknown.get")
+	def get = throw new NoSuchElementException( "Unknown.get" )
 }
 
 case object Knowable extends Know[Nothing] {
 	def isEmpty = true
-	def get = throw new NoSuchElementException("Knowable.get")
+	def get = throw new NoSuchElementException( "Knowable.get" )
 }

@@ -19,29 +19,34 @@ Try it out
 
 The following code (assembled using the built-in assembler)
 
-    COUNTER RB          ; zero page counter variable
+	; memory mapped i/o 
+	;
+	CHIO    EQU $8000   ; character i/o port
+	INTIO   EQU $8001   ; integer i/o port
+	HEXIO   EQU $8002   ; hex integer i/o port
+	RNG     EQU $8003   ; random number generator (read only)
 
-            ORG $8000   ; memory mapped i/o 
+	; zero page variables
+	;
+	COUNTER RB          ; counter variable
 
-    COUT    RB          ; character i/o port
-    IOUT    RB          ; integer i/o port
+					ORG $9000   ; ROM
 
-            ORG $9000   ; ROM
+	START
+					LDA	#0      ; start counter off with 0
+					STA	COUNTER
+	LOOP    INC	COUNTER ; bump the counter
+					LDA	COUNTER
+					CMP	#6      ; is counter less than 6
+					BNE	PRINT   ; if so, print
+					BRK         ; otherwise, stop
+	PRINT   STA	INTIO   ; send counter value to integer i/o port
+					LDA	#'\n'   ; now print a line feed
+					STA CHIO
+					JMP LOOP
 
-            LDA #0      ; start counter off with 0
-            STA COUNTER
-    LOOP    INC COUNTER ; bump the counter
-            LDA COUNTER
-            CMP #6      ; is counter less than 6
-            BNE PRINT   ; if so, print
-            BRK         ; otherwise, stop
-    PRINT   STA IOUT    ; send counter value to integer i/o port
-            LDA #'\n'   ; now print a line feed
-            STA COUT
-            JMP LOOP
-
-            ORG $FFFC   ; reset vector
-            DW  $9000   ; CPU will start executing at 9000
+					ORG	$FFFC   ; reset vector
+					DW  START   ; CPU will start executing at 9000
 
 will print
 
@@ -73,9 +78,9 @@ If you now type the `u` command to disassemble the program from memory, you shou
 	9008  C9 06                      CMP #$06
 	900A  D0 01                      BNE PRINT
 	900C  00                         BRK 
-	900D  8D 01 80   PRINT           STA IOUT
+	900D  8D 01 80   PRINT           STA INTIO
 	9010  A9 0A                      LDA #$0A
-	9012  8D 00 80                   STA COUT
+	9012  8D 00 80                   STA CHIO
 	9015  4C 04 90                   JMP LOOP
 
 Notice that the REPL can use the symbol information from the assembler to provide a more readable disassembly.

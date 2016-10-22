@@ -7,4 +7,8 @@ package object mos6502 {
 	
 	def hexWord( a: Int ) = hexByte( a>>8 ) + hexByte( a )
 	
+	def ishex( s: String ) = !s.isEmpty && s.forall( c => "012345679abcdefABCDEF" contains c )
+	
+	def hex( s: String ) = Integer.parseInt( s, 16 )
+	
 }

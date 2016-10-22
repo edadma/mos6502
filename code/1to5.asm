@@ -1,12 +1,17 @@
-COUNTER RB          ; zero page counter variable
+; memory mapped i/o 
+;
+CHIO    EQU $8000   ; character i/o port
+INTIO   EQU $8001   ; integer i/o port
+HEXIO   EQU $8002   ; hex integer i/o port
+RNG     EQU $8003   ; random number generator (read only)
 
-        ORG $8000   ; memory mapped i/o 
-
-COUT    RB          ; character i/o port
-IOUT    RB          ; integer i/o port
+; zero page variables
+;
+COUNTER RB          ; counter variable
 
         ORG $9000   ; ROM
 
+START
         LDA #0      ; start counter off with 0
         STA COUNTER
 LOOP    INC COUNTER ; bump the counter
@@ -14,10 +19,10 @@ LOOP    INC COUNTER ; bump the counter
         CMP #6      ; is counter less than 6
         BNE PRINT   ; if so, print
         BRK         ; otherwise, stop
-PRINT   STA IOUT    ; send counter value to integer i/o port
+PRINT   STA INTIO    ; send counter value to integer i/o port
         LDA #'\n'   ; now print a line feed
-        STA COUT
+        STA CHIO
         JMP LOOP
 
         ORG $FFFC   ; reset vector
-        DW  $9000   ; CPU will start executing at 9000
+        DW  START   ; CPU will start executing at 9000

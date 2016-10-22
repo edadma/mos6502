@@ -21,6 +21,16 @@ class StdIOInt( val start: Int ) extends SingleAddressPort {
 	
 }
 
+class StdIOHex( val start: Int ) extends SingleAddressPort {
+	
+	val name = "stdio-hex"
+	
+	def readByte( addr: Int ) = hex( io.StdIn.readLine )
+	
+	def writeByte( addr: Int, value: Int ) = print( value.toHexString )
+	
+}
+
 class RNG( val start: Int ) extends ReadOnlyPort {
 	
 	val name = "rng"
@@ -28,6 +38,14 @@ class RNG( val start: Int ) extends ReadOnlyPort {
 	def readByte( addr: Int ) = util.Random.nextInt( 0x100 )
 	
 }
+
+// class RBG( val start: Int ) extends ReadOnlyPort {
+// 	
+// 	val name = "rbg"
+// 	
+// 	def readByte( addr: Int ) = if (util.Random.nextInt( 100 ) < 5) 1 else 0
+// 	
+// }
 
 class VideoRAM( start: Int, width: Int, height: Int, palette: Seq[Int] ) extends RAM( "video", start, start + width*height - 1 ) {
 
