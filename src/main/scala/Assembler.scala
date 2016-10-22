@@ -130,10 +130,14 @@ object Assembler {
 					pointer += dblength( data )
 				case DataWordAST( data ) =>
 					pointer += data.length*2
-				case ReserveByteAST( count ) =>
+				case ReserveByteAST( None ) =>
 					pointer += 1
-				case ReserveWordAST( count ) =>
+				case ReserveWordAST( None ) =>
 					pointer += 2
+				case ReserveByteAST( Some(count) ) =>
+					pointer += eval( count, true ).get
+				case ReserveWordAST( Some(count) ) =>
+					pointer += eval( count, true ).get*2
 			}
 		
 			if (!allknown)

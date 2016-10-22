@@ -101,25 +101,25 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 	
 	def directive =
 		(space ~ "org|ORG".r ~ space) ~> expression ^^ {e => List( OriginDirectiveAST(e) )} |
-		(opt(label) <~ (space ~ "db|DB".r ~ space)) ~ rep1sep(expression | string, os ~ "," ~ os) ^^ {
+		(opt(label) <~ (space ~ "db|DB|dcb|DCB".r ~ space)) ~ rep1sep(expression | string, os ~ "," ~ os) ^^ {
 			case None ~ exprs =>
 				List( DataByteAST(exprs) )
 			case Some( label ) ~ exprs =>
 				List( LabelDirectiveAST(label), DataByteAST(exprs) )
 			} |
-		(opt(label) <~ (space ~ "dw|DW".r ~ space)) ~ rep1sep(expression, os ~ "," ~ os) ^^ {
+		(opt(label) <~ (space ~ "dw|DW|dcw|DCW".r ~ space)) ~ rep1sep(expression, os ~ "," ~ os) ^^ {
 			case None ~ exprs =>
 				List( DataWordAST(exprs) )
 			case Some( label ) ~ exprs =>
 				List( LabelDirectiveAST(label), DataWordAST(exprs) )
 			} |
-		(opt(label) <~ (space ~ "rb|RB".r)) ~ opt(space ~> expression) ^^ {
+		(opt(label) <~ (space ~ "rb|RB|dsb|DSB".r)) ~ opt(space ~> expression) ^^ {
 			case None ~ expr =>
 				List( ReserveByteAST(expr) )
 			case Some( label ) ~ expr =>
 				List( LabelDirectiveAST(label), ReserveByteAST(expr) )
 			} |
-		(opt(label) <~ (space ~ "rw|RW".r)) ~ opt(space ~> expression) ^^ {
+		(opt(label) <~ (space ~ "rw|RW|dsw|DSW".r)) ~ opt(space ~> expression) ^^ {
 			case None ~ expr =>
 				List( ReserveWordAST(expr) )
 			case Some( label ) ~ expr =>
