@@ -42,10 +42,18 @@ class SimpleInstruction( computation: CPU => Unit ) extends Instruction {
 
 class BranchInstruction( xx: Int, y: Boolean ) extends Instruction {
 	
+	val flag =
+		xx match {
+			case 0 => N
+			case 1 => V
+			case 2 => C
+			case 3 => Z
+		}
+		
 	def perform( cpu: CPU ) = {
 		val offset = cpu.nextByte.toByte
 		
-		if (cpu.status(xx) == y)
+		if (cpu.status( flag ) == y)
 			cpu.PC += offset
 			
 		true
