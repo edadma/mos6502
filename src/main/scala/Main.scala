@@ -14,7 +14,10 @@ object Main extends App with Flags {
 	var discur = 0
 	var symbols = Map[Int, String]()
 	
-	mem add new RAM( "main", 0x0000, 0x7FFF )
+	mem add new RAM( "zp", 0x0000, 0x00FF )
+	mem add new RAM( "stack", 0x0100, 0x01FF )
+	mem add new RAM( "main", 0x0600, 0x7FFF )
+	mem add new VideoRAM( 0x0200, 32, 32, Vector(0x000000, 0xffffff, 0x880000, 0xaaffee, 0xcc44cc, 0x00cc55, 0x0000aa, 0xeeee77, 0xdd8855, 0x664400, 0xff7777, 0x333333, 0x777777, 0xaaff66, 0x0088ff, 0xbbbbbb) )
 	mem add new StdIOChar( 0x8000 )
 	mem add new StdIOInt( 0x8001 )
 			
@@ -84,7 +87,7 @@ object Main extends App with Flags {
 		def registers {
 			out.printf( "A:%s X:%s Y:%s SP:%s PC:%s\n", hexByte(cpu.A), hexByte(cpu.X), hexByte(cpu.Y), hexWord(cpu.SP), hexWord(cpu.PC) )
 			out.printf( "N:%s V:%s B:%s D:%s I:%s Z:%s C:%s\n", Seq(N, V, B, D, I, Z, C) map (cpu.read(_).toString): _* )
-			out.println( hexWord(cpu.PC) + ':' + hexByte(mem.readByte(cpu.PC)) )
+//			out.println( hexWord(cpu.PC) + ':' + (if (mem.addressable(cpu.PC)) hexByte(mem.readByte(cpu.PC)) else "--") )
 		}
 	
 		def dump( start: Int, lines: Int ) {
@@ -135,7 +138,7 @@ object Main extends App with Flags {
 			var addr = start
 			
 			for (_ <- 1 to lines) {
-				if (!mem.addressable( addr ) || !mem.addressable( addr + 1 ) || !mem.addressable( addr + 2 ))
+				if (!mem.addressable( addr ))
 					return addr
 					
 				val opcode = mem.readByte( addr )

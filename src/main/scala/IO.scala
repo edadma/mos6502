@@ -1,7 +1,5 @@
 package xyz.hyperreal.mos6502
 
-import scala.swing._
-
 
 class StdIOChar( val start: Int ) extends SingleAddressPort {
 	
@@ -23,8 +21,44 @@ class StdIOInt( val start: Int ) extends SingleAddressPort {
 	
 }
 
-class VideoRAM( start: Int ) extends RAM( "video", start, start + 1023 ) {
+class VideoRAM( start: Int, width: Int, height: Int, palette: Seq[Int] ) extends RAM( "video", start, start + width*height - 1 ) {
+
+	import scala.swing._
+	import Swing._
 	
 	require( start >= 0 )
+	require( width > 0 )
+	require( height > 0 )
+	require( !palette.isEmpty )
+//	require( palette forall {case (r, g, b) => 0 <= r && r <= 255 && 0 <= g && g <= 255 && 0 <= b && b <= 255} )
+	
+// 	val colors = (palette map {case (r, g, b) => r << 16 | g << 8 | b}).toArray
+	val colors = (palette map {c => new Color(c)}).toArray
+	val square = 6
+	
+	val panel = new Panel {
+		preferredSize = (width*square, height*square)
+		
+		override def paintComponent( g: Graphics2D ) {
+			for (x <- 0 until width; y <- 0 until height) {
+				g.setColor( colors(mem(x + y*width)&0x0F) )
+				g.fillRect( x*square, y*square, square, square )
+			}
+		}
+	}
+	
+	new Frame {
+		title = "Video"
+		contents = panel
+		pack
+		visible = true
+		
+		override def closeOperation = sys.exit
+	}
+	
+	override def writeByte( addr: Int, value: Int ) = {
+		super.writeByte( addr, value )
+		panel.repaint
+	}
 	
 }

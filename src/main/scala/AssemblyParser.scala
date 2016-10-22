@@ -83,9 +83,9 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 		expression <~ ("," ~ os ~ "x|X".r) ^^ {OperandModeAST( 'directX, _ )} |
  		expression <~ ("," ~ os ~ "y|Y".r) ^^ {OperandModeAST( 'directY, _ )} |
 		expression ^^ {OperandModeAST( 'direct, _ )} |
-		"(" ~> expression <~ ")" ^^ {OperandModeAST( 'indirect, _ )} |
 		"(" ~> expression <~ ("," ~ os ~ "x|X".r ~ ")") ^^ {OperandModeAST( 'indirectX, _ )} |
-		"(" ~> expression <~ (")," ~ os ~ "y|Y".r) ^^ {OperandModeAST( 'indirectY, _ )}
+		"(" ~> expression <~ (")," ~ os ~ "y|Y".r) ^^ {OperandModeAST( 'indirectY, _ )} |
+		"(" ~> expression <~ ")" ^^ {OperandModeAST( 'indirect, _ )}
 		
 	def instruction =
 		(opt(label) <~ space) ~ mnemonic ~ opt(space ~> mode) ^^ {
