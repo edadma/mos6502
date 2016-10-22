@@ -20,7 +20,8 @@ object Main extends App with Flags {
 	mem add new VideoRAM( 0x0200, 32, 32, Vector(0x000000, 0xffffff, 0x880000, 0xaaffee, 0xcc44cc, 0x00cc55, 0x0000aa, 0xeeee77, 0xdd8855, 0x664400, 0xff7777, 0x333333, 0x777777, 0xaaff66, 0x0088ff, 0xbbbbbb) )
 	mem add new StdIOChar( 0x8000 )
 	mem add new StdIOInt( 0x8001 )
-			
+	mem add new RNG( 0x8002 )
+	
 	Options( args )
 	{
 		case "--help" :: _ =>
@@ -210,6 +211,8 @@ object Main extends App with Flags {
 					case "assemble"|"a" =>
 						assemble( com(1) )
 						out.println( mem )
+					case "breakpoint"|"b" =>
+						
 					case "disassemble"|"u" =>
 						if (com.length > 1)
 							discur = hex( com(1) )
@@ -234,6 +237,7 @@ object Main extends App with Flags {
 						"""
 						|assemble (a) <file>           clear ROM, assemble <file>, and reset CPU
 						|assemble (a) <org>            clear ROM, assemble REPL input at <org>, and reset CPU
+						|breakpoint (b) <addr>*        set/clear breakpoint at <addr>
 						|disassemble (u) [<addr>*]     print disassembled code at <addr> or where left off
 						|drop (dr) <region>            drop memory <region>
 						|dump (d) [<addr>*]            print memory at <addr> or where left off

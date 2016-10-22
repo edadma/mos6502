@@ -21,6 +21,14 @@ class StdIOInt( val start: Int ) extends SingleAddressPort {
 	
 }
 
+class RNG( val start: Int ) extends ReadOnlyPort {
+	
+	val name = "rng"
+	
+	def readByte( addr: Int ) = util.Random.nextInt( 0x100 )
+	
+}
+
 class VideoRAM( start: Int, width: Int, height: Int, palette: Seq[Int] ) extends RAM( "video", start, start + width*height - 1 ) {
 
 	import scala.swing._
