@@ -11,7 +11,7 @@ Description
 
 It's true, there are many 6502 emulators out there, but this one is written in Scala and is therefore easy and fun to extend should you wish to add some more hardware to your virtual computer.
 
-All the examples with a file name ending with `.asm` will assemble using the built-in assembler. Of course, the emulator's built-in assembler will have slightly different syntax than other assemblers for assembly directives. If a more powerful assembler is needed, there is one called `crasm` which is available under Ubuntu/Mint that generates SREC (Motorola S-Record) files using it's `-o` option. Those files can then be executed using the emlulator's `-le` option or loaded into the REPL using the `l` command. The `cc65` tools may also be used in conjunction with a program called `srecords` to get an SREC file that can be loaded.
+All the examples with a file name ending with `.asm` will assemble using the built-in assembler. Of course, the emulator's built-in assembler will have slightly different syntax than other assemblers for assembly directives. If a more powerful assembler is needed, there is one called `crasm` which is available under Ubuntu/Mint that generates SREC (Motorola S-Record) files using it's `-o` option. Those files can then be executed using the emlulator's `-le` option or loaded into the REPL using the `l` command. The `cc65` tools may also be used in conjunction with a program called `srecord` to get an SREC file that can be loaded.
 
 
 Try it out
@@ -60,7 +60,7 @@ Of course, when doing this in the REPL you will also see
 
 	A:06 X:00 Y:00 SP:01FD PC:900D
 	N:0 V:0 B:0 D:0 I:0 Z:1 C:0
-	900D:8D
+	900D  8D 01 80   PRINT           STA IOUT
 
 as well, showing you the state of the CPU after execution.
 
@@ -78,7 +78,7 @@ If you now type the `u` command to disassemble the program from memory, you shou
 	9012  8D 00 80                   STA COUT
 	9015  4C 04 90                   JMP LOOP
 
-Notice that the REPL uses the symbol information from the assembler to provide more readable disassembly.
+Notice that the REPL can use the symbol information from the assembler to provide a more readable disassembly.
 
 
 License
@@ -91,7 +91,7 @@ Documentation
 -------------
 
 - [Scaladoc library documentation](http://edadma.github.io/mos6502)
-- Type `java -jar mos6502-0.1.jar --help` for executable options
+- Type `java -jar mos6502-0.2.jar --help` for executable options
 - Type `help` inside the REPL for commands
 
 Usage
@@ -99,9 +99,9 @@ Usage
 
 ### Executable
 
-If you just want to download the executable so that you can run 6502 programs or use the REPL, you can download it from [here](https://dl.bintray.com/edadma/generic/mos6502-0.1.jar). *You do not need* the Scala library for it to work because the JAR already contains all dependencies. You just need Java 7+ installed.
+If you just want to download the executable so that you can run 6502 programs or use the REPL, you can download it from [here](https://dl.bintray.com/edadma/generic/mos6502-0.2.jar). *You do not need* the Scala library for it to work because the JAR already contains all dependencies. You just need Java 7+ installed.
 
-Run it as a normal Java executable JAR with the command `java -jar mos6502-0.1.jar` in the folder where you downloaded the file.
+Run it as a normal Java executable JAR with the command `java -jar mos6502-0.2.jar` in the folder where you downloaded the file.
 
 ### Library
 
@@ -115,14 +115,14 @@ Use the following definition to use *mos6502* in your Maven project:
 	<dependency>
 		<groupId>xyz.hyperreal</groupId>
 		<artifactId>mos6502</artifactId>
-		<version>0.1</version>
+		<version>0.2</version>
 	</dependency>
 
 Add the following to your `build.sbt` file to use *mos6502* in your SBT project:
 
 	resolvers += "Hyperreal Repository" at "https://dl.bintray.com/edadma/maven"
 
-	libraryDependencies += "xyz.hyperreal" %% "mos6502" % "0.1"
+	libraryDependencies += "xyz.hyperreal" %% "mos6502" % "0.2"
 
 
 Building

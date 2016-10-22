@@ -209,6 +209,7 @@ object Main extends App with Flags {
 				com.head match {
 					case "assemble"|"a" =>
 						assemble( com(1) )
+						out.println( mem )
 					case "disassemble"|"u" =>
 						if (com.length > 1)
 							discur = hex( com(1) )
@@ -225,33 +226,28 @@ object Main extends App with Flags {
 						dumpcur = (dumpcur + 16*8) min 0x10000
 					case "execute"|"e" =>
 						if (com.length > 1)
-							if (ishex( com(1) ))
-								cpu.PC = hex( com(1) )
-							else {
-								load( com(1) )
-								cpu.run
-							}
+							cpu.PC = hex( com(1) )
 						
 						cpu.run
 						registers
 					case "help"|"h" =>
 						"""
-						|assemble (a) <file>          assemble <file> and reset CPU
-						|assemble (a) <org>           assemble REPL input into <org> and reset CPU
-						|disassemble (u) [<addr>]     print disassembled code at <addr> or where left off
-						|drop (dr) <region>           drop memory <region>
-						|dump (d) [<addr>]            print memory at <addr> or where left off
-						|execute (e) [<addr>]         execute instructions starting from current PC or <addr>
-						|execute (e) <file>           clear ROM, load SREC <file>, reset CPU, and run
-						|help (h)                     print this summary
-						|load (l) <file>              clear ROM, load SREC <file>, and reset CPU
-						|memory (m)                   print memory map
-						|memory (m) <addr> <data>...  write <data> (space separated bytes) to memory at <addr>
-						|quit (q)                     exit the REPL
-						|registers (r)                print CPU registers
-						|registers (r) [<reg> <val>]  set CPU <reg>ister to <val>ue
-						|reset (re)                   reset CPU registers setting PC from reset vector
-						|step (s) [<addr>]            execute only next instruction at current PC or <addr>
+						|assemble (a) <file>           clear ROM, assemble <file>, and reset CPU
+						|assemble (a) <org>            clear ROM, assemble REPL input at <org>, and reset CPU
+						|disassemble (u) [<addr>*]     print disassembled code at <addr> or where left off
+						|drop (dr) <region>            drop memory <region>
+						|dump (d) [<addr>*]            print memory at <addr> or where left off
+						|execute (e) [<addr>*]         execute instructions starting from current PC or <addr>
+						|help (h)                      print this summary
+						|load (l) <file>               clear ROM, load SREC <file>, and reset CPU
+						|memory (m)                    print memory map
+						|memory (m) <addr>* <data>...  write <data> (space separated bytes) to memory at <addr>
+						|quit (q)                      exit the REPL
+						|registers (r)                 print CPU registers
+						|registers (r) <reg> <val>     set CPU <reg>ister to <val>ue
+						|reset (re)                    reset CPU registers setting PC from reset vector
+						|step (s) [<addr>*]            execute only next instruction at current PC or <addr>
+						|* <addr> can either be a hexadecimal value or label
 						""".trim.stripMargin.lines foreach out.println
 					case "load"|"l" =>
 						load( com(1) )
