@@ -1,11 +1,63 @@
 package xyz.hyperreal.mos6502
 
-import java.io.File
+import java.io.{PrintWriter, File}
 
 import collection.mutable.ArrayBuffer
 
 
 object SREC {
+	
+	def write( m: Memory, f: File, header: Seq[Byte] ) {
+		val out = new PrintWriter( f )
+		var s1count = 0
+		
+		def record( typ: Char, items: Any* ) = {
+			var sum = 0
+			var count = 0
+			val buf = new StringBuilder
+			
+			def add( b: Int ) {
+				sum += b
+				count += 1
+				buf append hexByte(b)
+			}
+			
+			for (i <- items)
+				i match {
+					case byte: Int =>
+						add( byte )
+					case bytes: Seq[Number] =>
+						for (b <- bytes)
+							add( b.intValue )
+				}
+				
+			out.println( "S" + typ + hexByte(count + 1) + buf + hexByte((sum + count + 1)^0xFF) )
+		}
+		
+//		def text( s: Seq[Byte] ) = s map (b => hexByte( b )) mkString
+		
+		record( '0', 0x00, 0x00, header )
+		
+		val roms = m.seqROM
+		
+		if (roms isEmpty)
+			sys.error( "There's no ROM to be saved." )
+			
+		for (rom <- roms) {
+			val end = rom.start + rom.size
+			
+			for (rec <- rom.start until end by 16) {
+				val len = 16 min (end - rec)
+				
+				record( '1', rec >> 8, rec, (for (i <- 0 until len) yield rom.readByte(rec + i)) )
+				s1count += 1
+			}
+		}
+		
+		record( '5', s1count >> 8, s1count )
+		record( '9', 0, 0 )
+		out.close
+	}
 	
 	def apply( m: Memory, s: File ): Int = apply( m, io.Source.fromFile(s) )
 	

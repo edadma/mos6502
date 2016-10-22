@@ -1,7 +1,7 @@
 package xyz.hyperreal.mos6502
 
 
-class StdIOChar( val start: Int ) extends SingleAddressPort {
+class StdIOChar( val start: Int ) extends SingleAddressDevice {
 	
 	val name = "stdio-char"
 	
@@ -11,7 +11,7 @@ class StdIOChar( val start: Int ) extends SingleAddressPort {
 	
 }
 
-class StdIOInt( val start: Int ) extends SingleAddressPort {
+class StdIOInt( val start: Int ) extends SingleAddressDevice {
 	
 	val name = "stdio-int"
 	
@@ -21,7 +21,7 @@ class StdIOInt( val start: Int ) extends SingleAddressPort {
 	
 }
 
-class StdIOHex( val start: Int ) extends SingleAddressPort {
+class StdIOHex( val start: Int ) extends SingleAddressDevice {
 	
 	val name = "stdio-hex"
 	
@@ -31,7 +31,7 @@ class StdIOHex( val start: Int ) extends SingleAddressPort {
 	
 }
 
-class RNG( val start: Int ) extends ReadOnlyPort {
+class RNG( val start: Int ) extends ReadOnlyDevice {
 	
 	val name = "rng"
 	
@@ -39,7 +39,7 @@ class RNG( val start: Int ) extends ReadOnlyPort {
 	
 }
 
-// class RBG( val start: Int ) extends ReadOnlyPort {
+// class RBG( val start: Int ) extends ReadOnlyDevice {
 // 	
 // 	val name = "rbg"
 // 	
@@ -47,7 +47,7 @@ class RNG( val start: Int ) extends ReadOnlyPort {
 // 	
 // }
 
-class VideoRAM( start: Int, width: Int, height: Int, cpu: CPU, palette: Seq[Int] ) extends RAM( "video", start, start + width*height - 1 ) {
+class VideoRAM( start: Int, width: Int, height: Int, cpu: CPU, palette: Seq[Int] ) extends RAM( "video", start, start + width*height - 1 ) with Device {
 
 	import scala.swing._
 	import Swing._
@@ -74,7 +74,7 @@ class VideoRAM( start: Int, width: Int, height: Int, cpu: CPU, palette: Seq[Int]
 		}
 	}
 	
-	new Frame {
+	val frame = new Frame {
 		title = "Video"
 		contents =
 			new BorderPanel {
@@ -86,9 +86,12 @@ class VideoRAM( start: Int, width: Int, height: Int, cpu: CPU, palette: Seq[Int]
 				) = South
 			}
 		pack
-		visible = true
 		
 		override def closeOperation = sys.exit
+	}
+	
+	override def init {
+		frame.visible = true
 	}
 	
 	override def clear = {

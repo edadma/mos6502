@@ -7,6 +7,8 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 	
 	val opcodes: Seq[Instruction]
 	
+	var init = false
+	
 	var A = 0
 	var X = 0
 	var Y = 0
@@ -92,12 +94,17 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 	
 	def step = {
 		
+		if (!init) {
+			init = true
+			reset
+		}
+			
 		cont = true
 		
 		if (trace)
 			println( hexWord(PC) + ' ' + hexByte(mem.readByte(PC)) )
 			
-		opcodes(nextByte) perform this
+		opcodes(nextByte) apply this
 		
 		if (trace)
 			printf( "A:%s X:%s Y:%s SP:%s PC:%s N:%d V:%d B:%d D:%d I:%d Z:%d C:%d\n\n", hexByte(A), hexByte(X), hexByte(Y), hexWord(SP), hexWord(PC),
@@ -120,6 +127,7 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 		PC = mem.readWord( RESET_VECTOR )
 		S = 0
 		mem.clearRAM
+		mem.seqDevice foreach (_.init)
 	}
 	
 }
@@ -173,11 +181,8 @@ object CPU {
 		val asmmap = new HashMap[(String, Symbol), Byte]
 		val dismap = new HashMap[Int, (String, Symbol)]
 		
-		opcodes(0) = BRK
-		asmmap(("brk", 'implicit)) = 0
-		dismap(0) = ("brk", 'implicit)
-		
 		List(
+			(0x00, brk, "brk"),
 			(0x18, clc, "clc"),
 			(0xD8, cld, "cld"),
 			(0x58, cli, "cli"),

@@ -24,7 +24,7 @@ trait Addressable {
 	
 	def isROM = isInstanceOf[ROM]
 	
-	def isPort = isInstanceOf[Port]
+	def isDevice = isInstanceOf[Device]
 	
 	def program( addr: Int, value: Int ) = writeByte( addr, value )
 	
@@ -87,32 +87,31 @@ object Vectors {
 	}
 }
 
-abstract class Port extends Addressable {
+trait Device extends Addressable {
 	
-	val start: Int
-	val size: Int
+	def init {}
 	
-	override def toString = s"$name port: ${hexWord(start)}-${hexWord(start + size - 1)}"
+	override def toString = s"$name device: ${hexWord(start)}-${hexWord(start + size - 1)}"
 
 }
 
-abstract class SingleAddressPort extends Port {
+abstract class SingleAddressDevice extends Device {
 	
 	val size = 1
 	
-	override def toString = s"$name port: ${hexWord(start)}"
+	override def toString = s"$name device: ${hexWord(start)}"
 	
 }
 
-abstract class ReadOnlyPort extends SingleAddressPort {
+abstract class ReadOnlyDevice extends SingleAddressDevice {
 	
-	def writeByte( addr: Int, value: Int ) = sys.error( "read only port" )
+	def writeByte( addr: Int, value: Int ) = sys.error( "read only device" )
 	
 }
 
-abstract class WriteOnlyPort extends SingleAddressPort {
+abstract class WriteOnlyDevice extends SingleAddressDevice {
 	
-	def readByte( addr: Int ) = sys.error( "write only port" )
+	def readByte( addr: Int ) = sys.error( "write only device" )
 	
 }
 
@@ -145,7 +144,7 @@ class Memory extends Addressable {
 	
 	def addressable( addr: Int ) = lookup( addr ) != None
 	
-	def port( addr: Int ) = find( addr ).isPort
+	def device( addr: Int ) = find( addr ).isDevice
 	
 	def remove( name: String ) {
 		regions.indexWhere( r => r.name == name ) match {
@@ -154,12 +153,16 @@ class Memory extends Addressable {
 		}
 	}
 	
+	def seqDevice = (regions filter (r => r.isDevice)).asInstanceOf[Seq[Device]]
+	
+	def seqROM = regions filter (r => r.isROM)
+	
 	def removeROM =
-		for (r <- regions filter (r => r.isROM))
+		for (r <- seqROM)
 			regions -= r
 			
 	def code = {
-		val roms = regions filter (r => r.isROM)
+		val roms = seqROM
 		
 		if (roms isEmpty)
 			0

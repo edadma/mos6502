@@ -23,8 +23,23 @@ object Main extends App with Flags {
 	mem add new StdIOHex( 0x8002 )
 	mem add new RNG( 0x8003 )
 	
+	var enterREPL = true
+	
 	Options( args )
 	{
+		case "-a" :: file :: _ =>
+			assemble( file )
+			Nil
+		case "-ae" :: file :: _ =>
+			assemble( file )
+			cpu.run
+			enterREPL = false
+			Nil
+		case "-as" :: file :: _ =>
+			assemble( file )
+			save( file + ".s19" )
+			enterREPL = false
+			Nil
 		case "--help" :: _ =>
 			println( "MOS 6502 emulator v0.1" )
 			println( "Usage:  --help      display this help and exit" )
@@ -32,7 +47,8 @@ object Main extends App with Flags {
 			println( "        -le <file>  load SREC <file> and execute" )
 			println( "        -a <file>   assemble source <file> and enter REPL" )
 			println( "        -ae <file>  assemble source <file> and execute" )
-			sys.exit
+			println( "        -as <file>  assemble source <file> and save SREC" )
+			enterREPL = false
 			Nil
 		case "-l" :: file :: _ =>
 			load( file )
@@ -40,26 +56,19 @@ object Main extends App with Flags {
 		case "-le" :: file :: _ =>
 			load( file )
 			cpu.run
-			sys.exit
-			Nil
-		case "-a" :: file :: _ =>
-			assemble( file )
-			Nil
-		case "-ae" :: file :: _ =>
-			assemble( file )
-			cpu.run
-			sys.exit
+			enterREPL = false
 			Nil
 		case o :: _ if o startsWith "-" =>
 			println( "bad option: " + o )
-			sys.exit
+			enterREPL = false
 			Nil
 		case _ :: t =>
 			t
 	}
 
-	repl
-	
+	if (enterREPL)
+		repl
+		
 	def load( file: String ) {
 		mem.removeROM
 		SREC( mem, new File(file) )
@@ -67,6 +76,10 @@ object Main extends App with Flags {
 		cpu.reset
 	}
 
+	def save( file: String ) {
+		SREC.write( mem, new File(file), file.getBytes.toVector )
+	}
+	
 	def assemble( file: String ) {
 		mem.removeROM
 		symbols = Assembler( mem, io.Source.fromFile(file) ) map {case (s, t) => (t, s)}
@@ -100,7 +113,7 @@ object Main extends App with Flags {
 			def printChar( c: Option[Int] ) = out.print( if (c != None && ' ' <= c.get && c.get <= '~') c.get.asInstanceOf[Char] else '.' )
 			
 			def read( addr: Int ) =
-				if (!mem.addressable( addr ) || mem.port( addr ))
+				if (!mem.addressable( addr ) || mem.device( addr ))
 					None
 				else
 					Some( mem.readByte(addr) )
@@ -231,10 +244,10 @@ object Main extends App with Flags {
 						cpu.run
 						registers
 					case "help"|"h" =>
+//						|breakpoint (b) <addr>*        set/clear breakpoint at <addr>
 						"""
 						|assemble (a) <file>           clear ROM, assemble <file>, and reset CPU
 						|assemble (a) <org>            clear ROM, assemble REPL input at <org>, and reset CPU
-						|breakpoint (b) <addr>*        set/clear breakpoint at <addr>
 						|disassemble (u) [<addr>*]     print disassembled code at <addr> or where left off
 						|drop (dr) <region>            drop memory <region>
 						|dump (d) [<addr>*]            print memory at <addr> or where left off
@@ -248,6 +261,7 @@ object Main extends App with Flags {
 						|registers (r) <reg> <val>     set CPU <reg>ister to <val>ue
 						|reset (re)                    reset CPU registers setting PC from reset vector
 						|step (s) [<addr>*]            execute only next instruction at current PC or <addr>
+						|save (sa) <file>              save all ROM contents to SREC file
 						|* <addr> can either be a hexadecimal value or label
 						""".trim.stripMargin.lines foreach out.println
 					case "load"|"l" =>
@@ -293,6 +307,8 @@ object Main extends App with Flags {
 							
 						cpu.step
 						registers
+					case "save"|"sa" =>
+						save( com(1) )
 					case "" =>
 					case c => out.println( "unrecognized command: " + c )
 				}

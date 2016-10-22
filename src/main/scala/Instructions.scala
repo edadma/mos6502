@@ -1,7 +1,7 @@
 package xyz.hyperreal.mos6502
 
 
-object Instructions extends Flags {
+object Instructions extends Flags with VectorsAddresses {
 
 	//
 	// cc = 01
@@ -140,7 +140,20 @@ object Instructions extends Flags {
 	
 	//
 	// simple
-	//	
+	//
+	val brk = (cpu: CPU) => {
+		if (cpu.mem.addressable( BRK_VECTOR )) {
+			cpu.PC += 1	// BRK is really a two byte instruction, operand byte is not used
+			cpu.push( cpu.PC >> 8 )
+			cpu.push( cpu.PC )
+			cpu.set( B )
+			cpu.push( cpu.S )
+			cpu.set( I )
+			cpu.PC = cpu.readWord( BRK_VECTOR )
+		} else
+			cpu.stop
+	}
+	
 	val clc = (cpu: CPU) => cpu.clear( C )
 	
 	val cld = (cpu: CPU) => cpu.clear( D )
