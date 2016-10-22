@@ -13,10 +13,10 @@ object TestMain extends App {
 	Assembler( mem,
 		"""
 		|				org $9000
-		|				lda #'\n'
+		|				db  "a\0"
 		""".trim.stripMargin )
 	println( mem )
-	println( mem.readByte(0x9001).toHexString )
+	println( mem.readByte(0x9000).toHexString )
 	val cpu = new CPU6502( mem ) //{trace = true}
 
 // 	cpu.reset

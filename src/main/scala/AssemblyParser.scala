@@ -27,15 +27,22 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 				replaceAll("""\\0""", "\u0000").
 				replaceAll("""\\\\""", "\\").
 				replaceAll("""\\'""", "'").
+				replaceAll("""\\"""", "\"").
 				replaceAll("""\\b""", "\b").
 				replaceAll("""\\f""", "\f").
 				replaceAll("""\\t""", "\t").
 				replaceAll("""\\r""", "\r").
 				replaceAll("""\\n""", "\n")
 
-	def character = """'.*'""".r ^^ {s => NumberExpressionAST( lit(s).head.toInt )}
+	def character = """'(?:[^"\x00-\x1F\x7F\\]|\\[\\'"bfnrt0])'""".r ^^ {
+		s =>
+			NumberExpressionAST( lit(s).head.toInt )
+	}
 
-	def string = """".*"""".r ^^ {s => StringExpressionAST( lit(s) )}
+	def string = """"(?:[^"\x00-\x1F\x7F\\]|\\[\\'"bfnrt0])*"""".r ^^ {
+		s =>
+			StringExpressionAST( lit(s) )
+	}
 	
 	def label = "[_0-9a-zA-Z]+".r
 	
