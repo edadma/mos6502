@@ -114,6 +114,7 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 		SP = 0x1FD
 		PC = mem.readWord( RESET_VECTOR )
 		S = 0
+		mem.clearRAM
 	}
 	
 }

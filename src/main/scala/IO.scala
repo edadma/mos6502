@@ -56,6 +56,11 @@ class VideoRAM( start: Int, width: Int, height: Int, palette: Seq[Int] ) extends
 		override def closeOperation = sys.exit
 	}
 	
+	override def clear = {
+		super.clear
+		panel.repaint
+	}
+	
 	override def writeByte( addr: Int, value: Int ) = {
 		super.writeByte( addr, value )
 		panel.repaint

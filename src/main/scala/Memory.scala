@@ -20,6 +20,12 @@ trait Addressable {
 	
 	def writeByte( addr: Int, value: Int )
 	
+	def isRAM = isInstanceOf[RAM]
+	
+	def isROM = isInstanceOf[ROM]
+	
+	def isPort = isInstanceOf[Port]
+	
 	def program( addr: Int, value: Int ) = writeByte( addr, value )
 	
 	def readWord( addr: Int ) = readByte( addr ) + (readByte( addr + 1 )<<8)
@@ -39,6 +45,10 @@ class RAM( val name: String, val start: Int, end: Int ) extends Addressable {
 	val size = end - start + 1
 		
 	protected val mem = new Array[Byte]( size )
+	
+	def clear =
+		for (i <- 0 until size)
+			mem(i) = 0
 	
 	def readByte( addr: Int ) = mem( addr - start )&0xFF
 	
@@ -135,7 +145,7 @@ class Memory extends Addressable {
 	
 	def addressable( addr: Int ) = lookup( addr ) != None
 	
-	def port( addr: Int ) = find( addr ).isInstanceOf[Port]
+	def port( addr: Int ) = find( addr ).isPort
 	
 	def remove( name: String ) {
 		regions.indexWhere( r => r.name == name ) match {
@@ -144,12 +154,12 @@ class Memory extends Addressable {
 		}
 	}
 	
-	def clearROM =
-		for (r <- regions filter (r => r.isInstanceOf[ROM]))
+	def removeROM =
+		for (r <- regions filter (r => r.isROM))
 			regions -= r
 			
 	def code = {
-		val roms = regions filter (r => r.isInstanceOf[ROM])
+		val roms = regions filter (r => r.isROM)
 		
 		if (roms isEmpty)
 			0
@@ -157,6 +167,10 @@ class Memory extends Addressable {
 			roms.head.start
 	}
 	
+	def clearRAM =
+		for (r <- regions filter (r => r.isRAM))
+			r.asInstanceOf[RAM].clear
+			
 	def add( region: Addressable ) {
 		regions find (r => r.start <= region.start && region.start < r.start + r.size) match {
 			case Some(r) => sys.error( hexWord(region.start) + ", " + hexWord(region.size) + " overlaps " + hexWord(r.start) + ", " + hexWord(r.size) )

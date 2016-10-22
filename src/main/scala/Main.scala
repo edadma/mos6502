@@ -63,14 +63,14 @@ object Main extends App with Flags {
 	def hex( s: String ) = Integer.parseInt( s, 16 )
 	
 	def load( file: String ) {
-		mem.clearROM
+		mem.removeROM
 		SREC( mem, new File(file) )
 		discur = mem.code
 		cpu.reset
 	}
 
 	def assemble( file: String ) {
-		mem.clearROM
+		mem.removeROM
 		symbols = Assembler( mem, io.Source.fromFile(file) ) map {case (s, t) => (t, s)}
 		discur = mem.code
 		cpu.reset
@@ -87,7 +87,7 @@ object Main extends App with Flags {
 		def registers {
 			out.printf( "A:%s X:%s Y:%s SP:%s PC:%s\n", hexByte(cpu.A), hexByte(cpu.X), hexByte(cpu.Y), hexWord(cpu.SP), hexWord(cpu.PC) )
 			out.printf( "N:%s V:%s B:%s D:%s I:%s Z:%s C:%s\n", Seq(N, V, B, D, I, Z, C) map (cpu.read(_).toString): _* )
-//			out.println( hexWord(cpu.PC) + ':' + (if (mem.addressable(cpu.PC)) hexByte(mem.readByte(cpu.PC)) else "--") )
+			disassemble( cpu.PC, 1 )
 		}
 	
 		def dump( start: Int, lines: Int ) {
@@ -142,6 +142,14 @@ object Main extends App with Flags {
 					return addr
 					
 				val opcode = mem.readByte( addr )
+				
+				CPU.dis6502 get opcode match {
+					case None =>
+					case Some( (mnemonic, mode) ) =>
+						if (mode != 'implicit && mode != 'accumulator && (!mem.addressable( addr + 1 ) || !mem.addressable( addr + 2 )))
+							return addr
+				}
+				
 				val label =
 					(symbols get addr match {
 						case None => ""
@@ -295,9 +303,6 @@ object Main extends App with Flags {
 			catch
 			{
 				case e: Exception =>
-// 								if (trace)
-// 									e.printStackTrace( out )
-// 								else
 					out.println( e )
 			}
 			
