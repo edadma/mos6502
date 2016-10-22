@@ -36,15 +36,15 @@ object Instructions extends Flags {
 		}
 	}
 	
-	def and( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
+	def and( cpu: CPU, addr: Int ) = cpu.loadA( cpu.flags(cpu.A&cpu.readByte(addr)) )
 	
 	def cmp( cpu: CPU, addr: Int ) = cpu.set( C, cpu.flags(cpu.A - cpu.readByte(addr)) >= 0 )
 	
-	def eor( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
+	def eor( cpu: CPU, addr: Int ) = cpu.loadA( cpu.flags(cpu.A^cpu.readByte(addr)) )
 
 	def lda( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
 
-	def ora( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
+	def ora( cpu: CPU, addr: Int ) = cpu.loadA( cpu.flags(cpu.A|cpu.readByte(addr)) )
 	
 	def sbc( cpu: CPU, addr: Int ) {
 		val src = cpu.readByte( addr )
