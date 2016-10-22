@@ -41,7 +41,7 @@ object Main extends App with Flags {
 			enterREPL = false
 			Nil
 		case "--help" :: _ =>
-			println( "MOS 6502 emulator v0.1" )
+			println( "MOS 6502 emulator v0.3" )
 			println( "Usage:  --help      display this help and exit" )
 			println( "        -l <file>   load SREC <file> and enter REPL" )
 			println( "        -le <file>  load SREC <file> and execute" )

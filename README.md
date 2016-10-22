@@ -96,7 +96,7 @@ Documentation
 -------------
 
 - [Scaladoc library documentation](http://edadma.github.io/mos6502)
-- Type `java -jar mos6502-0.2.jar --help` for executable options
+- Type `java -jar mos6502-0.3.jar --help` for executable options
 - Type `help` inside the REPL for commands
 
 Usage
@@ -104,9 +104,9 @@ Usage
 
 ### Executable
 
-If you just want to download the executable so that you can run 6502 programs or use the REPL, you can download it from [here](https://dl.bintray.com/edadma/generic/mos6502-0.2.jar). *You do not need* the Scala library for it to work because the JAR already contains all dependencies. You just need Java 7+ installed.
+If you just want to download the executable so that you can run 6502 programs or use the REPL, you can download it from [here](https://dl.bintray.com/edadma/generic/mos6502-0.3.jar). *You do not need* the Scala library for it to work because the JAR already contains all dependencies. You just need Java 7+ installed.
 
-Run it as a normal Java executable JAR with the command `java -jar mos6502-0.2.jar` in the folder where you downloaded the file.
+Run it as a normal Java executable JAR with the command `java -jar mos6502-0.3.jar` in the folder where you downloaded the file.
 
 ### Library
 
@@ -120,14 +120,14 @@ Use the following definition to use *mos6502* in your Maven project:
 	<dependency>
 		<groupId>xyz.hyperreal</groupId>
 		<artifactId>mos6502</artifactId>
-		<version>0.2</version>
+		<version>0.3</version>
 	</dependency>
 
 Add the following to your `build.sbt` file to use *mos6502* in your SBT project:
 
 	resolvers += "Hyperreal Repository" at "https://dl.bintray.com/edadma/maven"
 
-	libraryDependencies += "xyz.hyperreal" %% "mos6502" % "0.2"
+	libraryDependencies += "xyz.hyperreal" %% "mos6502" % "0.3"
 
 
 Building
