@@ -292,6 +292,23 @@
       </a>
     </span>
       
+    </li><li name="xyz.hyperreal.mos6502.Device" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="DeviceextendsAddressable"></a>
+      <a id="Device:Device"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Device.html"><span class="name">Device</span></a><span class="result"> extends <a href="Addressable.html" class="extype" name="xyz.hyperreal.mos6502.Addressable">Addressable</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@DeviceextendsAddressable" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="xyz.hyperreal.mos6502.DirectiveAST" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="DirectiveASTextendsStatementAST"></a>
       <a id="DirectiveAST:DirectiveAST"></a>
@@ -305,6 +322,23 @@
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.mos6502.package@DirectiveASTextendsStatementAST" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="xyz.hyperreal.mos6502.EquateDirectiveAST" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="EquateDirectiveASTextendsDirectiveASTwithProductwithSerializable"></a>
+      <a id="EquateDirectiveAST:EquateDirectiveAST"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="EquateDirectiveAST.html"><span class="name">EquateDirectiveAST</span></a><span class="params">(<span name="equ">equ: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="expr">expr: <a href="ExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.ExpressionAST">ExpressionAST</a></span>, <span name="value">value: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="DirectiveAST.html" class="extype" name="xyz.hyperreal.mos6502.DirectiveAST">DirectiveAST</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@EquateDirectiveASTextendsDirectiveASTwithProductwithSerializable" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -344,7 +378,7 @@
     </span>
       
     </li><li name="xyz.hyperreal.mos6502.Instruction" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="InstructionextendsVectorsAddresseswithFlags"></a>
+      <a id="Instructionextendsxyz.hyperreal.mos6502.CPU=&gt;UnitwithFlags"></a>
       <a id="Instruction:Instruction"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -352,10 +386,10 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="Instruction.html"><span class="name">Instruction</span></a><span class="result"> extends <a href="VectorsAddresses.html" class="extype" name="xyz.hyperreal.mos6502.VectorsAddresses">VectorsAddresses</a> with <a href="Flags.html" class="extype" name="xyz.hyperreal.mos6502.Flags">Flags</a></span>
+        <a href="Instruction.html"><span class="name">Instruction</span></a><span class="result"> extends (<a href="CPU.html" class="extype" name="xyz.hyperreal.mos6502.CPU">CPU</a>) ⇒ <span class="extype" name="scala.Unit">Unit</span> with <a href="Flags.html" class="extype" name="xyz.hyperreal.mos6502.Flags">Flags</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.package@InstructionextendsVectorsAddresseswithFlags" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@Instructionextendsxyz.hyperreal.mos6502.CPU=&gt;UnitwithFlags" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -530,23 +564,6 @@
       </a>
     </span>
       
-    </li><li name="xyz.hyperreal.mos6502.Port" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="PortextendsAddressable"></a>
-      <a id="Port:Port"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">abstract </span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <a href="Port.html"><span class="name">Port</span></a><span class="result"> extends <a href="Addressable.html" class="extype" name="xyz.hyperreal.mos6502.Addressable">Addressable</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.package@PortextendsAddressable" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
     </li><li name="xyz.hyperreal.mos6502.RAM" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="RAMextendsAddressable"></a>
       <a id="RAM:RAM"></a>
@@ -560,6 +577,23 @@
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.mos6502.package@RAMextendsAddressable" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="xyz.hyperreal.mos6502.RNG" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RNGextendsReadOnlyDevice"></a>
+      <a id="RNG:RNG"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="RNG.html"><span class="name">RNG</span></a><span class="result"> extends <a href="ReadOnlyDevice.html" class="extype" name="xyz.hyperreal.mos6502.ReadOnlyDevice">ReadOnlyDevice</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@RNGextendsReadOnlyDevice" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -581,19 +615,19 @@
       </a>
     </span>
       
-    </li><li name="xyz.hyperreal.mos6502.ReadOnlyPort" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="ReadOnlyPortextendsSingleAddressPort"></a>
-      <a id="ReadOnlyPort:ReadOnlyPort"></a>
+    </li><li name="xyz.hyperreal.mos6502.ReadOnlyDevice" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ReadOnlyDeviceextendsSingleAddressDevice"></a>
+      <a id="ReadOnlyDevice:ReadOnlyDevice"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="ReadOnlyPort.html"><span class="name">ReadOnlyPort</span></a><span class="result"> extends <a href="SingleAddressPort.html" class="extype" name="xyz.hyperreal.mos6502.SingleAddressPort">SingleAddressPort</a></span>
+        <a href="ReadOnlyDevice.html"><span class="name">ReadOnlyDevice</span></a><span class="result"> extends <a href="SingleAddressDevice.html" class="extype" name="xyz.hyperreal.mos6502.SingleAddressDevice">SingleAddressDevice</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.package@ReadOnlyPortextendsSingleAddressPort" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@ReadOnlyDeviceextendsSingleAddressDevice" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -683,19 +717,19 @@
       </a>
     </span>
       
-    </li><li name="xyz.hyperreal.mos6502.SingleAddressPort" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="SingleAddressPortextendsPort"></a>
-      <a id="SingleAddressPort:SingleAddressPort"></a>
+    </li><li name="xyz.hyperreal.mos6502.SingleAddressDevice" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SingleAddressDeviceextendsDevice"></a>
+      <a id="SingleAddressDevice:SingleAddressDevice"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="SingleAddressPort.html"><span class="name">SingleAddressPort</span></a><span class="result"> extends <a href="Port.html" class="extype" name="xyz.hyperreal.mos6502.Port">Port</a></span>
+        <a href="SingleAddressDevice.html"><span class="name">SingleAddressDevice</span></a><span class="result"> extends <a href="Device.html" class="extype" name="xyz.hyperreal.mos6502.Device">Device</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.package@SingleAddressPortextendsPort" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@SingleAddressDeviceextendsDevice" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -735,7 +769,7 @@
     </span>
       
     </li><li name="xyz.hyperreal.mos6502.StdIOChar" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="StdIOCharextendsSingleAddressPort"></a>
+      <a id="StdIOCharextendsSingleAddressDevice"></a>
       <a id="StdIOChar:StdIOChar"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -743,16 +777,33 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="StdIOChar.html"><span class="name">StdIOChar</span></a><span class="result"> extends <a href="SingleAddressPort.html" class="extype" name="xyz.hyperreal.mos6502.SingleAddressPort">SingleAddressPort</a></span>
+        <a href="StdIOChar.html"><span class="name">StdIOChar</span></a><span class="result"> extends <a href="SingleAddressDevice.html" class="extype" name="xyz.hyperreal.mos6502.SingleAddressDevice">SingleAddressDevice</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.package@StdIOCharextendsSingleAddressPort" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@StdIOCharextendsSingleAddressDevice" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="xyz.hyperreal.mos6502.StdIOHex" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="StdIOHexextendsSingleAddressDevice"></a>
+      <a id="StdIOHex:StdIOHex"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="StdIOHex.html"><span class="name">StdIOHex</span></a><span class="result"> extends <a href="SingleAddressDevice.html" class="extype" name="xyz.hyperreal.mos6502.SingleAddressDevice">SingleAddressDevice</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@StdIOHexextendsSingleAddressDevice" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       
     </li><li name="xyz.hyperreal.mos6502.StdIOInt" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="StdIOIntextendsSingleAddressPort"></a>
+      <a id="StdIOIntextendsSingleAddressDevice"></a>
       <a id="StdIOInt:StdIOInt"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -760,10 +811,10 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="StdIOInt.html"><span class="name">StdIOInt</span></a><span class="result"> extends <a href="SingleAddressPort.html" class="extype" name="xyz.hyperreal.mos6502.SingleAddressPort">SingleAddressPort</a></span>
+        <a href="StdIOInt.html"><span class="name">StdIOInt</span></a><span class="result"> extends <a href="SingleAddressDevice.html" class="extype" name="xyz.hyperreal.mos6502.SingleAddressDevice">SingleAddressDevice</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.package@StdIOIntextendsSingleAddressPort" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@StdIOIntextendsSingleAddressDevice" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -820,7 +871,7 @@
     </span>
       
     </li><li name="xyz.hyperreal.mos6502.VideoRAM" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="VideoRAMextendsRAM"></a>
+      <a id="VideoRAMextendsRAMwithDevice"></a>
       <a id="VideoRAM:VideoRAM"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -828,27 +879,27 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="VideoRAM.html"><span class="name">VideoRAM</span></a><span class="result"> extends <a href="RAM.html" class="extype" name="xyz.hyperreal.mos6502.RAM">RAM</a></span>
+        <a href="VideoRAM.html"><span class="name">VideoRAM</span></a><span class="result"> extends <a href="RAM.html" class="extype" name="xyz.hyperreal.mos6502.RAM">RAM</a> with <a href="Device.html" class="extype" name="xyz.hyperreal.mos6502.Device">Device</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.package@VideoRAMextendsRAM" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@VideoRAMextendsRAMwithDevice" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       
-    </li><li name="xyz.hyperreal.mos6502.WriteOnlyPort" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="WriteOnlyPortextendsSingleAddressPort"></a>
-      <a id="WriteOnlyPort:WriteOnlyPort"></a>
+    </li><li name="xyz.hyperreal.mos6502.WriteOnlyDevice" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="WriteOnlyDeviceextendsSingleAddressDevice"></a>
+      <a id="WriteOnlyDevice:WriteOnlyDevice"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="WriteOnlyPort.html"><span class="name">WriteOnlyPort</span></a><span class="result"> extends <a href="SingleAddressPort.html" class="extype" name="xyz.hyperreal.mos6502.SingleAddressPort">SingleAddressPort</a></span>
+        <a href="WriteOnlyDevice.html"><span class="name">WriteOnlyDevice</span></a><span class="result"> extends <a href="SingleAddressDevice.html" class="extype" name="xyz.hyperreal.mos6502.SingleAddressDevice">SingleAddressDevice</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.package@WriteOnlyPortextendsSingleAddressPort" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@WriteOnlyDeviceextendsSingleAddressDevice" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -890,23 +941,6 @@
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.mos6502.package@Assembler" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
-    </li><li name="xyz.hyperreal.mos6502.BRK" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="BRK"></a>
-      <a id="BRK:BRK"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="BRK$.html"><span class="name">BRK</span></a><span class="result"> extends <a href="Instruction.html" class="extype" name="xyz.hyperreal.mos6502.Instruction">Instruction</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.package@BRK" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -971,7 +1005,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="Instructions$.html"><span class="name">Instructions</span></a><span class="result"> extends <a href="Flags.html" class="extype" name="xyz.hyperreal.mos6502.Flags">Flags</a></span>
+        <a href="Instructions$.html"><span class="name">Instructions</span></a><span class="result"> extends <a href="Flags.html" class="extype" name="xyz.hyperreal.mos6502.Flags">Flags</a> with <a href="VectorsAddresses.html" class="extype" name="xyz.hyperreal.mos6502.VectorsAddresses">VectorsAddresses</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.mos6502.package@Instructions" title="Permalink" target="_top">
@@ -1098,6 +1132,23 @@
       </a>
     </span>
       
+    </li><li name="xyz.hyperreal.mos6502#hex" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="hex(s:String):Int"></a>
+      <a id="hex(String):Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">hex</span><span class="params">(<span name="s">s: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@hex(s:String):Int" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="xyz.hyperreal.mos6502#hexByte" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="hexByte(a:Int):String"></a>
       <a id="hexByte(Int):String"></a>
@@ -1128,6 +1179,23 @@
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.mos6502.package@hexWord(a:Int):String" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="xyz.hyperreal.mos6502#ishex" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ishex(s:String):Boolean"></a>
+      <a id="ishex(String):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ishex</span><span class="params">(<span name="s">s: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@ishex(s:String):Boolean" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>

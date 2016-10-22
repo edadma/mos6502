@@ -45,13 +45,13 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">Instructions</span><span class="result"> extends <a href="Flags.html" class="extype" name="xyz.hyperreal.mos6502.Flags">Flags</a></span>
+        <span class="name">Instructions</span><span class="result"> extends <a href="Flags.html" class="extype" name="xyz.hyperreal.mos6502.Flags">Flags</a> with <a href="VectorsAddresses.html" class="extype" name="xyz.hyperreal.mos6502.VectorsAddresses">VectorsAddresses</a></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="Flags.html" class="extype" name="xyz.hyperreal.mos6502.Flags">Flags</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="VectorsAddresses.html" class="extype" name="xyz.hyperreal.mos6502.VectorsAddresses">VectorsAddresses</a>, <a href="Flags.html" class="extype" name="xyz.hyperreal.mos6502.Flags">Flags</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -69,7 +69,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="xyz.hyperreal.mos6502.Instructions"><span>Instructions</span></li><li class="in" name="xyz.hyperreal.mos6502.Flags"><span>Flags</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="xyz.hyperreal.mos6502.Instructions"><span>Instructions</span></li><li class="in" name="xyz.hyperreal.mos6502.VectorsAddresses"><span>VectorsAddresses</span></li><li class="in" name="xyz.hyperreal.mos6502.Flags"><span>Flags</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -162,6 +162,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Flags.html" class="extype" name="xyz.hyperreal.mos6502.Flags">Flags</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.mos6502.VectorsAddresses#BRK_VECTOR" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="BRK_VECTOR:Int"></a>
+      <a id="BRK_VECTOR:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">BRK_VECTOR</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.Instructions$@BRK_VECTOR:Int" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="VectorsAddresses.html" class="extype" name="xyz.hyperreal.mos6502.VectorsAddresses">VectorsAddresses</a></dd></dl></div>
     </li><li name="xyz.hyperreal.mos6502.Flags#C" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="C:Int"></a>
       <a id="C:Int"></a>
@@ -230,6 +247,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Flags.html" class="extype" name="xyz.hyperreal.mos6502.Flags">Flags</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.mos6502.VectorsAddresses#RESET_VECTOR" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="RESET_VECTOR:Int"></a>
+      <a id="RESET_VECTOR:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">RESET_VECTOR</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.Instructions$@RESET_VECTOR:Int" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="VectorsAddresses.html" class="extype" name="xyz.hyperreal.mos6502.VectorsAddresses">VectorsAddresses</a></dd></dl></div>
     </li><li name="xyz.hyperreal.mos6502.Flags#V" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="V:Int"></a>
       <a id="V:Int"></a>
@@ -345,6 +379,23 @@
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.mos6502.Instructions$@bit(cpu:xyz.hyperreal.mos6502.CPU,addr:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="xyz.hyperreal.mos6502.Instructions#brk" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="brk:xyz.hyperreal.mos6502.CPU=&gt;Unit"></a>
+      <a id="brk:(CPU)⇒Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">brk</span><span class="result">: (<a href="CPU.html" class="extype" name="xyz.hyperreal.mos6502.CPU">CPU</a>) ⇒ <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.Instructions$@brk:xyz.hyperreal.mos6502.CPU=&gt;Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1408,7 +1459,9 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="xyz.hyperreal.mos6502.Flags">
+        <div class="parent" name="xyz.hyperreal.mos6502.VectorsAddresses">
+              <h3>Inherited from <a href="VectorsAddresses.html" class="extype" name="xyz.hyperreal.mos6502.VectorsAddresses">VectorsAddresses</a></h3>
+            </div><div class="parent" name="xyz.hyperreal.mos6502.Flags">
               <h3>Inherited from <a href="Flags.html" class="extype" name="xyz.hyperreal.mos6502.Flags">Flags</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>

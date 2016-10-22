@@ -51,7 +51,7 @@
       
           <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="Instruction.html" class="extype" name="xyz.hyperreal.mos6502.Instruction">Instruction</a>, <a href="Flags.html" class="extype" name="xyz.hyperreal.mos6502.Flags">Flags</a>, <a href="VectorsAddresses.html" class="extype" name="xyz.hyperreal.mos6502.VectorsAddresses">VectorsAddresses</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="Instruction.html" class="extype" name="xyz.hyperreal.mos6502.Instruction">Instruction</a>, <a href="Flags.html" class="extype" name="xyz.hyperreal.mos6502.Flags">Flags</a>, (<a href="CPU.html" class="extype" name="xyz.hyperreal.mos6502.CPU">CPU</a>) ⇒ <span class="extype" name="scala.Unit">Unit</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -69,7 +69,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="xyz.hyperreal.mos6502.AddressModeInstruction"><span>AddressModeInstruction</span></li><li class="in" name="xyz.hyperreal.mos6502.Instruction"><span>Instruction</span></li><li class="in" name="xyz.hyperreal.mos6502.Flags"><span>Flags</span></li><li class="in" name="xyz.hyperreal.mos6502.VectorsAddresses"><span>VectorsAddresses</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="xyz.hyperreal.mos6502.AddressModeInstruction"><span>AddressModeInstruction</span></li><li class="in" name="xyz.hyperreal.mos6502.Instruction"><span>Instruction</span></li><li class="in" name="xyz.hyperreal.mos6502.Flags"><span>Flags</span></li><li class="in" name="scala.Function1"><span>Function1</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -89,7 +89,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="xyz.hyperreal.mos6502.AddressModeInstruction#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(computation:(xyz.hyperreal.mos6502.CPU,Int)=&gt;Unit,mode:xyz.hyperreal.mos6502.CPU=&gt;Int):xyz.hyperreal.mos6502.AddressModeInstruction"></a>
+      <a id="&lt;init&gt;(compute:(xyz.hyperreal.mos6502.CPU,Int)=&gt;Unit,mode:xyz.hyperreal.mos6502.CPU=&gt;Int):xyz.hyperreal.mos6502.AddressModeInstruction"></a>
       <a id="&lt;init&gt;:AddressModeInstruction"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -97,10 +97,10 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">AddressModeInstruction</span><span class="params">(<span name="computation">computation: (<a href="CPU.html" class="extype" name="xyz.hyperreal.mos6502.CPU">CPU</a>, <span class="extype" name="scala.Int">Int</span>) ⇒ <span class="extype" name="scala.Unit">Unit</span></span>, <span name="mode">mode: (<a href="CPU.html" class="extype" name="xyz.hyperreal.mos6502.CPU">CPU</a>) ⇒ <span class="extype" name="scala.Int">Int</span></span>)</span>
+        <span class="name">AddressModeInstruction</span><span class="params">(<span name="compute">compute: (<a href="CPU.html" class="extype" name="xyz.hyperreal.mos6502.CPU">CPU</a>, <span class="extype" name="scala.Int">Int</span>) ⇒ <span class="extype" name="scala.Unit">Unit</span></span>, <span name="mode">mode: (<a href="CPU.html" class="extype" name="xyz.hyperreal.mos6502.CPU">CPU</a>) ⇒ <span class="extype" name="scala.Int">Int</span></span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.AddressModeInstruction@&lt;init&gt;(computation:(xyz.hyperreal.mos6502.CPU,Int)=&gt;Unit,mode:xyz.hyperreal.mos6502.CPU=&gt;Int):xyz.hyperreal.mos6502.AddressModeInstruction" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.AddressModeInstruction@&lt;init&gt;(compute:(xyz.hyperreal.mos6502.CPU,Int)=&gt;Unit,mode:xyz.hyperreal.mos6502.CPU=&gt;Int):xyz.hyperreal.mos6502.AddressModeInstruction" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -182,23 +182,6 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Flags.html" class="extype" name="xyz.hyperreal.mos6502.Flags">Flags</a></dd></dl></div>
-    </li><li name="xyz.hyperreal.mos6502.VectorsAddresses#BRK_VECTOR" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="BRK_VECTOR:Int"></a>
-      <a id="BRK_VECTOR:Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">BRK_VECTOR</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.AddressModeInstruction@BRK_VECTOR:Int" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="VectorsAddresses.html" class="extype" name="xyz.hyperreal.mos6502.VectorsAddresses">VectorsAddresses</a></dd></dl></div>
     </li><li name="xyz.hyperreal.mos6502.Flags#C" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="C:Int"></a>
       <a id="C:Int"></a>
@@ -267,23 +250,6 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Flags.html" class="extype" name="xyz.hyperreal.mos6502.Flags">Flags</a></dd></dl></div>
-    </li><li name="xyz.hyperreal.mos6502.VectorsAddresses#RESET_VECTOR" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="RESET_VECTOR:Int"></a>
-      <a id="RESET_VECTOR:Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">RESET_VECTOR</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.AddressModeInstruction@RESET_VECTOR:Int" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="VectorsAddresses.html" class="extype" name="xyz.hyperreal.mos6502.VectorsAddresses">VectorsAddresses</a></dd></dl></div>
     </li><li name="xyz.hyperreal.mos6502.Flags#V" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="V:Int"></a>
       <a id="V:Int"></a>
@@ -318,6 +284,43 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Flags.html" class="extype" name="xyz.hyperreal.mos6502.Flags">Flags</a></dd></dl></div>
+    </li><li name="scala.Function1#andThen" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="andThen[A](g:R=&gt;A):T1=&gt;A"></a>
+      <a id="andThen[A]((Unit)⇒A):(CPU)⇒A"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">andThen</span><span class="tparams">[<span name="A">A</span>]</span><span class="params">(<span name="g">g: (<span class="extype" name="scala.Unit">Unit</span>) ⇒ <span class="extype" name="scala.Function1.andThen.A">A</span></span>)</span><span class="result">: (<a href="CPU.html" class="extype" name="xyz.hyperreal.mos6502.CPU">CPU</a>) ⇒ <span class="extype" name="scala.Function1.andThen.A">A</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.AddressModeInstruction@andThen[A](g:R=&gt;A):T1=&gt;A" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Function1</dd><dt>Annotations</dt><dd>
+                <span class="name">@unspecialized</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li name="xyz.hyperreal.mos6502.AddressModeInstruction#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="apply(cpu:xyz.hyperreal.mos6502.CPU):Unit"></a>
+      <a id="apply(CPU):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">apply</span><span class="params">(<span name="cpu">cpu: <a href="CPU.html" class="extype" name="xyz.hyperreal.mos6502.CPU">CPU</a></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.AddressModeInstruction@apply(cpu:xyz.hyperreal.mos6502.CPU):Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.mos6502.AddressModeInstruction">AddressModeInstruction</a> → Function1</dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -356,6 +359,26 @@
       
       <span class="defval" name="classOf[java.lang.CloneNotSupportedException]">...</span>
     </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.Function1#compose" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="compose[A&lt;:&lt;?&gt;](g:&lt;?&gt;):A=&gt;R"></a>
+      <a id="compose[A]((A)⇒CPU):(A)⇒Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">compose</span><span class="tparams">[<span name="A">A</span>]</span><span class="params">(<span name="g">g: (<span class="extype" name="scala.Function1.compose.A">A</span>) ⇒ <a href="CPU.html" class="extype" name="xyz.hyperreal.mos6502.CPU">CPU</a></span>)</span><span class="result">: (<span class="extype" name="scala.Function1.compose.A">A</span>) ⇒ <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.AddressModeInstruction@compose[A](g:A=&gt;T1):A=&gt;R" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Function1</dd><dt>Annotations</dt><dd>
+                <span class="name">@unspecialized</span><span class="args">()</span>
               
         </dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -517,23 +540,6 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="xyz.hyperreal.mos6502.AddressModeInstruction#perform" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="perform(cpu:xyz.hyperreal.mos6502.CPU):Boolean"></a>
-      <a id="perform(CPU):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">perform</span><span class="params">(<span name="cpu">cpu: <a href="CPU.html" class="extype" name="xyz.hyperreal.mos6502.CPU">CPU</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.AddressModeInstruction@perform(cpu:xyz.hyperreal.mos6502.CPU):Boolean" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.mos6502.AddressModeInstruction">AddressModeInstruction</a> → <a href="Instruction.html" class="extype" name="xyz.hyperreal.mos6502.Instruction">Instruction</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -551,7 +557,7 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="scala.Function1#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>
       <h4 class="signature">
@@ -567,7 +573,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Function1 → AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -650,8 +656,8 @@
               <h3>Inherited from <a href="Instruction.html" class="extype" name="xyz.hyperreal.mos6502.Instruction">Instruction</a></h3>
             </div><div class="parent" name="xyz.hyperreal.mos6502.Flags">
               <h3>Inherited from <a href="Flags.html" class="extype" name="xyz.hyperreal.mos6502.Flags">Flags</a></h3>
-            </div><div class="parent" name="xyz.hyperreal.mos6502.VectorsAddresses">
-              <h3>Inherited from <a href="VectorsAddresses.html" class="extype" name="xyz.hyperreal.mos6502.VectorsAddresses">VectorsAddresses</a></h3>
+            </div><div class="parent" name="scala.Function1">
+              <h3>Inherited from (<a href="CPU.html" class="extype" name="xyz.hyperreal.mos6502.CPU">CPU</a>) ⇒ <span class="extype" name="scala.Unit">Unit</span></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
