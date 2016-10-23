@@ -169,6 +169,9 @@ object Main extends App with Flags {
 						case Some( l ) => l
 					})
 					
+				if (cpu.breakpoints( addr ))
+					out.print( Console.BLUE_B )
+					
 				out.print( hexWord(addr) + "  " + hexByte(opcode) + " " )
 				addr += 1
 				
@@ -203,7 +206,7 @@ object Main extends App with Flags {
 						out.print( display )
 				}
 
-				out.println
+				out.println( Console.RESET )
 			}
 			
 			addr
@@ -233,7 +236,17 @@ object Main extends App with Flags {
 						assemble( com(1) )
 						out.println( mem )
 					case "breakpoint"|"b" =>
+						if (com.length > 1) {
+							if (com(1) == "--")
+								cpu.breakpoints = Set[Int]()
+							else if (com(1) startsWith "-")
+								cpu.breakpoints -= target( com(1) drop 1 )
+							else
+								cpu.breakpoints += target( com(1) )
+						}
 						
+						println( (cpu.breakpoints.toList map (b => hexWord(b) + (if (reverseSymbols contains b) "/" + reverseSymbols(b) else "")) sorted)
+							mkString " " )
 					case "disassemble"|"u" =>
 						if (com.length > 1)
 							discur = target( com(1) )
@@ -255,10 +268,10 @@ object Main extends App with Flags {
 						cpu.run
 						registers
 					case "help"|"h" =>
-//						|breakpoint (b) <addr>*        set/clear breakpoint at <addr>
 						"""
 						|assemble (a) <file>            clear ROM, assemble <file>, and reset CPU
 						|assemble (a) <org>             clear ROM, assemble REPL input at <org>, and reset CPU
+						|breakpoint (b) <addr>*         set/clear breakpoint at <addr>
 						|disassemble (u) [<addr>*]      print disassembled code at <addr> or where left off
 						|drop (dr) <region>             drop memory <region>
 						|dump (d) [<addr>*]             print memory at <addr> or where left off

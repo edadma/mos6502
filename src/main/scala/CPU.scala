@@ -8,6 +8,7 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 	val opcodes: Seq[Instruction]
 	
 	var init = false
+	var breakpoints = Set[Int]()
 	
 	var A = 0
 	var X = 0
@@ -110,7 +111,7 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 			printf( "A:%s X:%s Y:%s SP:%s PC:%s N:%d V:%d B:%d D:%d I:%d Z:%d C:%d\n\n", hexByte(A), hexByte(X), hexByte(Y), hexWord(SP), hexWord(PC),
 							read(N), read(V), read(B), read(D), read(I), read(Z), read(C) )
 		
-		cont
+		cont && !breakpoints.contains( PC )
 	}
 	
 	def run = while (step) {}
