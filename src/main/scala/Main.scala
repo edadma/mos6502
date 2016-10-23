@@ -274,6 +274,7 @@ object Main extends App with Flags {
 						|step (s) [<addr>*]             execute only next instruction at current PC or <addr>
 						|save (sa) <file>               save all ROM contents to SREC file
 						|symbols (sy)                   print symbol table
+						|symbols (sy) <symbol> <val>*   add <symbol> with associated <val>ue to symbol table
 						|* can either be a hexadecimal value or label (optionally followed by a colon)
 						""".trim.stripMargin.lines foreach out.println
 					case "load"|"l" =>
@@ -322,7 +323,10 @@ object Main extends App with Flags {
 					case "save"|"sa" =>
 						save( com(1) )
 					case "symbols"|"sy" =>
-						out.println( symbols )
+						if (com.length > 2)
+							symbols += (com(1) -> target( com(2) ))
+						else
+							out.println( symbols )
 					case "" =>
 					case c => out.println( "unrecognized command: " + c )
 				}
