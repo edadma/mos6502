@@ -12,7 +12,8 @@ object Main extends App with Flags {
 	
 	var dumpcur = 0
 	var discur = 0
-	var symbols = Map[Int, String]()
+	var symbols = Map[String, Int]()
+	var reverseSymbols = Map[Int, String]()
 	
 	mem add new RAM( "zp", 0x0000, 0x00FF )
 	mem add new RAM( "stack", 0x0100, 0x01FF )
@@ -82,7 +83,8 @@ object Main extends App with Flags {
 	
 	def assemble( file: String ) {
 		mem.removeROM
-		symbols = Assembler( mem, io.Source.fromFile(file) ) map {case (s, t) => (t, s)}
+		symbols = Assembler( mem, io.Source.fromFile(file) )
+		reverseSymbols = symbols map {case (s, t) => (t, s)}
 		discur = mem.code
 		cpu.reset
 	}
@@ -140,7 +142,7 @@ object Main extends App with Flags {
 		}
 		
 		def reference( target: Int, zp: Boolean ) =
-			symbols get target match {
+			reverseSymbols get target match {
 				case None => "$" + (if (zp) hexByte( target ) else hexWord( target ))
 				case Some( l ) => l
 			}
@@ -162,7 +164,7 @@ object Main extends App with Flags {
 				}
 				
 				val label =
-					(symbols get addr match {
+					(reverseSymbols get addr match {
 						case None => ""
 						case Some( l ) => l
 					})
@@ -207,7 +209,16 @@ object Main extends App with Flags {
 			addr
 		}
 		
-		out.println( "MOS 6502 emulator v0.1" )
+		def target( ref: String ) =
+			if (isHex( ref ))
+				hex( ref )
+			else
+				symbols get (if (ref endsWith ":") ref dropRight 1 else ref) match {
+					case None => sys.error( "unknown label: " + ref )
+					case Some( t ) => t
+				}
+				
+		out.println( "MOS 6502 emulator v0.3" )
 		out.println( "Type 'help' for list of commands." )
 		out.println
 		
@@ -225,7 +236,7 @@ object Main extends App with Flags {
 						
 					case "disassemble"|"u" =>
 						if (com.length > 1)
-							discur = hex( com(1) )
+							discur = target( com(1) )
 							
 						discur = disassemble( discur, 15 )
 					case "drop"|"dr" =>
@@ -233,44 +244,44 @@ object Main extends App with Flags {
 						out.println( mem )
 					case "dump"|"d" =>
 						if (com.length > 1)
-							dumpcur = hex( com(1) )
+							dumpcur = target( com(1) )
 							
 						dump( dumpcur, 8 )
 						dumpcur = (dumpcur + 16*8) min 0x10000
 					case "execute"|"e" =>
 						if (com.length > 1)
-							cpu.PC = hex( com(1) )
+							cpu.PC = target( com(1) )
 						
 						cpu.run
 						registers
 					case "help"|"h" =>
 //						|breakpoint (b) <addr>*        set/clear breakpoint at <addr>
 						"""
-						|assemble (a) <file>           clear ROM, assemble <file>, and reset CPU
-						|assemble (a) <org>            clear ROM, assemble REPL input at <org>, and reset CPU
-						|disassemble (u) [<addr>*]     print disassembled code at <addr> or where left off
-						|drop (dr) <region>            drop memory <region>
-						|dump (d) [<addr>*]            print memory at <addr> or where left off
-						|execute (e) [<addr>*]         execute instructions starting from current PC or <addr>
-						|help (h)                      print this summary
-						|load (l) <file>               clear ROM, load SREC <file>, and reset CPU
-						|memory (m)                    print memory map
-						|memory (m) <addr>* <data>...  write <data> (space separated bytes) to memory at <addr>
-						|quit (q)                      exit the REPL
-						|registers (r)                 print CPU registers
-						|registers (r) <reg> <val>     set CPU <reg>ister to <val>ue
-						|reset (re)                    reset CPU registers setting PC from reset vector
-						|step (s) [<addr>*]            execute only next instruction at current PC or <addr>
-						|save (sa) <file>              save all ROM contents to SREC file
-						|* <addr> can either be a hexadecimal value or label
+						|assemble (a) <file>            clear ROM, assemble <file>, and reset CPU
+						|assemble (a) <org>             clear ROM, assemble REPL input at <org>, and reset CPU
+						|disassemble (u) [<addr>*]      print disassembled code at <addr> or where left off
+						|drop (dr) <region>             drop memory <region>
+						|dump (d) [<addr>*]             print memory at <addr> or where left off
+						|execute (e) [<addr>*]          execute instructions starting from current PC or <addr>
+						|help (h)                       print this summary
+						|load (l) <file>                clear ROM, load SREC <file>, and reset CPU
+						|memory (m)                     print memory map
+						|memory (m) <addr>* <data>*...  write <data> (space separated bytes) to memory at <addr>
+						|quit (q)                       exit the REPL
+						|registers (r)                  print CPU registers
+						|registers (r) <reg> <val>*     set CPU <reg>ister to <val>ue
+						|reset (re)                     reset CPU registers setting PC from reset vector
+						|step (s) [<addr>*]             execute only next instruction at current PC or <addr>
+						|save (sa) <file>               save all ROM contents to SREC file
+						|* can either be a hexadecimal value or label (optionally followed by a colon)
 						""".trim.stripMargin.lines foreach out.println
 					case "load"|"l" =>
 						load( com(1) )
 					case "memory"|"m" =>
 						if (com.length > 2) {
-							val addr = hex( com(1) )
+							val addr = target( com(1) )
 							
-							for ((d, i) <- com drop 2 map (hex) zipWithIndex)
+							for ((d, i) <- com drop 2 map (target) zipWithIndex)
 								mem.program( addr + i, d )
 								
 							dump( addr, (com.length - 2 + addr%16)/16 + 1 )
@@ -279,7 +290,7 @@ object Main extends App with Flags {
 					case "quit"|"q" => sys.exit
 					case "registers"|"r" =>
 						if (com.length > 2) {
-							val n = hex( com(2) )
+							val n = target( com(2) )
 							
 							com(1).toLowerCase match {
 								case "a" => cpu.A = n
@@ -303,7 +314,7 @@ object Main extends App with Flags {
 						discur = mem.code
 					case "step"|"s" =>
 						if (com.length > 1)
-							cpu.PC = hex( com(1) )
+							cpu.PC = target( com(1) )
 							
 						cpu.step
 						registers
