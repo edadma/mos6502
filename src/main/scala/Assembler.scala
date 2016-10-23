@@ -51,9 +51,14 @@ object Assembler {
 		
 		def defineHere( symbol: String ) = define( symbol, if (pointerExact) Some(pointer) else None )
 		
-		def eval( expr: ExpressionAST, mustknow: Boolean ): Know[Int] =
+		def ieval( expr: ExpressionAST, mustknow: Boolean ) = eval( expr, mustknow ).asInstanceOf[Know[Int]]
+		
+		def seval( expr: ExpressionAST, mustknow: Boolean ) = eval( expr, mustknow ).asInstanceOf[Know[String]]
+		
+		def eval( expr: ExpressionAST, mustknow: Boolean ): Know[Any] =
 			expr match {
 				case NumberExpressionAST( n ) => Known( n )
+				case StringExpressionAST( s ) => Known( s )
 				case ReferenceExpressionAST( r ) =>
 					symbols get r match {
 						case None|Some( None ) if mustknow => problem( "undefined reference: " + r )
@@ -61,8 +66,8 @@ object Assembler {
 						case Some( None ) => Knowable
 						case Some( Some(a) ) => Known( a )
 					}
-				case UnaryExpressionAST( ">", expr ) => eval( expr, mustknow ) map (_ >> 8)
-				case UnaryExpressionAST( "<", expr ) => eval( expr, mustknow ) map (_&0xFF)
+				case UnaryExpressionAST( ">", expr ) => ieval( expr, mustknow ) map (_ >> 8)
+				case UnaryExpressionAST( "<", expr ) => ieval( expr, mustknow ) map (_&0xFF)
 			}
 		
 		def dblength( data: Seq[ExpressionAST] ) = {
@@ -78,7 +83,7 @@ object Assembler {
 			length
 		}
 		
-		def pass1 {
+		def pass1( ast: SourceAST ) {
 			
 			pointer = 0
 			pointerExact = true
@@ -89,7 +94,7 @@ object Assembler {
 					dir.definite = defineHere( label )
 				case LabelDirectiveAST( _, true ) =>
 				case OriginDirectiveAST( expr ) =>
-					eval( expr, false ) match {
+					ieval( expr, false ) match {
 						case Known( org ) =>
 							check( org < 0 || org >= 0x10000, "origin must be less than 0x10000" )
 							pointer = org
@@ -97,12 +102,17 @@ object Assembler {
 						case Knowable|Unknown => problem( "origin must be known when the directive is encountered" )
 					}
 				case dir@EquateDirectiveAST( equ, expr, None ) =>
-					eval( expr, false ) match {
+					ieval( expr, false ) match {
 						case Known( v ) =>
 							dir.value = Some( v )
 							define( equ, dir.value )
 						case Knowable|Unknown => problem( "equate must be known when the directive is encountered" )
 					}
+				case inc@IncludeDirectiveAST( file, ast ) =>
+					if (ast == None)
+						inc.ast = Some( new AssemblyParser(io.Source.fromFile(seval(file, true).get)).parse )
+						
+					pass1( inc.ast.get )
 				case InstructionAST( _, _, Some(size) ) =>
 					pointer += size
 				case inst@InstructionAST( _, SimpleModeAST(_), None ) =>
@@ -118,7 +128,7 @@ object Assembler {
 					inst.size = Some( 2 )
 					pointer += 2
 		case inst@InstructionAST( _, mode@OperandModeAST(_, expr, _), None ) =>
-					eval( expr, false ) match {
+					ieval( expr, false ) match {
 						case Known( a ) =>
 							if (a < 0x100) {
 								inst.size = Some( 2 )
@@ -144,16 +154,16 @@ object Assembler {
 				case ReserveWordAST( None ) =>
 					pointer += 2
 				case ReserveByteAST( Some(count) ) =>
-					pointer += eval( count, true ).get
+					pointer += ieval( count, true ).get
 				case ReserveWordAST( Some(count) ) =>
-					pointer += eval( count, true ).get*2
+					pointer += ieval( count, true ).get*2
 			}
 		
 			if (!allknown)
-				pass1
+				pass1( ast )
 		}
 		
-		def pass2 = {
+		def pass2( ast: SourceAST ): AssemblerResult = {
 			
 			val segments = new ListBuffer[(Int, List[Byte])]
 			val segment = new ListBuffer[Byte]
@@ -182,8 +192,10 @@ object Assembler {
 			ast.statements foreach {
 				case OriginDirectiveAST( expr ) =>
 					append
-					pointer = eval( expr, false ).get
+					pointer = ieval( expr, false ).get
 					base = pointer
+				case IncludeDirectiveAST( _, ast ) =>
+					pass2( ast.get )
 				case InstructionAST( mnemonic, SimpleModeAST(mode), _ ) =>
 					pointer += 1
 					opcode( mnemonic, mode )
@@ -191,14 +203,14 @@ object Assembler {
 					pointer += 3
 					opcode( mnemonic, mode )					
 					word( operand match {
-						case None => eval( expr, true ).get
+						case None => ieval( expr, true ).get
 						case Some( t ) => t
 					} )
 				case InstructionAST( mnemonic, OperandModeAST('indirect, _, _), _ ) =>
 					problem( "illegal instruction: " + (mnemonic, 'indirect) )
 				case InstructionAST( mnemonic@("bcc"|"bcs"|"beq"|"bmi"|"bne"|"bpl"|"bvc"|"bvs"), OperandModeAST(_, expr, operand), _ ) =>
 					val target = operand match {
-						case None => eval( expr, true ).get
+						case None => ieval( expr, true ).get
 						case Some( t ) => t
 					}
 					
@@ -209,12 +221,12 @@ object Assembler {
 					pointer += 2
 					opcode( mnemonic, mode )
 					segment += (operand match {
-						case None => eval( expr, true ).get
+						case None => ieval( expr, true ).get
 						case Some( t ) => t
 					}).toByte
 				case InstructionAST( mnemonic, OperandModeAST(mode, expr, operand), _ ) =>
 					val o = operand match {
-						case None => eval( expr, true ).get
+						case None => ieval( expr, true ).get
 						case Some( t ) => t
 					}
 					
@@ -237,17 +249,18 @@ object Assembler {
 				case InstructionAST( mnemonic, mode, _ ) =>
 					problem( "pass2: uncaught instruction: " + (mnemonic, mode) )
 				case DataByteAST( data ) =>
-					data foreach {
-						case StringExpressionAST( s ) =>
-							segment ++= s.getBytes
-						case expr =>
-							segment += eval( expr, true ).get.toByte
-					}
+					for (d <- data)
+						eval( d, true ).get match {
+							case s: String =>
+								segment ++= s.getBytes
+							case v: Int =>
+								segment += v.toByte
+						}
 					
 					pointer += dblength( data )
 				case DataWordAST( data ) =>
 					for (d <- data)
-						word( eval(d, true).get )
+						word( ieval(d, true).get )
 					
 					pointer += data.length*2
 				case _ =>
@@ -258,8 +271,8 @@ object Assembler {
 			
 		}
 		
-		pass1
-		pass2
+		pass1( ast )
+		pass2( ast )
 		
 	}
 	

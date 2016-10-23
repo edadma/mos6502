@@ -23,7 +23,7 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 			)
 	}
 
-	def lit( s: String ) = s.substring(1, s.length - 1).
+	def escape( s: String ) = s.substring(1, s.length - 1).
 				replaceAll("""\\0""", "\u0000").
 				replaceAll("""\\\\""", "\\").
 				replaceAll("""\\'""", "'").
@@ -36,12 +36,12 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 
 	def character = """'(?:[^"\x00-\x1F\x7F\\]|\\[\\'"bfnrt0])'""".r ^^ {
 		s =>
-			NumberExpressionAST( lit(s).head.toInt )
+			NumberExpressionAST( escape(s).head.toInt )
 	}
 
 	def string = """"(?:[^"\x00-\x1F\x7F\\]|\\[\\'"bfnrt0])*"""".r ^^ {
 		s =>
-			StringExpressionAST( lit(s) )
+			StringExpressionAST( escape(s) )
 	}
 	
 	def label = "[_0-9a-zA-Z]+:?".r ^^ {
@@ -75,7 +75,8 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 		">" ~> expression ^^ {UnaryExpressionAST( ">", _ )} |
 		number |
 		character |
-		reference
+		reference |
+		string
 	
 	def mode =
 		"#" ~> expression ^^ {OperandModeAST( 'immediate, _ )} |
@@ -100,12 +101,13 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 		}
 	
 	def directive =
+		("include" ~ space) ~> expression ^^ {f => List(IncludeDirectiveAST( f ))} |
 		(space ~ "org|ORG|.org|.ORG".r ~ space) ~> expression ^^ {e => List( OriginDirectiveAST(e) )} |
 		(label <~ (space ~ "equ|EQU|=".r ~ space)) ~ expression ^^ {
 			case equ ~ expr =>
 				List( EquateDirectiveAST(equ, expr) )
 			} |
-		(opt(label) <~ (space ~ "db|DB|dcb|DCB|.byte|.BYTE".r ~ space)) ~ rep1sep(expression | string, os ~ "," ~ os) ^^ {
+		(opt(label) <~ (space ~ "db|DB|dcb|DCB|.byte|.BYTE".r ~ space)) ~ rep1sep(expression, os ~ "," ~ os) ^^ {
 			case None ~ exprs =>
 				List( DataByteAST(exprs) )
 			case Some( label ) ~ exprs =>
