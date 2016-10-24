@@ -5,13 +5,13 @@ import java.io.File
 import collection.mutable.{ListBuffer, HashMap}
 
 
-case class AssemblerResult( symbols: Map[String,Int], segments: List[(Int, List[Byte])] )
+case class AssemblerResult( symbols: Map[String, Any], segments: List[(Int, List[Byte])] )
 
 object Assembler {
 	
-	def apply( mem: Memory, src: String ): Map[String,Int] = apply( mem, io.Source.fromString(src) )
+	def apply( mem: Memory, src: String ): Map[String, Any] = apply( mem, io.Source.fromString(src) )
 	
-	def apply( mem: Memory, src: io.Source ): Map[String,Int] = {
+	def apply( mem: Memory, src: io.Source ): Map[String, Any] = {
 		val AssemblerResult(symbols, segments) = apply( src )
 		
 		for (((base, data), ind) <- segments zipWithIndex)
@@ -26,7 +26,7 @@ object Assembler {
 	
 	def apply( ast: SourceAST ): AssemblerResult = {
 		
-		val symbols = new HashMap[String, Option[Int]]
+		val symbols = new HashMap[String, Option[Any]]
 		var pointer = 0
 		var pointerExact = true
 		var allknown = true
@@ -37,7 +37,7 @@ object Assembler {
 				
 		def problem( msg: String ) = sys.error( msg )
 		
-		def define( symbol: String, target: Option[Int] ) = {
+		def define( symbol: String, target: Option[Any] ) = {
 			val v = symbols.get( symbol )
 			
 			check( v != Some( None ) && v != None, "duplicate symbol: " + symbol )
@@ -102,7 +102,7 @@ object Assembler {
 						case Knowable|Unknown => problem( "origin must be known when the directive is encountered" )
 					}
 				case dir@EquateDirectiveAST( equ, expr, None ) =>
-					ieval( expr, false ) match {
+					eval( expr, false ) match {
 						case Known( v ) =>
 							dir.value = Some( v )
 							define( equ, dir.value )
