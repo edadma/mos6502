@@ -103,7 +103,7 @@ object SREC {
 			case (line0, num) =>
 				val line = line0.trim
 				
-				def problem( col: Int, msg: String ) = println( "error on line " + (num + 1) + ": " + msg + '\n' + line + '\n' + " "*col + '^' )
+				def problem( col: Int, msg: String ) = sys.error( "error on line " + (num + 1) + ": " + msg + '\n' + line + '\n' + " "*col + '^' )
 				
 				def hexb( index: Int ) = {
 					for (i <- index until index + 2)
