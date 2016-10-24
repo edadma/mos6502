@@ -160,6 +160,10 @@ class Memory extends Addressable {
 	def removeROM =
 		for (r <- seqROM)
 			regions -= r
+	
+	def removeDevices =
+		for (r <- seqDevice)
+			regions -= r
 			
 	def code = {
 		val roms = seqROM

@@ -82,10 +82,26 @@ object Main extends App with Flags {
 	}
 	
 	def assemble( file: String ) {
+		var purged = false
+		
+		def purge =
+			if (!purged) {
+				purged = true
+				mem.removeDevices
+			}
+			
 		mem.removeROM
 		symbols = Assembler( mem, io.Source.fromFile(file) )
 		reverseSymbols = symbols map {case (s, t) => (t, s)}
 		discur = mem.code
+		
+		for ((k, v) <- symbols)
+			(k, v) match {
+				case ("__chario", p: String) =>
+					purge
+					mem add new StdIOChar( hex(p) )
+			}
+			
 		cpu.reset
 	}
 	
