@@ -146,7 +146,15 @@ class Memory extends Addressable {
 	
 	def addressable( addr: Int ) = lookup( addr ) != None
 	
-	def device( addr: Int ) = find( addr ).isDevice
+	private def find( addr: Int, pred: Addressable => Boolean ) =
+		lookup( addr ) match {
+			case None => false
+			case Some( r ) => pred( r )
+		}
+	
+	def device( addr: Int ) = find( addr, _.isDevice )
+	
+	def memory( addr: Int ) = find( addr, r => r.isRAM || r.isROM )
 	
 	def remove( name: String ) {
 		regions.indexWhere( r => r.name == name ) match {

@@ -146,11 +146,11 @@ object Main extends App with Flags {
 			def printChar( c: Option[Int] ) = out.print( if (c != None && ' ' <= c.get && c.get <= '~') c.get.asInstanceOf[Char] else '.' )
 			
 			def read( addr: Int ) =
-				if (!mem.addressable( addr ) || mem.device( addr ))
-					None
-				else
+				if (mem.addressable( addr ) && mem.memory( addr ))
 					Some( mem.readByte(addr) )
-					
+				else
+					None
+			
 			for (line <- addr until ((addr + 16*lines) min 0x10000) by 16) {
 				out.print( "%4x  ".format(line).toUpperCase )
 				
@@ -182,7 +182,7 @@ object Main extends App with Flags {
 			var addr = start
 			
 			for (_ <- 1 to lines) {
-				if (!mem.addressable( addr ))
+				if (!mem.memory( addr ))
 					return addr
 					
 				val opcode = mem.readByte( addr )
@@ -190,7 +190,7 @@ object Main extends App with Flags {
 				CPU.dis6502 get opcode match {
 					case None =>
 					case Some( (mnemonic, mode) ) =>
-						if (mode != 'implicit && mode != 'accumulator && (!mem.addressable( addr + 1 ) || !mem.addressable( addr + 2 )))
+						if (mode != 'implicit && mode != 'accumulator && (!mem.memory( addr + 1 ) || !mem.memory( addr + 2 )))
 							return addr
 				}
 				
