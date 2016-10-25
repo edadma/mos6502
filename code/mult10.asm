@@ -1,9 +1,12 @@
+; required hardware
+;
+_stdioChar_         = "8000"  ; add a character i/o "device" and memory map it to address $8000
+_stdioInt_          = "8001"  ; add an integer i/o "device" and memory map it to address $8001
+
 ; memory mapped i/o 
 ;
 CHIO    EQU $8000   ; character i/o port
 INTIO   EQU $8001   ; integer i/o port
-HEXIO   EQU $8002   ; hex integer i/o port
-RNG     EQU $8003   ; random number generator (read only)
 
 TEMP    RB          ; temporary variable
 

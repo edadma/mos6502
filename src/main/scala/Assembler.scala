@@ -108,6 +108,7 @@ object Assembler {
 							define( equ, dir.value )
 						case Knowable|Unknown => problem( "equate must be known when the directive is encountered" )
 					}
+				case EquateDirectiveAST( _, _, Some(_) ) =>
 				case inc@IncludeDirectiveAST( file, ast ) =>
 					if (ast == None)
 						inc.ast = Some( new AssemblyParser(io.Source.fromFile(seval(file, true).get)).parse )
@@ -127,7 +128,7 @@ object Assembler {
 				case inst@InstructionAST( "bcc"|"bcs"|"beq"|"bmi"|"bne"|"bpl"|"bvc"|"bvs", _, None ) =>
 					inst.size = Some( 2 )
 					pointer += 2
-		case inst@InstructionAST( _, mode@OperandModeAST(_, expr, _), None ) =>
+				case inst@InstructionAST( _, mode@OperandModeAST(_, expr, _), None ) =>
 					ieval( expr, false ) match {
 						case Known( a ) =>
 							if (a < 0x100) {

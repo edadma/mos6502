@@ -15,14 +15,7 @@ object Main extends App with Flags {
 	var symbols = Map[String, Any]()
 	var reverseSymbols = Map[Any, String]()
 	
-	mem add new RAM( "zp", 0x0000, 0x00FF )
-	mem add new RAM( "stack", 0x0100, 0x01FF )
-	mem add new RAM( "main", 0x0600, 0x7FFF )
-// 	mem add new VideoRAM( 0x0200, 32, 32, cpu, Vector(0x000000, 0xffffff, 0x880000, 0xaaffee, 0xcc44cc, 0x00cc55, 0x0000aa, 0xeeee77, 0xdd8855, 0x664400, 0xff7777, 0x333333, 0x777777, 0xaaff66, 0x0088ff, 0xbbbbbb) )
-// 	mem add new StdIOChar( 0x8000 )
-// 	mem add new StdIOInt( 0x8001 )
-// 	mem add new StdIOHex( 0x8002 )
-// 	mem add new RNG( 0x8003 )
+	mem add new RAM( "main", 0x0000, 0x5FFF )
 	
 	var enterREPL = true
 	
@@ -97,9 +90,30 @@ object Main extends App with Flags {
 		
 		for ((k, v) <- symbols)
 			(k, v) match {
-				case ("__chario", p: String) =>
+				case ("_stdioChar_", p: String) =>
 					purge
 					mem add new StdIOChar( hex(p) )
+				case ("_stdioInt_", p: String) =>
+					purge
+					mem add new StdIOInt( hex(p) )
+				case ("_stdioHex_", p: String) =>
+					purge
+					mem add new StdIOHex( hex(p) )
+				case ("_rng_", p: String) =>
+					purge
+					mem add new RNG( hex(p) )
+				case ("_video_", p: String) =>
+					val parms = p split ","
+					purge
+					mem add new VideoRAM( hex(parms(0)), hex(parms(1)), hex(parms(2)), cpu, (for (i <- 3 to 18) yield hex(parms(i))).toIndexedSeq )
+				case ("_ram_", p: String) =>
+					mem.removeRAM
+					
+					val block = """(\p{XDigit}+)\-(\p{XDigit}+)"""r
+					
+					for ((m, ind) <- block findAllMatchIn p zipWithIndex)
+						mem add new RAM( "main" + ind, hex(m group 1), hex(m group 2) )
+				case _ =>
 			}
 			
 		cpu.reset
@@ -364,7 +378,8 @@ object Main extends App with Flags {
 			catch
 			{
 				case e: Exception =>
-					out.println( e )
+//					out.println( e )
+					e.printStackTrace( out )
 			}
 			
 			out.println

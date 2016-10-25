@@ -94,6 +94,10 @@ class VideoRAM( start: Int, width: Int, height: Int, cpu: CPU, palette: Seq[Int]
 		frame.visible = true
 	}
 	
+	override def dispose {
+		frame.visible = false
+	}
+	
 	override def clear = {
 		super.clear
 		panel.repaint

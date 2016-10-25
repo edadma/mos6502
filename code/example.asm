@@ -1,13 +1,12 @@
-        org $8000
+_stdioChar_         = "8000"
 
+        org $8000
 cout    rb
-iout    rb
 
         org $9000
-
+start
         ldx #$ff
         txs
-				
 pstring ldy #0
 l1      lda message,y
         beq l2
@@ -21,4 +20,4 @@ l2      lda #'\n'
 message db  "This is a test.\0"
 				
         org $FFFC
-        dw  $9000
+        dw  start

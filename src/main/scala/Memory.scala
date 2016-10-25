@@ -91,6 +91,8 @@ trait Device extends Addressable {
 	
 	def init {}
 	
+	def dispose {}
+	
 	override def toString = s"$name device: ${hexWord(start)}-${hexWord(start + size - 1)}"
 
 }
@@ -149,7 +151,11 @@ class Memory extends Addressable {
 	def remove( name: String ) {
 		regions.indexWhere( r => r.name == name ) match {
 			case -1 => sys.error( "not found: " + name )
-			case ind => regions remove ind
+			case ind =>
+				if (regions(ind) isDevice)
+					regions(ind).asInstanceOf[Device].dispose
+					
+				regions remove ind
 		}
 	}
 	
@@ -161,10 +167,16 @@ class Memory extends Addressable {
 		for (r <- seqROM)
 			regions -= r
 	
-	def removeDevices =
-		for (r <- seqDevice)
+	def removeRAM =
+		for (r <- regions filter (r => r.isRAM && !r.isDevice))
 			regions -= r
-			
+	
+	def removeDevices =
+		for (r <- seqDevice) {
+			r.dispose
+			regions -= r
+		}
+		
 	def code = {
 		val roms = seqROM
 		

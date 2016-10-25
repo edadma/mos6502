@@ -1,12 +1,15 @@
 ; Conway's Game of Life
 ; http://rosettacode.org/wiki/Conway's_Game_of_Life
 ; Submitted by Anonymous
-
+;a code/gameoflife.asm
 ; emulator I/O
-chio        =   $8000
-intio       =   $8001
-hout        =   $8002
-rng         =   $8003
+_rng_       = "8003"
+_video_     = "0200,20,20,000000,ffffff,880000,aaffee,cc44cc,00cc55,0000aa,eeee77,dd8855,664400,ff7777,333333,777777,aaff66,0088ff,bbbbbb"
+_ram_       = "0000-01ff,0600-7fff"
+
+
+rng         = $8003
+video       = $6000
 
             org $9000
 start
