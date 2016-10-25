@@ -123,6 +123,7 @@ object Main extends App with Flags {
 		val reader = new ConsoleReader
 		val out = new PrintWriter( reader.getTerminal.wrapOutIfNeeded(System.out), true )
 		var line: String = null
+		var reload = ""
 		
 		reader.setBellEnabled( false )
 		reader.setPrompt( "> " )
@@ -256,14 +257,13 @@ object Main extends App with Flags {
 		out.println( "Type 'help' for list of commands." )
 		out.println
 		
-		while ({line = reader.readLine; line != null})
-		{
-			val com = line.trim.split( "\\s+" )
+		def interp( command: String ) {
+			val com = command.trim.split( "\\s+" )
 			
-			try
-			{
+			try {
 				com.head match {
 					case "assemble"|"a" =>
+						reload = command
 						assemble( com(1) )
 						out.println( mem )
 					case "breakpoint"|"b" =>
@@ -314,6 +314,7 @@ object Main extends App with Flags {
 						|quit (q)                       exit the REPL
 						|registers (r)                  print CPU registers
 						|registers (r) <reg> <val>*     set CPU <reg>ister to <val>ue
+						|reload (rl)                    redo last 'load' or 'assemble' command
 						|reset (re)                     reset CPU registers setting PC from reset vector
 						|step (s) [<addr>*]             execute only next instruction at current PC or <addr>
 						|save (sa) <file>               save all ROM contents to SREC file
@@ -322,6 +323,7 @@ object Main extends App with Flags {
 						|* can either be a hexadecimal value or label (optionally followed by a colon)
 						""".trim.stripMargin.lines foreach out.println
 					case "load"|"l" =>
+						reload = command
 						load( com(1) )
 					case "memory"|"m" =>
 						if (com.length > 2) {
@@ -355,6 +357,8 @@ object Main extends App with Flags {
 						}
 						
 						registers
+					case "reload"|"rl" =>
+						interp( reload )
 					case "reset"|"re" =>
 						cpu.reset
 						discur = mem.code
@@ -378,10 +382,13 @@ object Main extends App with Flags {
 			catch
 			{
 				case e: Exception =>
-//					out.println( e )
-					e.printStackTrace( out )
+					out.println( e )
+//					e.printStackTrace( out )
 			}
-			
+		}
+		
+		while ({line = reader.readLine; line != null}) {
+			interp( line )
 			out.println
 		}
 	}
