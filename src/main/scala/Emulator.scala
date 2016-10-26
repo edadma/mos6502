@@ -28,8 +28,10 @@ class Emulator( chip: String ) extends Flags {
 	register( "_video_",
 		(p: String, mem: Memory, cpu: CPU) => {
 			val parms = p split ","
+			val kp = new KeyPress( hex(parms(1)) )
 			
-			mem add new VideoRAM( hex(parms(0)), hex(parms(1)), hex(parms(2)), hex(parms(3)), cpu, (for (i <- 4 to 19) yield hex(parms(i))).toIndexedSeq )
+			mem add kp
+			mem add new VideoRAM( hex(parms(0)), kp, hex(parms(2)), hex(parms(3)), hex(parms(4)), cpu, (for (i <- 5 to 20) yield hex(parms(i))).toIndexedSeq )
 		} )
 	register( "_ram_",
 		(p: String, mem: Memory, cpu: CPU) => {
