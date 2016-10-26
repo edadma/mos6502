@@ -7,7 +7,7 @@ import jline.console.ConsoleReader
 
 object Main extends App with Flags {
 	
-	val emu = new Emulator( "6502" )	
+	lazy val emu = new Emulator( "6502" )	
 	var enterREPL = true
 	
 	Options( args )
@@ -52,7 +52,7 @@ object Main extends App with Flags {
 	}
 
 	if (enterREPL)
-		repl
+		REPL
 
 	def assemble( file: String ) = emu.assemble( io.Source.fromFile(file) )
 	
@@ -60,7 +60,7 @@ object Main extends App with Flags {
 
 	def save( file: String ) = emu.save( file )
 	
-	def repl {
+	def REPL {
 		val reader = new ConsoleReader
 		val out = new PrintWriter( reader.getTerminal.wrapOutIfNeeded(System.out), true )
 		var line: String = null
