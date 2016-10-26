@@ -64,7 +64,7 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 	
 	def blank = os ~ opt(comment) ~ nl
 	
-	def source = rep(blank) ~> repsep(statement, rep(blank)) <~ (rep(blank) ~ opt(os ~ opt(comment))) ^^ {l => SourceAST( l.flatten )}
+	def source = rep(blank) ~> repsep(statement, rep1(blank)) <~ (rep(blank) ~ opt(os ~ opt(comment))) ^^ {l => SourceAST( l.flatten )}
 	
 	def statement =
 		instruction |
@@ -101,7 +101,7 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 		}
 	
 	def directive =
-		("include" ~ space) ~> expression ^^ {f => List(IncludeDirectiveAST( f ))} |
+		("#include" ~ space) ~> expression ^^ {f => List(IncludeDirectiveAST( f ))} |
 		(space ~ "org|ORG|.org|.ORG".r ~ space) ~> expression ^^ {e => List( OriginDirectiveAST(e) )} |
 		(label <~ (space ~ "equ|EQU|=".r ~ space)) ~ expression ^^ {
 			case equ ~ expr =>
@@ -135,7 +135,7 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 		
 	def parse = parseAll( source, new PagedSeqReader(PagedSeq.fromSource(input)) ) match {
 		case Success( result, _ ) => result
-		case failure: NoSuccess => sys.error( failure.msg )
+		case NoSuccess( msg, input ) => sys.error( msg + ": " + input.pos + '\n' + input.pos.longString.replace( "\n\n", "\n" ) )
 	}
 	
 }
