@@ -7,11 +7,11 @@ Have fun playing with your own virtual 6502 based computer!
 Description
 -----------
 
-*mos6502* is an emulator for the venerable MOS Technology 6502 microprocessor written in Scala. The emulator is fully functional. It includes a basic assembler and disassembler. Programs (in 6502) can be executed from the command line, or the REPL can be used. There are a few working examples under the `code` folder that can either be executed directly or loaded into the REPL.
+*mos6502* is an emulator for the venerable MOS Technology 6502 microprocessor written in Scala. The emulator is fully functional. It includes a basic assembler and disassembler. Programs (in 6502) can be executed from the command line, or the REPL can be used. There are a few working examples under the `code` folder that can either be executed directly from the command line or loaded into the REPL.
 
 It's true, there are many 6502 emulators out there, but this one is written in Scala and is therefore easy and fun to extend should you wish to add some more hardware to your virtual computer.
 
-All the examples with a file name ending with `.asm` will assemble using the built-in assembler. Of course, the emulator's built-in assembler will have slightly different syntax than other assemblers for assembly directives. If a more powerful assembler is needed, there is one called `crasm` which is available under Ubuntu/Mint that generates SREC (Motorola S-Record) files using it's `-o` option. Those files can then be executed using the emlulator's `-le` option or loaded into the REPL using the `l` command. The `cc65` tools may also be used in conjunction with a program called `srecord` to get an SREC file that can be loaded.
+All the examples in the `code` folder with a file name ending with `.asm` will assemble using the built-in assembler. Of course, the emulator's built-in assembler will have slightly different syntax than other assemblers for assembly directives. If a more powerful assembler is needed, there is one called `crasm` which is available under Ubuntu/Mint that generates SREC (Motorola S-Record) files using it's `-o` option. Those files can then be executed using the emlulator's `-le` option or loaded into the REPL using the `l` command. The `cc65` tools may also be used in conjunction with a program called `srecord` to get an SREC file that can be loaded.
 
 
 Try it out
@@ -19,34 +19,38 @@ Try it out
 
 The following code (assembled using the built-in assembler)
 
-	; memory mapped i/o 
+	; install required i/o devices
 	;
-	CHIO    EQU $8000   ; character i/o port
-	INTIO   EQU $8001   ; integer i/o port
-	HEXIO   EQU $8002   ; hex integer i/o port
-	RNG     EQU $8003   ; random number generator (read only)
+	_stdioChar_ = "8000" ; add a character i/o "device" and memory map it to address $8000
+	_stdioInt_  = "8001" ; add an integer i/o "device" and memory map it to address $8001
+
+	; memory mapped i/o
+	;
+	CHIO    EQU $8000    ; character i/o port
+	INTIO   EQU $8001    ; integer i/o port
 
 	; zero page variables
 	;
-	COUNTER RB          ; counter variable
+	COUNTER RB           ; counter variable
 
-	        ORG $9000   ; ROM
-
+	; program ROM
+	;
+	        ORG $9000    ; program starts at $9000
 	START
-	        LDA	#0      ; start counter off with 0
+	        LDA	#0       ; start counter off with 0
 	        STA	COUNTER
-	LOOP    INC	COUNTER ; bump the counter
+	LOOP    INC	COUNTER  ; bump the counter
 	        LDA	COUNTER
-	        CMP	#6      ; is counter less than 6
-	        BNE	PRINT   ; if so, print
-	        BRK         ; otherwise, stop
-	PRINT   STA	INTIO   ; send counter value to integer i/o port
-	        LDA	#'\n'   ; now print a line feed
+	        CMP	#6       ; is counter less than 6
+	        BNE	PRINT    ; if so, print
+	        BRK          ; otherwise, stop
+	PRINT   STA	INTIO    ; send counter value to integer i/o port
+	        LDA	#'\n'    ; now print a line feed
 	        STA CHIO
 	        JMP LOOP
 
-	        ORG	$FFFC   ; reset vector
-	        DW  START   ; CPU will start executing at 9000
+	        ORG	$FFFC    ; reset vector
+	        DW  START    ; CPU will start executing at 9000
 
 will print
 
@@ -65,7 +69,7 @@ Of course, when doing this in the REPL you will also see
 
 	A:06 X:00 Y:00 SP:01FD PC:900D
 	N:0 V:0 B:0 D:0 I:0 Z:1 C:0
-	900D  8D 01 80   PRINT           STA IOUT
+	900D  8D 01 80   PRINT           STA INTIO
 
 as well, showing you the state of the CPU after execution.
 

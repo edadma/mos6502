@@ -1,9 +1,9 @@
-; required hardware
+; install required i/o devices
 ;
-_stdioChar_         = "8000"  ; add a character i/o "device" and memory map it to address $8000
-_stdioInt_          = "8001"  ; add an integer i/o "device" and memory map it to address $8001
+_stdioChar_ = "8000" ; add a character i/o "device" and memory map it to address $8000
+_stdioInt_  = "8001" ; add an integer i/o "device" and memory map it to address $8001
 
-; memory mapped i/o 
+; memory mapped i/o
 ;
 CHIO    EQU $8000   ; character i/o port
 INTIO   EQU $8001   ; integer i/o port
@@ -14,7 +14,7 @@ COUNTER RB          ; counter variable
 
 ; program ROM
 ;
-        ORG $9000   ; ROM
+        ORG $9000   ; program starts at $9000
 START
         LDA #0      ; start counter off with 0
         STA COUNTER
