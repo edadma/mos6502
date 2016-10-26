@@ -9,7 +9,11 @@ class Emulator( chip: String ) extends Flags {
 	
 	val mem =
 		new Memory {
-			add( new RAM("main", 0x0000, 0x5FFF) )
+			def init {
+				removeDevices
+				regions.clear
+				add( new RAM("main", 0x0000, 0x5FFF) )
+			}
 		}
 	val cpu =
 		chip match {
@@ -25,7 +29,7 @@ class Emulator( chip: String ) extends Flags {
 		(p: String, mem: Memory, cpu: CPU) => {
 			val parms = p split ","
 			
-			mem add new VideoRAM( hex(parms(0)), hex(parms(1)), hex(parms(2)), cpu, (for (i <- 3 to 18) yield hex(parms(i))).toIndexedSeq )
+			mem add new VideoRAM( hex(parms(0)), hex(parms(1)), hex(parms(2)), hex(parms(3)), cpu, (for (i <- 4 to 19) yield hex(parms(i))).toIndexedSeq )
 		} )
 	register( "_ram_",
 		(p: String, mem: Memory, cpu: CPU) => {
@@ -50,8 +54,7 @@ class Emulator( chip: String ) extends Flags {
 	}
 	
 	def assemble( src: io.Source ) {
-		mem.removeDevices
-		mem.removeROM
+		mem.init
 		symbols = Assembler( mem, src )
 		reverseSymbols = symbols map {case (s, t) => (t, s)}
 		discur = mem.code
@@ -175,7 +178,7 @@ class Emulator( chip: String ) extends Flags {
 	}
 		
 	def load( file: String ) {
-		mem.removeROM
+		mem.init
 		SREC( mem, new File(file) )
 		discur = mem.code
 		clearBreakpoints

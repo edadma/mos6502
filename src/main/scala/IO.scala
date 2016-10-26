@@ -47,7 +47,7 @@ class RNG( val start: Int ) extends ReadOnlyDevice {
 // 	
 // }
 
-class VideoRAM( start: Int, width: Int, height: Int, cpu: CPU, palette: Seq[Int] ) extends RAM( "video", start, start + width*height - 1 ) with Device {
+class VideoRAM( start: Int, width: Int, height: Int, square: Int, cpu: CPU, palette: Seq[Int] ) extends RAM( "video", start, start + width*height - 1 ) with Device {
 
 	import scala.swing._
 	import Swing._
@@ -61,7 +61,6 @@ class VideoRAM( start: Int, width: Int, height: Int, cpu: CPU, palette: Seq[Int]
 	
 // 	val colors = (palette map {case (r, g, b) => r << 16 | g << 8 | b}).toArray
 	val colors = (palette map {c => new Color(c)}).toArray
-	val square = 6
 	
 	val panel = new Panel {
 		preferredSize = (width*square, height*square)

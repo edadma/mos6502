@@ -117,20 +117,24 @@ abstract class WriteOnlyDevice extends SingleAddressDevice {
 	
 }
 
-class Memory extends Addressable {
+abstract class Memory extends Addressable {
 	
 	val name = "System memory"
-	private val regions = new ArrayBuffer[Addressable]
-	private var first = 0
-	private var end = 0
+	protected val regions = new ArrayBuffer[Addressable]
+	protected var first = 0
+	protected var end = 0
 	
-	private def lookup( addr: Int ) =
+	def init
+	
+	init
+	
+	protected def lookup( addr: Int ) =
 		regions.indexWhere( r => r.start <= addr && r.start + r.size > addr ) match {
 			case -1 => None
 			case ind => Some( regions(ind) )
 		}
 	
-	private def find( addr: Int ) =
+	protected def find( addr: Int ) =
 		lookup( addr ) match {
 			case None => sys.error( addr.toHexString + " is not an addressable memory location" )
 			case Some( r ) => r
@@ -146,7 +150,7 @@ class Memory extends Addressable {
 	
 	def addressable( addr: Int ) = lookup( addr ) != None
 	
-	private def find( addr: Int, pred: Addressable => Boolean ) =
+	protected def find( addr: Int, pred: Addressable => Boolean ) =
 		lookup( addr ) match {
 			case None => false
 			case Some( r ) => pred( r )
