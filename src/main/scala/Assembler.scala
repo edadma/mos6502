@@ -5,7 +5,9 @@ import java.io.File
 import collection.mutable.{ListBuffer, HashMap}
 
 
-case class AssemblerResult( symbols: Map[String, Any], segments: List[(Int, List[Byte])] )
+class Segment( val name, val ListBuffer[(Int, ListBuffer[Byte])] )
+
+case class AssemblerResult( symbols: Map[String, Any], segments: List[(String, List[(Int, List[Byte])])] )
 
 object Assembler {
 	
@@ -166,25 +168,26 @@ object Assembler {
 		
 		def pass2( ast: SourceAST ): AssemblerResult = {
 			
-			val segments = new ListBuffer[(Int, List[Byte])]
-			val segment = new ListBuffer[Byte]
+			val segments = new HashMap[String, Segment]
+			val blocks = new ListBuffer[(Int, List[Byte])]
+			val block = new ListBuffer[Byte]
 			var base = 0
 			
 			def word( w: Int ) {
-				segment += w.toByte
-				segment += (w >> 8).toByte
+				block += w.toByte
+				block += (w >> 8).toByte
 			}
 			
 			def opcode( mnemonic: String, mode: Symbol ) =
 				CPU.asm6502.get( (mnemonic, mode) ) match {
 					case None => problem( "illegal instruction: " + (mnemonic, mode) )
-					case Some( op ) => segment += op
+					case Some( op ) => block += op
 				}
 
 			def append =
-				if (!segment.isEmpty) {
-					segments += (base -> segment.toList)
-					segment.clear
+				if (!block.isEmpty) {
+					blocks += (base -> block.toList)
+					block.clear
 				}
 
 			pointer = 0
@@ -217,11 +220,11 @@ object Assembler {
 					
 					pointer += 2
 					opcode( mnemonic, 'relative )
-					segment += (target - pointer).toByte
+					block += (target - pointer).toByte
 				case InstructionAST( mnemonic, OperandModeAST(mode@('immediate|'indirectX|'indirectY), expr, operand), _ ) =>
 					pointer += 2
 					opcode( mnemonic, mode )
-					segment += (operand match {
+					block += (operand match {
 						case None => ieval( expr, true ).get
 						case Some( t ) => t
 					}).toByte
@@ -241,7 +244,7 @@ object Assembler {
 						}
 						
 						opcode( mnemonic, m )
-						segment += o.toByte
+						block += o.toByte
 					} else {
 						pointer += 3
 						opcode( mnemonic, mode )
@@ -253,9 +256,9 @@ object Assembler {
 					for (d <- data)
 						eval( d, true ).get match {
 							case s: String =>
-								segment ++= s.getBytes
+								block ++= s.getBytes
 							case v: Int =>
-								segment += v.toByte
+								block += v.toByte
 						}
 					
 					pointer += dblength( data )
@@ -268,7 +271,7 @@ object Assembler {
 			}
 			
 			append
-			AssemblerResult( symbols map {case (k, v) => k -> v.get} toMap, segments.toList )
+			AssemblerResult( symbols map {case (k, v) => k -> v.get} toMap, blocks.toList )
 			
 		}
 		
