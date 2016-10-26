@@ -7,16 +7,7 @@ import jline.console.ConsoleReader
 
 object Main extends App with Flags {
 	
-	val mem = new Memory
-	val cpu = new CPU6502( mem )
-	
-	var dumpcur = 0
-	var discur = 0
-	var symbols = Map[String, Any]()
-	var reverseSymbols = Map[Any, String]()
-	
-	mem add new RAM( "main", 0x0000, 0x5FFF )
-	
+	val emu = new Emulator( "6502" )	
 	var enterREPL = true
 	
 	Options( args )
@@ -26,7 +17,7 @@ object Main extends App with Flags {
 			Nil
 		case "-ae" :: file :: _ =>
 			assemble( file )
-			cpu.run
+			emu.run
 			enterREPL = false
 			Nil
 		case "-as" :: file :: _ =>
@@ -49,7 +40,7 @@ object Main extends App with Flags {
 			Nil
 		case "-le" :: file :: _ =>
 			load( file )
-			cpu.run
+			emu.run
 			enterREPL = false
 			Nil
 		case o :: _ if o startsWith "-" =>
@@ -62,62 +53,12 @@ object Main extends App with Flags {
 
 	if (enterREPL)
 		repl
-		
-	def load( file: String ) {
-		mem.removeROM
-		SREC( mem, new File(file) )
-		discur = mem.code
-		cpu.reset
-	}
 
-	def save( file: String ) {
-		SREC.write( mem, new File(file), file.getBytes.toVector )
-	}
+	def assemble( file: String ) = emu.assemble( io.Source.fromFile(file) )
 	
-	def assemble( file: String ) {
-		var purged = false
-		
-		def purge =
-			if (!purged) {
-				purged = true
-				mem.removeDevices
-			}
-			
-		mem.removeROM
-		symbols = Assembler( mem, io.Source.fromFile(file) )
-		reverseSymbols = symbols map {case (s, t) => (t, s)}
-		discur = mem.code
-		
-		for ((k, v) <- symbols)
-			(k, v) match {
-				case ("_stdioChar_", p: String) =>
-					purge
-					mem add new StdIOChar( hex(p) )
-				case ("_stdioInt_", p: String) =>
-					purge
-					mem add new StdIOInt( hex(p) )
-				case ("_stdioHex_", p: String) =>
-					purge
-					mem add new StdIOHex( hex(p) )
-				case ("_rng_", p: String) =>
-					purge
-					mem add new RNG( hex(p) )
-				case ("_video_", p: String) =>
-					val parms = p split ","
-					purge
-					mem add new VideoRAM( hex(parms(0)), hex(parms(1)), hex(parms(2)), cpu, (for (i <- 3 to 18) yield hex(parms(i))).toIndexedSeq )
-				case ("_ram_", p: String) =>
-					mem.removeRAM
-					
-					val block = """(\p{XDigit}+)\-(\p{XDigit}+)"""r
-					
-					for ((m, ind) <- block findAllMatchIn p zipWithIndex)
-						mem add new RAM( "main" + ind, hex(m group 1), hex(m group 2) )
-				case _ =>
-			}
-			
-		cpu.reset
-	}
+	def load( file: String ) = emu.load( file )
+
+	def save( file: String ) = emu.save( file )
 	
 	def repl {
 		val reader = new ConsoleReader
@@ -128,130 +69,11 @@ object Main extends App with Flags {
 		reader.setBellEnabled( false )
 		reader.setPrompt( "> " )
 
-		def registers {
-			out.printf( "A:%s X:%s Y:%s SP:%s PC:%s\n", hexByte(cpu.A), hexByte(cpu.X), hexByte(cpu.Y), hexWord(cpu.SP), hexWord(cpu.PC) )
-			out.printf( "N:%s V:%s B:%s D:%s I:%s Z:%s C:%s\n", Seq(N, V, B, D, I, Z, C) map (cpu.read(_).toString): _* )
-			disassemble( cpu.PC, 1 )
-		}
+		def registers = out.print( emu.registers )
 	
-		def dump( start: Int, lines: Int ) {
-			val addr = start - start%16
-			
-			def printByte( b: Option[Int] ) =
-				if (b == None)
-					out.print( "-- " )
-				else
-					out.print( "%02x ".format(b.get&0xFF).toUpperCase )
-			
-			def printChar( c: Option[Int] ) = out.print( if (c != None && ' ' <= c.get && c.get <= '~') c.get.asInstanceOf[Char] else '.' )
-			
-			def read( addr: Int ) =
-				if (mem.addressable( addr ) && mem.memory( addr ))
-					Some( mem.readByte(addr) )
-				else
-					None
-			
-			for (line <- addr until ((addr + 16*lines) min 0x10000) by 16) {
-				out.print( "%4x  ".format(line).toUpperCase )
-				
-				for (i <- line until ((line + 16) min 0x10000)) {
-					if (i%16 == 8)
-						out.print( ' ' )
-						
-					printByte( read(i) )
-				}
-				
-				val bytes = ((line + 16) min 0x10000) - line
-				
-				out.print( " "*((16 - bytes)*3 + 1 + (if (bytes < 9) 1 else 0)) )
-				
-				for (i <- line until ((line + 16) min 0x10000))
-					printChar( read(i) )
-					
-				out.println
-			}
-		}
+		def dump( start: Int, lines: Int ) = out.print( emu.dump(start, lines) )
 		
-		def reference( target: Int, zp: Boolean ) =
-			reverseSymbols get target match {
-				case None => "$" + (if (zp) hexByte( target ) else hexWord( target ))
-				case Some( l ) => l
-			}
-		
-		def disassemble( start: Int, lines: Int ): Int = {
-			var addr = start
-			
-			for (_ <- 1 to lines) {
-				if (!mem.memory( addr ))
-					return addr
-					
-				val opcode = mem.readByte( addr )
-				
-				CPU.dis6502 get opcode match {
-					case None =>
-					case Some( (mnemonic, mode) ) =>
-						if (mode != 'implicit && mode != 'accumulator && (!mem.memory( addr + 1 ) || !mem.memory( addr + 2 )))
-							return addr
-				}
-				
-				val label =
-					(reverseSymbols get addr match {
-						case None => ""
-						case Some( l ) => l
-					})
-					
-				if (cpu.breakpoints( addr ))
-					out.print( Console.BLUE_B )
-					
-				out.print( hexWord(addr) + "  " + hexByte(opcode) + " " )
-				addr += 1
-				
-				CPU.dis6502 get opcode match {
-					case None => out.print( " "*(6 + 2 + 15 + 1) + "---" )
-					case Some( (mnemonic, mode) ) =>
-						val (display, size) =
-							(mode match {
-								case 'implicit => ("", 0)
-								case 'accumulator => ("A", 0)
-								case 'immediate => ("#" + "$" + hexByte(mem.readByte(addr)), 1)
-								case 'relative => (reference(mem.readByte(addr).toByte + addr + 1, false), 1)
-								case 'indirectX => ("(" + reference(mem.readByte(addr), true) + ",X)", 1)
-								case 'indirectY => ("(" + reference(mem.readByte(addr), true) + "),Y", 1)
-								case 'zeroPage => (reference(mem.readByte(addr), true), 1)
-								case 'zeroPageIndexedX => (reference(mem.readByte(addr), true) + ",X", 1)
-								case 'zeroPageIndexedY => (reference(mem.readByte(addr), true) + ",Y", 1)
-								case 'direct => (reference(mem.readWord(addr), false), 2)
-								case 'directX => (reference(mem.readWord(addr), false) + ",X", 2)
-								case 'directY => (reference(mem.readWord(addr), false) + ",Y", 2)
-								case 'indirect => ("(" + reference(mem.readWord(addr), false) + ")", 2)
-							})
-						
-						for (i <- 0 until size)
-							out.print( hexByte(mem.readByte(addr + i)) + " " )
-							
-						addr += size
-						
-						out.print( " "*((2 - size)*3 + 2) )
-						out.print( label + " "*(15 - label.length + 1) )
-						out.print( mnemonic.toUpperCase + " " )
-						out.print( display )
-				}
-
-				out.println( Console.RESET )
-			}
-			
-			addr
-		}
-		
-		def target( ref: String ) =
-			if (isHex( ref ))
-				hex( ref )
-			else
-				symbols get (if (ref endsWith ":") ref dropRight 1 else ref) match {
-					case Some( t: Int ) => t
-					case None => sys.error( "unknown label: " + ref )
-					case Some( s ) => sys.error( "symbol not an integer: " + s )
-				}
+		def disassemble( start: Int, lines: Int ) = out.print( emu.disassemble(start, lines) )
 				
 		out.println( "MOS 6502 emulator v0.3" )
 		out.println( "Type 'help' for list of commands." )
@@ -265,38 +87,35 @@ object Main extends App with Flags {
 					case "assemble"|"a" =>
 						reload = command
 						assemble( com(1) )
-						out.println( mem )
+						out.println( emu.mem )
 					case "breakpoint"|"b" =>
-						if (com.length > 1) {
+						if (com.length > 1)
 							if (com(1) == "--")
-								cpu.breakpoints = Set[Int]()
+								emu.clearBreakpoints
 							else if (com(1) startsWith "-")
-								cpu.breakpoints -= target( com(1) drop 1 )
+								emu.clearBreakpoint( emu.target(com(1) drop 1) )
 							else
-								cpu.breakpoints += target( com(1) )
-						}
+								emu.setBreakpoint( emu.target(com(1)) )
 						
-						println( (cpu.breakpoints.toList map (b => hexWord(b) + (if (reverseSymbols contains b) "/" + reverseSymbols(b) else "")) sorted)
-							mkString " " )
+						println( emu.breakpoints map {case (b, l) => hexWord(b) + (if (l != "") "/" + l else "")} mkString " " )
 					case "disassemble"|"u" =>
-						if (com.length > 1)
-							discur = target( com(1) )
-							
-						discur = disassemble( discur, 15 )
+						disassemble( (if (com.length > 1) emu.target( com(1) ) else -1), 15 )
 					case "drop"|"dr" =>
-						mem.remove( com(1) )
-						out.println( mem )
+						emu.mem.remove( com(1) )
+						out.println( emu.mem )
 					case "dump"|"d" =>
-						if (com.length > 1)
-							dumpcur = target( com(1) )
-							
-						dump( dumpcur, 8 )
-						dumpcur = (dumpcur + 16*8) min 0x10000
+						val from =
+							if (com.length > 1)
+								emu.target( com(1) )
+							else
+								-1
+								
+						dump( from, 10 )
 					case "execute"|"e" =>
 						if (com.length > 1)
-							cpu.PC = target( com(1) )
+							emu.cpu.PC = emu.target( com(1) )
 						
-						cpu.run
+						emu.run
 						registers
 					case "help"|"h" =>
 						"""
@@ -327,32 +146,32 @@ object Main extends App with Flags {
 						load( com(1) )
 					case "memory"|"m" =>
 						if (com.length > 2) {
-							val addr = target( com(1) )
+							val addr = emu.target( com(1) )
 							
-							for ((d, i) <- com drop 2 map (target) zipWithIndex)
-								mem.program( addr + i, d )
+							for ((d, i) <- com drop 2 map (emu.target) zipWithIndex)
+								emu.program( addr + i, d )
 								
 							dump( addr, (com.length - 2 + addr%16)/16 + 1 )
 						} else
-							out.println( mem )
+							out.println( emu.mem )
 					case "quit"|"q" => sys.exit
 					case "registers"|"r" =>
 						if (com.length > 2) {
-							val n = target( com(2) )
+							val n = emu.target( com(2) )
 							
 							com(1).toLowerCase match {
-								case "a" => cpu.A = n
-								case "x" => cpu.X = n
-								case "y" => cpu.Y = n
-								case "sp" => cpu.SP = n
-								case "pc" => cpu.PC = n
-								case "n" => cpu.set( N, n )
-								case "v" => cpu.set( V, n )
-								case "b" => cpu.set( B, n )
-								case "d" => cpu.set( D, n )
-								case "i" => cpu.set( I, n )
-								case "z" => cpu.set( Z, n )
-								case "c" => cpu.set( C, n )
+								case "a" => emu.cpu.A = n
+								case "x" => emu.cpu.X = n
+								case "y" => emu.cpu.Y = n
+								case "sp" => emu.cpu.SP = n
+								case "pc" => emu.cpu.PC = n
+								case "n" => emu.cpu.set( N, n )
+								case "v" => emu.cpu.set( V, n )
+								case "b" => emu.cpu.set( B, n )
+								case "d" => emu.cpu.set( D, n )
+								case "i" => emu.cpu.set( I, n )
+								case "z" => emu.cpu.set( Z, n )
+								case "c" => emu.cpu.set( C, n )
 							}
 						}
 						
@@ -360,21 +179,20 @@ object Main extends App with Flags {
 					case "reload"|"rl" =>
 						interp( reload )
 					case "reset"|"re" =>
-						cpu.reset
-						discur = mem.code
+						emu.reset
 					case "step"|"s" =>
 						if (com.length > 1)
-							cpu.PC = target( com(1) )
+							emu.cpu.PC = emu.target( com(1) )
 							
-						cpu.step
+						emu.step
 						registers
 					case "save"|"sa" =>
 						save( com(1) )
 					case "symbols"|"sy" =>
 						if (com.length > 2)
-							symbols += (com(1) -> target( com(2) ))
+							emu.symbols += (com(1) -> emu.target( com(2) ))
 						else
-							out.println( symbols )
+							out.println( emu.symbols )
 					case "" =>
 					case c => out.println( "unrecognized command: " + c )
 				}
