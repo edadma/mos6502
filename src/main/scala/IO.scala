@@ -71,9 +71,7 @@ class VideoRAM( start: Int, keyPress: KeyPress, width: Int, height: Int, square:
 	require( width > 0 )
 	require( height > 0 )
 	require( !palette.isEmpty )
-//	require( palette forall {case (r, g, b) => 0 <= r && r <= 255 && 0 <= g && g <= 255 && 0 <= b && b <= 255} )
 	
-// 	val colors = (palette map {case (r, g, b) => r << 16 | g << 8 | b}).toArray
 	val colors = (palette map {c => new Color(c)}).toArray
 	val panel = new Panel {
 		preferredSize = (width*square, height*square)
@@ -96,20 +94,21 @@ class VideoRAM( start: Int, keyPress: KeyPress, width: Int, height: Int, square:
 		}
 	}
 	
-	val frame = new Frame {
-		title = "Video"
-		contents =
-			new BorderPanel {
-				layout(panel) = Center
-				layout(
-					Button( "Stop" ) {
-						cpu.stop
-					}
-				) = South
-			}
-		pack
-		peer.setDefaultCloseOperation( DO_NOTHING_ON_CLOSE )
-	}
+	val frame =
+		new Frame {
+			title = "Video"
+			contents =
+				new BorderPanel {
+					layout(panel) = Center
+					layout(
+						Button( "Stop" ) {
+							cpu.stop
+						}
+					) = South
+				}
+			pack
+			peer.setDefaultCloseOperation( DO_NOTHING_ON_CLOSE )
+		}
 	
 	override def init {
 		frame.visible = true

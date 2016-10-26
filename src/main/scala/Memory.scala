@@ -67,7 +67,7 @@ class ROM( val name: String, val start: Int, vals: Seq[Byte] ) extends Addressab
 	
 	def readByte( addr: Int ) = mem( addr - start )&0xFF
 	
-	def writeByte( addr: Int, value: Int ) = sys.error( "read only memory" )
+	def writeByte( addr: Int, value: Int ) = sys.error( "read only memory: " + addr.toHexString + " (tried to write " + value.toHexString + ")" )
 	
 	override def program( addr: Int, value: Int ) = mem( addr - start ) = value.toByte
 	

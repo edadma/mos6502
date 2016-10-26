@@ -80,7 +80,7 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 	
 	def mode =
 		"#" ~> expression ^^ {OperandModeAST( 'immediate, _ )} |
-		"a|A".r <~ guard(not("[a-zA-Z]"r)) ^^^ SimpleModeAST( 'accumulator ) |
+		"a|A".r <~ guard(not("[_0-9a-zA-Z]"r)) ^^^ SimpleModeAST( 'accumulator ) |
 		expression <~ ("," ~ os ~ "x|X".r) ^^ {OperandModeAST( 'directX, _ )} |
  		expression <~ ("," ~ os ~ "y|Y".r) ^^ {OperandModeAST( 'directY, _ )} |
 		expression ^^ {OperandModeAST( 'direct, _ )} |

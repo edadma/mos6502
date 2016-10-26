@@ -3,12 +3,18 @@
 ; The left top flash point is a busy indicator.
 ; The calculator supports keys: 'C', 'c', '0', '1', ..., '9', '+', '-' and '='.
 
+_video_     = "0200,8000,20,20,6,000000,ffffff,880000,aaffee,cc44cc,00cc55,0000aa,eeee77,dd8855,664400,ff7777,333333,777777,aaff66,0088ff,bbbbbb"
+_ram_       = "0000-01ff,0600-7fff"
+
+key         = $8000
+
+            org $9000
 main:               cld
 
                     jsr display
 
                     ; comparison loop for well response
-getch_main:         lda $ff
+getch_main:         lda key
                     cmp #67 ; 'C' for clear
                     beq store_main
                     cmp #99 ; 'c' for clear
@@ -31,7 +37,7 @@ store_main:         sta key_main
 
                     ; clear key
                     lda #0
-                    sta $ff
+                    sta key
 
                     ; clear operand 2 by 'C' or 'c'
                     lda key_main
@@ -549,16 +555,16 @@ byte_draw:          dcb 0
 color_draw:         dcb 0
 
 font_draw:          ; '0'~'9', 5x9
-dcb $0e,$11,$11,$13,$15,$19,$11,$11,$0e
-dcb $04,$06,$04,$04,$04,$04,$04,$04,$0e
-dcb $0e,$11,$10,$10,$08,$04,$02,$01,$1f
-dcb $0e,$11,$10,$10,$0e,$10,$10,$11,$0e
-dcb $08,$0c,$0a,$09,$09,$09,$1f,$08,$08
-dcb $1f,$01,$01,$01,$0f,$10,$10,$11,$0e
-dcb $0e,$11,$01,$01,$0f,$11,$11,$11,$0e
-dcb $1f,$11,$10,$10,$08,$08,$08,$04,$04
-dcb $0e,$11,$11,$11,$0e,$11,$11,$11,$0e
-dcb $0e,$11,$11,$11,$1e,$10,$10,$10,$0e
+	dcb $0e,$11,$11,$13,$15,$19,$11,$11,$0e
+	dcb $04,$06,$04,$04,$04,$04,$04,$04,$0e
+	dcb $0e,$11,$10,$10,$08,$04,$02,$01,$1f
+	dcb $0e,$11,$10,$10,$0e,$10,$10,$11,$0e
+	dcb $08,$0c,$0a,$09,$09,$09,$1f,$08,$08
+	dcb $1f,$01,$01,$01,$0f,$10,$10,$11,$0e
+	dcb $0e,$11,$01,$01,$0f,$11,$11,$11,$0e
+	dcb $1f,$11,$10,$10,$08,$08,$08,$04,$04
+	dcb $0e,$11,$11,$11,$0e,$11,$11,$11,$0e
+	dcb $0e,$11,$11,$11,$1e,$10,$10,$10,$0e
 
 pixel:              ; draw a pixel
 ; pixel page memory address, m=512+y*32+x
@@ -632,9 +638,6 @@ cmod:               ; char modulus
 
                     RTS
 
-a_cmod:             DCB 0
-p_cmod:             DCB 0 ; p=a/b*b
-
 cmul:               ; char multiply
 ; c=a*b
 ; input char a $00,b $01; output char c $02;
@@ -676,3 +679,11 @@ take1_cdiv:         DEX
 take2_cdiv:         STX $02
 
                     RTS
+
+            org $7000
+
+a_cmod:             DCB 0
+p_cmod:             DCB 0 ; p=a/b*b
+
+            org $FFFC
+            dw  main
