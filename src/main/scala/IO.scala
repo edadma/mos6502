@@ -79,8 +79,8 @@ class VideoRAM( start: Int, keyPress: KeyPress, width: Int, height: Int, square:
 		if (keyPress ne null) {
 			listenTo( keys )
 			reactions += {
-				case KeyTyped( _, key, _, _ ) =>
-					keyPress.key = key
+				case ev: KeyPressed =>
+					keyPress.key = ev.peer.getKeyChar
 				}
 			focusable = true
 			requestFocus
