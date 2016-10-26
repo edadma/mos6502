@@ -4,7 +4,7 @@
 
 ; emulator I/O
 _rng_       = "8003"
-_video_     = "0200,8000,20,20,6,000000,ffffff,880000,aaffee,cc44cc,00cc55,0000aa,eeee77,dd8855,664400,ff7777,333333,777777,aaff66,0088ff,bbbbbb"
+_video_     = "0200,0,20,20,6,000000,ffffff,880000,aaffee,cc44cc,00cc55,0000aa,eeee77,dd8855,664400,ff7777,333333,777777,aaff66,0088ff,bbbbbb"
 _ram_       = "0000-01ff,0600-7fff"
 
 

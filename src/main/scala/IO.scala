@@ -60,6 +60,8 @@ class KeyPress( val start: Int ) extends SingleAddressDevice {
 
 class VideoRAM( start: Int, keyPress: KeyPress, width: Int, height: Int, square: Int, cpu: CPU, palette: Seq[Int] ) extends RAM( "video", start, start + width*height - 1 ) with Device {
 
+	import javax.swing.WindowConstants._
+	
 	import scala.swing._
 	import Swing._
 	import BorderPanel.Position._
@@ -74,14 +76,17 @@ class VideoRAM( start: Int, keyPress: KeyPress, width: Int, height: Int, square:
 // 	val colors = (palette map {case (r, g, b) => r << 16 | g << 8 | b}).toArray
 	val colors = (palette map {c => new Color(c)}).toArray
 	val panel = new Panel {
-		preferredSize = (width*square, height*square)		
-		listenTo( keys )
-		reactions += {
-			case KeyTyped( _, key, _, _ ) =>
-				keyPress.key = key
-			}
-		focusable = true
-		requestFocus
+		preferredSize = (width*square, height*square)
+		
+		if (keyPress ne null) {
+			listenTo( keys )
+			reactions += {
+				case KeyTyped( _, key, _, _ ) =>
+					keyPress.key = key
+				}
+			focusable = true
+			requestFocus
+		}
 
 		override def paintComponent( g: Graphics2D ) {
 			for (x <- 0 until width; y <- 0 until height) {
@@ -103,15 +108,14 @@ class VideoRAM( start: Int, keyPress: KeyPress, width: Int, height: Int, square:
 				) = South
 			}
 		pack
-		
-		override def closeOperation = sys.exit
+		peer.setDefaultCloseOperation( DO_NOTHING_ON_CLOSE )
 	}
 	
 	override def init {
 		frame.visible = true
 	}
 	
-	override def dispose {
+	override def disable {
 		frame.visible = false
 	}
 	

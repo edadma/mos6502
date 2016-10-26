@@ -91,7 +91,7 @@ trait Device extends Addressable {
 	
 	def init {}
 	
-	def dispose {}
+	def disable {}
 	
 	override def toString = s"$name device: ${hexWord(start)}-${hexWord(start + size - 1)}"
 
@@ -165,7 +165,7 @@ abstract class Memory extends Addressable {
 			case -1 => sys.error( "not found: " + name )
 			case ind =>
 				if (regions(ind) isDevice)
-					regions(ind).asInstanceOf[Device].dispose
+					regions(ind).asInstanceOf[Device].disable
 					
 				regions remove ind
 		}
@@ -185,7 +185,7 @@ abstract class Memory extends Addressable {
 	
 	def removeDevices =
 		for (r <- seqDevice) {
-			r.dispose
+			r.disable
 			regions -= r
 		}
 		
