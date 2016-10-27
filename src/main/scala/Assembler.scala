@@ -5,7 +5,9 @@ import java.io.File
 import collection.mutable.{ListBuffer, HashMap}
 
 
-class Segment( val name, val ListBuffer[(Int, ListBuffer[Byte])] )
+class Block( var base: Int = 0, val data: ListBuffer[Byte] = new ListBuffer[Byte] )
+
+class Segment( val name: String, val segments: ListBuffer[Block] = new ListBuffer[Block] )
 
 case class AssemblerResult( symbols: Map[String, Any], segments: List[(String, List[(Int, List[Byte])])] )
 
@@ -169,9 +171,8 @@ object Assembler {
 		def pass2( ast: SourceAST ): AssemblerResult = {
 			
 			val segments = new HashMap[String, Segment]
-			val blocks = new ListBuffer[(Int, List[Byte])]
-			val block = new ListBuffer[Byte]
-			var base = 0
+			val blocks = new ListBuffer[Block]
+			val block = new Block
 			
 			def word( w: Int ) {
 				block += w.toByte
