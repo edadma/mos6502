@@ -75,7 +75,7 @@ object SREC {
 		
 		def data( addr: Int, bytes: Vector[Byte] ) {
 			if (!buf.isEmpty && addr != base + buf.length) {
-				m add new ROM( "SREC" + segment, base, buf.toIndexedSeq )
+				m add ROM( "SREC" + segment, base, buf.toIndexedSeq )
 				segment += 1
 				base = addr
 				buf.clear
@@ -90,7 +90,7 @@ object SREC {
 		apply( s, header, data, start )
 		
 		if (!buf.isEmpty)
-			m add new ROM( "SREC" + segment, base, buf.toIndexedSeq )
+			m add ROM( "SREC" + segment, base, buf.toIndexedSeq )
 			
 		startAddr
 	}

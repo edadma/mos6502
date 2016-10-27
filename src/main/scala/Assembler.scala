@@ -15,7 +15,8 @@ object Assembler {
 		val AssemblerResult(symbols, segments) = apply( src )
 		
 		for (((base, data), ind) <- segments zipWithIndex)
-			mem add new ROM( "asm" + ind, base, data )
+			for (i <- 0 until data.length)
+				mem.program( base + i, data(i) )
 			
 		symbols
 	}

@@ -142,7 +142,7 @@ object Instructions extends Flags with VectorsAddresses {
 	// simple
 	//
 	val brk = (cpu: CPU) => {
-		if (cpu.mem.addressable( BRK_VECTOR )) {
+		if (cpu.mem.addressable( BRK_VECTOR ) && cpu.mem.readWord( BRK_VECTOR ) != 0) {
 			cpu.PC += 1	// BRK is really a two byte instruction, operand byte is not used
 			cpu.push( cpu.PC >> 8 )
 			cpu.push( cpu.PC )

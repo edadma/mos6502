@@ -12,7 +12,8 @@ class Emulator( chip: String ) extends Flags {
 			def init {
 				removeDevices
 				regions.clear
-				add( new RAM("main", 0x0000, 0x5FFF) )
+				add( new RAM("main", 0x0000, 0x7FFF) )
+				add( new ROM("program", 0x9000, 0xFFFF) )
 			}
 		}
 	val cpu =
@@ -44,6 +45,15 @@ class Emulator( chip: String ) extends Flags {
 			
 			for ((m, ind) <- block findAllMatchIn p zipWithIndex)
 				mem add new RAM( "main" + ind, hex(m group 1), hex(m group 2) )
+		}	)
+	register( "_rom_",
+		(p: String, mem: Memory, cpu: CPU) => {
+			mem.removeROM
+			
+			val block = """(\p{XDigit}+)\-(\p{XDigit}+)"""r
+			
+			for ((m, ind) <- block findAllMatchIn p zipWithIndex)
+				mem add new ROM( "main" + ind, hex(m group 1), hex(m group 2) )
 		}	)
 	
 	var dumpcur = 0

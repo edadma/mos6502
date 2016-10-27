@@ -69,11 +69,11 @@ object Main extends App with Flags {
 		reader.setBellEnabled( false )
 		reader.setPrompt( "> " )
 
-		def registers = out.print( emu.registers )
+		def registers = out.println( emu.registers )
 	
-		def dump( start: Int, lines: Int ) = out.print( emu.dump(start, lines) )
+		def dump( start: Int, lines: Int ) = out.println( emu.dump(start, lines) )
 		
-		def disassemble( start: Int, lines: Int ) = out.print( emu.disassemble(start, lines) )
+		def disassemble( start: Int, lines: Int ) = out.println( emu.disassemble(start, lines) )
 				
 		out.println( "MOS 6502 emulator v0.3" )
 		out.println( "Type 'help' for list of commands." )
@@ -200,8 +200,8 @@ object Main extends App with Flags {
 			catch
 			{
 				case e: Exception =>
-					out.println( e )
-//					e.printStackTrace( out )
+//					out.println( e )
+					e.printStackTrace( out )
 			}
 		}
 		
