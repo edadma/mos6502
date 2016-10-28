@@ -216,8 +216,8 @@ object Main extends App with Flags {
 			catch
 			{
 				case e: Exception =>
-//					out.println( e )
-					e.printStackTrace( out )
+					out.println( e )
+//					e.printStackTrace( out )
 			}
 		}
 		
