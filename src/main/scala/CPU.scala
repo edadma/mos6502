@@ -1,5 +1,7 @@
 package xyz.hyperreal.mos6502
 
+import java.util.concurrent.locks.ReentrantLock
+
 import collection.mutable.HashMap
 
 
@@ -21,6 +23,14 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 	var trace = false
 	var opcode = 0
 	var cont = true
+	
+	def setCont( c: Boolean ) = synchronized {
+		cont = c
+	}
+	
+	def getCont = synchronized {
+		cont
+	}
 	
 	def status( flag: Int ) = (S&flag) != 0
 	
@@ -100,7 +110,7 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 			reset
 		}
 			
-		cont = true
+		setCont( true )
 		
 		if (trace)
 			println( hexWord(PC) + ' ' + hexByte(mem.readByte(PC)) )
@@ -111,13 +121,13 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 			printf( "A:%s X:%s Y:%s SP:%s PC:%s N:%d V:%d B:%d D:%d I:%d Z:%d C:%d\n\n", hexByte(A), hexByte(X), hexByte(Y), hexWord(SP), hexWord(PC),
 							read(N), read(V), read(B), read(D), read(I), read(Z), read(C) )
 		
-		cont && !breakpoints.contains( PC )
+		getCont && !breakpoints.contains( PC )
 	}
 	
 	def run = while (step) {}
 	
 	def stop {
-		cont = false
+		setCont( false )
 	}
 	
 	def reset {
