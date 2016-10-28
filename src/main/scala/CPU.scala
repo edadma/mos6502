@@ -22,8 +22,10 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 	
 	var trace = false
 	var opcode = 0
-	var cont = true
-	var running = false
+	protected var cont = true
+	protected var running = false
+	
+	def isRunning = running
 	
 	def setCont( c: Boolean ) = synchronized {
 		cont = c
@@ -107,7 +109,7 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 		mem.readByte( SP )
 	}
 	
-	def step = {
+	protected def execute = {
 		
 // 		if (!init) {
 // 			init = true
@@ -117,7 +119,8 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 		if (trace)
 			println( hexWord(PC) + ' ' + hexByte(mem.readByte(PC)) )
 			
-		opcodes(nextByte) apply this
+		opcode = nextByte&0xff
+		opcodes(opcode) apply this
 		
 		if (trace)
 			printf( "A:%s X:%s Y:%s SP:%s PC:%s N:%d V:%d B:%d D:%d I:%d Z:%d C:%d\n\n", hexByte(A), hexByte(X), hexByte(Y), hexWord(SP), hexWord(PC),
@@ -126,6 +129,12 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 		getCont && !breakpoints.contains( PC )
 	}
 	
+	def step =
+		if (running)
+			sys.error( "already running" )
+		else
+			execute
+			
 	def run =
 		if (running)
 			sys.error( "already running" )
@@ -137,7 +146,7 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 					def run {
 						running = true
 						
-						while (step) {}
+						while (execute) {}
 						
 						running = false
 					}

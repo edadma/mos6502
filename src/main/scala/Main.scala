@@ -131,7 +131,6 @@ object Main extends App with Flags {
 							emu.cpu.PC = emu.target( com(1) )
 						
 						emu.run
-						registers
 					case "help"|"h" =>
 						"""
 						|assemble (a) <file>            clear ROM, assemble <file>, and reset CPU
@@ -208,6 +207,7 @@ object Main extends App with Flags {
 						registers
 					case "stop"|"st" =>
 						emu.stop
+						while (emu.cpu.isRunning) {}
 						registers
 					case "save"|"sa" =>
 						save( com(1) )

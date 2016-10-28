@@ -83,6 +83,9 @@ class Emulator( chip: String ) extends Flags {
 	}
 	
 	def assemble( src: io.Source ) {
+		if (cpu.isRunning)
+			sys.error( "can't load while running" )
+			
 		mem.init
 		
 		val AssemblerResult(syms, segments) = Assembler( src )
@@ -222,6 +225,9 @@ class Emulator( chip: String ) extends Flags {
 	}
 		
 	def load( file: String ) {
+		if (cpu.isRunning)
+			sys.error( "can't load while running" )
+			
 		mem.init
 		SREC( mem, new File(file) )
 		discur = mem.code
