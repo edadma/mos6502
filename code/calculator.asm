@@ -169,19 +169,6 @@ next4_main:         dex
 display_main:       jsr display
                     jmp getch_main
 
-; global variables
-_operand1:          dcb 48,115,115,115,115 ; 's' for space
-_operator1:         dcb 61 ; '='
-_operand2:          dcb 48,115,115,115,115
-_operator2:         dcb 115
-
-; local variables
-key_main:           dcb 0
-tmp_main:           dcb 0
-still_main:         dcb 0 ; boolean, still editing flag
-standby_main:       dcb 0 ; boolean, preparing to move and clear flag
-just_main:          dcb 0 ; boolean, just operator key flag
-
 operate:            ; operate operand 1 and operand 2
 
                     lda _operator1
@@ -270,10 +257,6 @@ loop2_add:          lda _operand2,x
 
 end_add:            rts
 
-; local variables
-digit_add:          dcb 0
-carry_add:          dcb 0
-
 sub:                ; sub operand 1 and operand 2
 
 
@@ -345,10 +328,6 @@ loop2_sub:          lda _operand2,x
 
 end_sub:            rts
 
-; local variables
-digit_sub:          dcb 0
-borrow_sub:         dcb 0
-
 length:             ; compute the length of operand 2
 ; input void; output $00;
 
@@ -404,9 +383,6 @@ loop_clear:         lda #115
 
                     rts
 
-; local variables
-count_clear:        dcb 0
-
 display:            ; display operand 2
 
                     lda #4
@@ -435,9 +411,6 @@ loop_display:       lda count_display
                     bpl loop_display 
 
                     rts
-
-; local variables
-count_display:      dcb 0
 
 draw:               ; draw a digit
 ; input char x $00, char y $01,char digit $02; output void;
@@ -544,28 +517,6 @@ next_draw:          lda #0
 
 end_draw:           rts
 
-; local variables
-x_draw:             dcb 0
-y_draw:             dcb 0
-value_draw:         dcb 0
-i_draw:             dcb 0
-j_draw:             dcb 0
-mask_draw:          dcb 0
-byte_draw:          dcb 0
-color_draw:         dcb 0
-
-font_draw:          ; '0'~'9', 5x9
-	dcb $0e,$11,$11,$13,$15,$19,$11,$11,$0e
-	dcb $04,$06,$04,$04,$04,$04,$04,$04,$0e
-	dcb $0e,$11,$10,$10,$08,$04,$02,$01,$1f
-	dcb $0e,$11,$10,$10,$0e,$10,$10,$11,$0e
-	dcb $08,$0c,$0a,$09,$09,$09,$1f,$08,$08
-	dcb $1f,$01,$01,$01,$0f,$10,$10,$11,$0e
-	dcb $0e,$11,$01,$01,$0f,$11,$11,$11,$0e
-	dcb $1f,$11,$10,$10,$08,$08,$08,$04,$04
-	dcb $0e,$11,$11,$11,$0e,$11,$11,$11,$0e
-	dcb $0e,$11,$11,$11,$1e,$10,$10,$10,$0e
-
 pixel:              ; draw a pixel
 ; pixel page memory address, m=512+y*32+x
 ; (or m0=y%8*32+x, m1=2+y/8)
@@ -610,11 +561,6 @@ pixel:              ; draw a pixel
                     sta ($60),y
 
                     rts
-
-; local variables
-x_pixel:            dcb 0
-y_pixel:            dcb 0
-color_pixel:        dcb 0
 
 cmod:               ; char modulus
 ; c=a%b=a-a/b*b
@@ -680,10 +626,64 @@ take2_cdiv:         STX $02
 
                     RTS
 
+
+; global variables
             org $7000
+_operand1:          dcb 48,115,115,115,115 ; 's' for space
+_operator1:         dcb 61 ; '='
+_operand2:          dcb 48,115,115,115,115
+_operator2:         dcb 115
+
+; local variables
+key_main:           dcb 0
+tmp_main:           dcb 0
+still_main:         dcb 0 ; boolean, still editing flag
+standby_main:       dcb 0 ; boolean, preparing to move and clear flag
+just_main:          dcb 0 ; boolean, just operator key flag
+
+; local variables
+digit_add:          dcb 0
+carry_add:          dcb 0
+
+; local variables
+digit_sub:          dcb 0
+borrow_sub:         dcb 0
 
 a_cmod:             DCB 0
 p_cmod:             DCB 0 ; p=a/b*b
+
+; local variables
+count_clear:        dcb 0
+
+; local variables
+count_display:      dcb 0
+
+; local variables
+x_draw:             dcb 0
+y_draw:             dcb 0
+value_draw:         dcb 0
+i_draw:             dcb 0
+j_draw:             dcb 0
+mask_draw:          dcb 0
+byte_draw:          dcb 0
+color_draw:         dcb 0
+
+font_draw:          ; '0'~'9', 5x9
+	dcb $0e,$11,$11,$13,$15,$19,$11,$11,$0e
+	dcb $04,$06,$04,$04,$04,$04,$04,$04,$0e
+	dcb $0e,$11,$10,$10,$08,$04,$02,$01,$1f
+	dcb $0e,$11,$10,$10,$0e,$10,$10,$11,$0e
+	dcb $08,$0c,$0a,$09,$09,$09,$1f,$08,$08
+	dcb $1f,$01,$01,$01,$0f,$10,$10,$11,$0e
+	dcb $0e,$11,$01,$01,$0f,$11,$11,$11,$0e
+	dcb $1f,$11,$10,$10,$08,$08,$08,$04,$04
+	dcb $0e,$11,$11,$11,$0e,$11,$11,$11,$0e
+	dcb $0e,$11,$11,$11,$1e,$10,$10,$10,$0e
+
+; local variables
+x_pixel:            dcb 0
+y_pixel:            dcb 0
+color_pixel:        dcb 0
 
             org $FFFC
             dw  main
