@@ -168,8 +168,14 @@ class VideoRAM( start: Int, keyPress: KeyPress, width: Int, height: Int, square:
 							} )
 					) = BorderPanel.Position.South
 				}
+				
+// 			override def closeOperation {
+// 				cpu.stop
+// 				sys.exit
+// 			}
+			
 			pack
-			peer.setDefaultCloseOperation( DO_NOTHING_ON_CLOSE )
+			peer.setDefaultCloseOperation( EXIT_ON_CLOSE )
 		}
 	
 	override def init {

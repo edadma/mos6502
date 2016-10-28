@@ -142,6 +142,7 @@ object Main extends App with Flags {
 						
 						emu.run
 						waitWhileRunning
+						registers
 					case "help"|"h" =>
 						"""
 						|assemble (a) <file>              clear ROM, assemble <file>, and reset CPU
