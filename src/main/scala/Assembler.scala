@@ -9,18 +9,6 @@ case class AssemblerResult( symbols: Map[String, Any], segments: List[(Int, List
 
 object Assembler {
 	
-	def apply( mem: Memory, src: String ): Map[String, Any] = apply( mem, io.Source.fromString(src) )
-	
-	def apply( mem: Memory, src: io.Source ): Map[String, Any] = {
-		val AssemblerResult(symbols, segments) = apply( src )
-		
-		for (((base, data), ind) <- segments zipWithIndex)
-			for (i <- 0 until data.length)
-				mem.program( base + i, data(i) )
-			
-		symbols
-	}
-	
 	def apply( src: String ): AssemblerResult = apply( io.Source.fromString(src) )
 	
 	def apply( src: io.Source ): AssemblerResult = apply( new AssemblyParser(src).parse )

@@ -131,7 +131,6 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 			else
 				mem.code)
 		S = 0
-		mem.clearRAM
 		mem.seqDevice foreach (_.init)
 	}
 	

@@ -109,6 +109,12 @@ object Main extends App with Flags {
 						println( emu.breakpoints map {case (b, l) => hexWord(b) + (if (l != "") "/" + l else "")} mkString " " )
 					case "disassemble"|"u" =>
 						disassemble( (if (com.length > 1) emu.target( com(1) ) else -1), 15 )
+					case "clear"|"c" =>
+						if (com.length > 2)
+							for (i <- hex( com(1) ) until hex( com(2) ))
+								emu.mem.program( i, 0 )
+						else
+							emu.mem.clearRAM
 					case "drop"|"dr" =>
 						emu.mem.remove( com(1) )
 						out.println( emu.mem )
@@ -132,6 +138,7 @@ object Main extends App with Flags {
 						|assemble (a) <org>             clear ROM, assemble REPL input at <org>, and reset CPU
 						|breakpoint (b) <addr>*         set/clear breakpoint at <addr>
 						|disassemble (u) [<addr>*]      print disassembled code at <addr> or where left off
+						|clear (c) [<addr1>* <addr2>*]  clear RAM, optionally from <addr1> up to but not including <addr2>
 						|drop (dr) <region>             drop memory <region>
 						|dump (d) [<addr>*]             print memory at <addr> or where left off
 						|execute (e) [<addr>*]          execute instructions starting from current PC or <addr>

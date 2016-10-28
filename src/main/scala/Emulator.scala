@@ -84,7 +84,10 @@ class Emulator( chip: String ) extends Flags {
 	
 	def assemble( src: io.Source ) {
 		mem.init
-		symbols = Assembler( mem, src )
+		
+		val AssemblerResult(syms, segments) = Assembler( src )
+				
+		symbols = syms
 		reverseSymbols = symbols map {case (s, t) => (t, s)}
 		discur = mem.code
 		
@@ -93,6 +96,10 @@ class Emulator( chip: String ) extends Flags {
 				case None =>
 				case Some( installer: ((String, Memory, CPU) => Unit) ) => installer( v.asInstanceOf[String], mem, cpu )
 			}
+		
+		for ((base, data) <- segments)
+			for (i <- 0 until data.length)
+				mem.program( base + i, data(i) )
 			
 		clearBreakpoints
 		reset

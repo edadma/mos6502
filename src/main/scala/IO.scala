@@ -145,6 +145,7 @@ class VideoRAM( start: Int, keyPress: KeyPress, width: Int, height: Int, square:
 		}
 	
 	override def init {
+		clear
 		frame.visible = true
 	}
 	
