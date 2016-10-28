@@ -140,25 +140,31 @@ class VideoRAM( start: Int, keyPress: KeyPress, width: Int, height: Int, square:
 					) = BorderPanel.Position.Center
 					layout(
 						new FlowPanel( FlowPanel.Alignment.Center )(
-							Button( "Stop" ) {
+							new Button( Action("Stop")({
 								cpu.stop
 								println( "stopped from GUI" )
+							}) ) {
+								focusable = false
 							},
-							Button( "Run" ) {
+							new Button( Action("Run")({
 								try {
 									cpu.run
 									println( "run from GUI" )
 								} catch {
 									case e: Exception => println( e )
 								}
+							}) ) {
+								focusable = false
 							},
-							Button( "Reset" ) {
+							new Button( Action("Reset")({
 								try {
 									cpu.reset
 									println( "reset from GUI" )
 								} catch {
 									case e: Exception => println( e )
 								}
+							}) ) {
+								focusable = false
 							} )
 					) = BorderPanel.Position.South
 				}
