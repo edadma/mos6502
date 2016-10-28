@@ -94,7 +94,7 @@ object Assembler {
 					val label1 =
 						if (label startsWith ".") {
 							if (last eq null)
-								problem( "no previous label" )
+								problem( "no previous label: " + label )
 								
 							last + label
 						} else {
@@ -103,7 +103,9 @@ object Assembler {
 						}
 					
 					dir.definite = defineHere( label1 )
-				case LabelDirectiveAST( _, true ) =>
+				case LabelDirectiveAST( label, true ) =>
+					if (!(label startsWith "."))
+						last = label
 				case OriginDirectiveAST( expr ) =>
 					ieval( expr, false ) match {
 						case Known( org ) =>
@@ -176,10 +178,12 @@ object Assembler {
 		}
 		
 		def pass2( ast: SourceAST ): AssemblerResult = {
-			
+		
 			val segments = new ListBuffer[(Int, List[Byte])]
 			val segment = new ListBuffer[Byte]
 			var base = 0
+			
+			last = null
 			
 			def word( w: Int ) {
 				segment += w.toByte
@@ -202,6 +206,9 @@ object Assembler {
 			pointerExact = true
 			
 			ast.statements foreach {
+				case LabelDirectiveAST( label, _ ) =>
+					if (!(label startsWith "."))
+						last = label
 				case OriginDirectiveAST( expr ) =>
 					append
 					pointer = ieval( expr, false ).get

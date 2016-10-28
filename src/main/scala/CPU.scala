@@ -132,9 +132,12 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 	def step =
 		if (running)
 			sys.error( "already running" )
-		else
+		else {
+			running = true
 			execute
-			
+			running = false
+		}
+		
 	def run =
 		if (running)
 			sys.error( "already running" )

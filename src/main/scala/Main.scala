@@ -60,6 +60,11 @@ object Main extends App with Flags {
 
 	def save( file: String ) = emu.save( file )
 	
+	def waitWhileRunning = {
+		while (!emu.cpu.isRunning) {}
+		while (emu.cpu.isRunning) {}
+	}
+	
 	def REPL {
 		val reader = new ConsoleReader
 		val out = new PrintWriter( reader.getTerminal.wrapOutIfNeeded(System.out), true )
@@ -131,30 +136,37 @@ object Main extends App with Flags {
 							emu.cpu.PC = emu.target( com(1) )
 						
 						emu.run
+					case "execute&wait"|"ew" =>
+						if (com.length > 1)
+							emu.cpu.PC = emu.target( com(1) )
+						
+						emu.run
+						waitWhileRunning
 					case "help"|"h" =>
 						"""
-						|assemble (a) <file>            clear ROM, assemble <file>, and reset CPU
-						|assemble (a) <org>             clear ROM, assemble REPL input at <org>, and reset CPU
-						|breakpoint (b) <addr>*         set/clear breakpoint at <addr>
-						|disassemble (u) [<addr>*]      print disassembled code at <addr> or where left off
-						|clear (c) [<addr1>* <addr2>*]  clear RAM, optionally from <addr1> up to but not including <addr2>
-						|drop (dr) <region>             drop memory <region>
-						|dump (d) [<addr>*]             print memory at <addr> or where left off
-						|execute (e) [<addr>*]          execute instructions starting from current PC or <addr>
-						|help (h)                       print this summary
-						|load (l) <file>                clear ROM, load SREC <file>, and reset CPU
-						|memory (m)                     print memory map
-						|memory (m) <addr>* <data>*...  write <data> (space separated bytes) to memory at <addr>
-						|quit (q)                       exit the REPL
-						|registers (r)                  print CPU registers
-						|registers (r) <reg> <val>*     set CPU <reg>ister to <val>ue
-						|reload (rl)                    redo last 'load' or 'assemble' command
-						|reset (re)                     reset CPU registers setting PC from reset vector
-						|step (s) [<addr>*]             execute only next instruction at current PC or <addr>
-						|stop (st)                      stop code execution
-						|save (sa) <file>               save all ROM contents to SREC file
-						|symbols (sy)                   print symbol table
-						|symbols (sy) <symbol> <val>*   add <symbol> with associated <val>ue to symbol table
+						|assemble (a) <file>              clear ROM, assemble <file>, and reset CPU
+						|assemble (a) <org>               clear ROM, assemble REPL input at <org>, and reset CPU
+						|breakpoint (b) <addr>*           set/clear breakpoint at <addr>
+						|disassemble (u) [<addr>*]        print disassembled code at <addr> or where left off
+						|clear (c) [<addr1>* <addr2>*]    clear RAM, optionally from <addr1> up to but not including <addr2>
+						|drop (dr) <region>               drop memory <region>
+						|dump (d) [<addr>*]               print memory at <addr> or where left off
+						|execute (e) [<addr>*]            execute instructions starting from current PC or <addr>
+						|execute&wait (ew) [<addr>*]      execute instructions starting from current PC or <addr> and wait to finish
+						|help (h)                         print this summary
+						|load (l) <file>                  clear ROM, load SREC <file>, and reset CPU
+						|memory (m)                       print memory map
+						|memory (m) <addr>* <data>*...    write <data> (space separated bytes) to memory at <addr>
+						|quit (q)                         exit the REPL
+						|registers (r)                    print CPU registers
+						|registers (r) <reg> <val>*       set CPU <reg>ister to <val>ue
+						|reload (rl)                      redo last 'load' or 'assemble' command
+						|reset (re)                       reset CPU registers setting PC from reset vector
+						|step (s) [<addr>*]               execute only next instruction at current PC or <addr>
+						|stop (st)                        stop code execution
+						|save (sa) <file>                 save all ROM contents to SREC file
+						|symbols (sy)                     print symbol table
+						|symbols (sy) <symbol> <val>*     add <symbol> with associated <val>ue to symbol table
 						|* can either be a hexadecimal value or label (optionally followed by a colon)
 						""".trim.stripMargin.lines foreach out.println
 					case "load"|"l" =>
@@ -207,7 +219,7 @@ object Main extends App with Flags {
 						registers
 					case "stop"|"st" =>
 						emu.stop
-						while (emu.cpu.isRunning) {}
+						waitWhileRunning
 						registers
 					case "save"|"sa" =>
 						save( com(1) )

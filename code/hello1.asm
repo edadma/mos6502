@@ -1,17 +1,17 @@
-_stdioChar_         = "8000"
+_stdioChar_ = "8000"
 
         org $8000
-cout    rb
+chio    rb
 
         org $9000
 start   ldy #0
-l1      lda message,y
-        beq l2
-        sta	cout
+.1      lda message,y
+        beq .2
+        sta	chio
         iny
-        bne l1
-l2      lda #'\n'
-        sta cout
+        bne .1
+.2      lda #'\n'
+        sta chio
         brk
 
 message db  "Hello World!\0"
