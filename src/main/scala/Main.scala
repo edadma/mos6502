@@ -7,7 +7,7 @@ import jline.console.ConsoleReader
 
 object Main extends App with Flags {
 	
-	lazy val emu = new Emulator( "6502" )	
+	lazy val emu = new Emulator( "6502" )
 	var enterREPL = true
 	
 	Options( args )
@@ -68,6 +68,15 @@ object Main extends App with Flags {
 		
 		reader.setBellEnabled( false )
 		reader.setPrompt( "> " )
+
+		emu.reregister( "_stdioInt_",
+			(p: String, mem: Memory, cpu: CPU) => {
+				mem add new JLineInt( hex(p), reader )
+			} )
+		emu.reregister( "_stdioHex_",
+			(p: String, mem: Memory, cpu: CPU) => {
+				mem add new JLineHex( hex(p), reader )
+			} )
 
 		def registers = out.println( emu.registers )
 	

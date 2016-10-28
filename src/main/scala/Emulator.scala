@@ -60,10 +60,24 @@ class Emulator( chip: String ) extends Flags {
 	var discur = 0
 	var symbols = Map[String, Any]()
 	var reverseSymbols = Map[Any, String]()
-		
+	
 	def register( name: String, installer: (String, Memory, CPU) => Unit ) {
 		if (registry contains name)
 			sys.error( "device installer already registered: " + name )
+			
+		registry(name) = installer
+	}
+	
+	def degister( name: String ) {
+		if (!(registry contains name))
+			sys.error( "device installer not registered: " + name )
+			
+		registry -= name
+	}
+	
+	def reregister( name: String, installer: (String, Memory, CPU) => Unit ) {
+		if (!(registry contains name))
+			sys.error( "device installer not registered: " + name )
 			
 		registry(name) = installer
 	}

@@ -1,5 +1,7 @@
 package xyz.hyperreal.mos6502
 
+import jline.console.ConsoleReader
+
 
 class StdIOChar( val start: Int ) extends SingleAddressDevice {
 	
@@ -26,6 +28,38 @@ class StdIOHex( val start: Int ) extends SingleAddressDevice {
 	val name = "stdio-hex"
 	
 	def readByte( addr: Int ) = hex( io.StdIn.readLine )
+	
+	def writeByte( addr: Int, value: Int ) = print( value.toHexString )
+	
+}
+
+class JLineInt( val start: Int, reader: ConsoleReader ) extends SingleAddressDevice {
+	
+	val name = "stdio-int"
+	
+	def readByte( addr: Int ) = {
+		val p = reader.getPrompt
+		val res = reader.readLine("").toInt
+		
+		reader.setPrompt( p )
+		res
+	}
+	
+	def writeByte( addr: Int, value: Int ) = print( value )
+	
+}
+
+class JLineHex( val start: Int, reader: ConsoleReader ) extends SingleAddressDevice {
+	
+	val name = "stdio-hex"
+	
+	def readByte( addr: Int ) = {
+		val p = reader.getPrompt
+		val res = hex( reader.readLine("") )
+		
+		reader.setPrompt( p )
+		res
+	}
 	
 	def writeByte( addr: Int, value: Int ) = print( value.toHexString )
 	
