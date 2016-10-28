@@ -94,11 +94,12 @@ class KeyPress( val start: Int ) extends SingleAddressDevice {
 
 class VideoRAM( start: Int, keyPress: KeyPress, width: Int, height: Int, square: Int, cpu: CPU, palette: Seq[Int] ) extends RAM( "video", start, start + width*height - 1 ) with Device {
 
+	import javax.swing.BorderFactory._
 	import javax.swing.WindowConstants._
+	import javax.swing.border._
 	
 	import scala.swing._
 	import Swing._
-	import BorderPanel.Position._
 	import scala.swing.event._
 	
 	require( start >= 0 )
@@ -109,6 +110,7 @@ class VideoRAM( start: Int, keyPress: KeyPress, width: Int, height: Int, square:
 	val colors = (palette map {c => new Color(c)}).toArray
 	val panel = new Panel {
 		preferredSize = (width*square, height*square)
+		border = createBevelBorder( BevelBorder.LOWERED )
 		
 		if (keyPress ne null) {
 			listenTo( keys )
@@ -133,12 +135,32 @@ class VideoRAM( start: Int, keyPress: KeyPress, width: Int, height: Int, square:
 			title = "Video"
 			contents =
 				new BorderPanel {
-					layout(panel) = Center
 					layout(
-						Button( "Stop" ) {
-							cpu.stop
-						}
-					) = South
+						new FlowPanel( FlowPanel.Alignment.Center )(panel)
+					) = BorderPanel.Position.Center
+					layout(
+						new FlowPanel( FlowPanel.Alignment.Center )(
+							Button( "Stop" ) {
+								cpu.stop
+								println( "stopped from GUI" )
+							},
+							Button( "Run" ) {
+								try {
+									cpu.run
+									println( "run from GUI" )
+								} catch {
+									case e: Exception => println( e )
+								}
+							},
+							Button( "Reset" ) {
+								try {
+									cpu.reset
+									println( "reset from GUI" )
+								} catch {
+									case e: Exception => println( e )
+								}
+							} )
+					) = BorderPanel.Position.South
 				}
 			pack
 			peer.setDefaultCloseOperation( DO_NOTHING_ON_CLOSE )

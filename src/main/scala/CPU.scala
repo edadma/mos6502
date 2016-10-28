@@ -9,7 +9,7 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 	
 	val opcodes: Seq[Instruction]
 	
-	var init = false
+//	var init = false
 	var breakpoints = Set[Int]()
 	
 	var A = 0
@@ -23,13 +23,17 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 	var trace = false
 	var opcode = 0
 	var cont = true
+	var running = false
 	
 	def setCont( c: Boolean ) = synchronized {
 		cont = c
 	}
 	
 	def getCont = synchronized {
-		cont
+		val res = cont
+		
+		cont = true
+		res
 	}
 	
 	def status( flag: Int ) = (S&flag) != 0
@@ -105,12 +109,10 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 	
 	def step = {
 		
-		if (!init) {
-			init = true
-			reset
-		}
-			
-		setCont( true )
+// 		if (!init) {
+// 			init = true
+// 			reset
+// 		}
 		
 		if (trace)
 			println( hexWord(PC) + ' ' + hexByte(mem.readByte(PC)) )
@@ -124,24 +126,43 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 		getCont && !breakpoints.contains( PC )
 	}
 	
-	def run = while (step) {}
+	def run =
+		if (running)
+			sys.error( "already running" )
+		else
+			new Thread (
+				new Runnable {
+					cont = true
+					
+					def run {
+						running = true
+						
+						while (step) {}
+						
+						running = false
+					}
+				} ).start
 	
 	def stop {
 		setCont( false )
 	}
 	
 	def reset {
-		A = 0
-		X = 0
-		Y = 0
-		SP = 0x1FD
-		PC =
-			(if (mem.addressable( RESET_VECTOR ))
-				mem.readWord( RESET_VECTOR )
-			else
-				mem.code)
-		S = 0
-		mem.seqDevice foreach (_.init)
+		if (running)
+			sys.error( "can't reset while running" )
+		else {
+			A = 0
+			X = 0
+			Y = 0
+			SP = 0x1FD
+			PC =
+				(if (mem.addressable( RESET_VECTOR ))
+					mem.readWord( RESET_VECTOR )
+				else
+					mem.code)
+			S = 0
+			mem.seqDevice foreach (_.init)
+		}
 	}
 	
 }

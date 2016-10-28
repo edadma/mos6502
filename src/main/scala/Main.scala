@@ -152,6 +152,7 @@ object Main extends App with Flags {
 						|reload (rl)                    redo last 'load' or 'assemble' command
 						|reset (re)                     reset CPU registers setting PC from reset vector
 						|step (s) [<addr>*]             execute only next instruction at current PC or <addr>
+						|stop (st)                      stop code execution
 						|save (sa) <file>               save all ROM contents to SREC file
 						|symbols (sy)                   print symbol table
 						|symbols (sy) <symbol> <val>*   add <symbol> with associated <val>ue to symbol table
@@ -170,7 +171,10 @@ object Main extends App with Flags {
 							dump( addr, (com.length - 2 + addr%16)/16 + 1 )
 						} else
 							out.println( emu.mem )
-					case "quit"|"q" => sys.exit
+					case "quit"|"q" =>
+						emu.stop
+						emu.mem.removeDevices
+						sys.exit
 					case "registers"|"r" =>
 						if (com.length > 2) {
 							val n = emu.target( com(2) )
@@ -201,6 +205,9 @@ object Main extends App with Flags {
 							emu.cpu.PC = emu.target( com(1) )
 							
 						emu.step
+						registers
+					case "stop"|"st" =>
+						emu.stop
 						registers
 					case "save"|"sa" =>
 						save( com(1) )

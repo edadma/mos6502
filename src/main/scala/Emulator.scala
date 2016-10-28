@@ -114,6 +114,8 @@ class Emulator( chip: String ) extends Flags {
 	
 	def step = cpu.step
 	
+	def stop = cpu.stop
+	
 	def readByte( addr: Int ) = mem.readByte( addr )
 	
 	def readWord( addr: Int ) = mem.readWord( addr )
