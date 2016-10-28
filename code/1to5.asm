@@ -18,15 +18,15 @@ COUNTER RB          ; counter variable
 START
         LDA #0      ; start counter off with 0
         STA COUNTER
-LOOP    INC COUNTER ; bump the counter
+.1      INC COUNTER ; bump the counter
         LDA COUNTER
         CMP #6      ; is counter less than 6
-        BNE PRINT   ; if so, print
+        BNE .2      ; if so, print
         BRK         ; otherwise, stop
-PRINT   STA INTIO   ; send counter value to integer i/o port
+.2      STA INTIO   ; send counter value to integer i/o port
         LDA #'\n'   ; now print a line feed
         STA CHIO
-        JMP LOOP
+        JMP .1
 
         ORG $FFFC   ; reset vector
         DW  START   ; CPU will start executing at 9000

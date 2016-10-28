@@ -19,7 +19,8 @@ object Assembler {
 		var pointer = 0
 		var pointerExact = true
 		var allknown = true
-		
+		var last: String = null
+
 		def check( cond: Boolean, msg: String ) =
 			if (cond)
 				problem( msg )
@@ -49,8 +50,17 @@ object Assembler {
 				case NumberExpressionAST( n ) => Known( n )
 				case StringExpressionAST( s ) => Known( s )
 				case ReferenceExpressionAST( r ) =>
-					symbols get r match {
-						case None|Some( None ) if mustknow => problem( "undefined reference: " + r )
+					val r1 =
+						if (r startsWith ".") {
+							if (last eq null)
+								problem( "no previous label" )
+								
+							last + r
+						} else
+							r
+
+					symbols get r1 match {
+						case None|Some( None ) if mustknow => problem( "undefined reference: " + r1 )
 						case None => Unknown
 						case Some( None ) => Knowable
 						case Some( Some(a) ) => Known( a )
@@ -74,13 +84,25 @@ object Assembler {
 		
 		def pass1( ast: SourceAST ) {
 			
+			last = null
 			pointer = 0
 			pointerExact = true
 			allknown = true
 			
 			ast.statements foreach {
 				case dir@LabelDirectiveAST( label, false ) =>
-					dir.definite = defineHere( label )
+					val label1 =
+						if (label startsWith ".") {
+							if (last eq null)
+								problem( "no previous label" )
+								
+							last + label
+						} else {
+							last = label
+							label
+						}
+					
+					dir.definite = defineHere( label1 )
 				case LabelDirectiveAST( _, true ) =>
 				case OriginDirectiveAST( expr ) =>
 					ieval( expr, false ) match {

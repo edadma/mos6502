@@ -125,10 +125,16 @@ class Emulator( chip: String ) extends Flags {
 		String.format( "N:%s V:%s B:%s D:%s I:%s Z:%s C:%s\n", Seq(N, V, B, D, I, Z, C) map (cpu.read(_).toString): _* ) +
 		disassemble( cpu.PC, 1 )
 		
+	def display( label: String ) =
+		label indexOf '.' match {
+			case -1 => label
+			case dot => label substring dot
+		}
+	
 	def reference( target: Int, zp: Boolean ) =
 		reverseSymbols get target match {
 			case None => "$" + (if (zp) hexByte( target ) else hexWord( target ))
-			case Some( l ) => l
+			case Some( l ) => display( l )
 		}
 		
 	def target( ref: String ) =
@@ -165,7 +171,7 @@ class Emulator( chip: String ) extends Flags {
 			val label =
 				(reverseSymbols get addr match {
 					case None => ""
-					case Some( l ) => l
+					case Some( l ) => display( l )
 				})
 				
 			if (cpu.breakpoints( addr ))
