@@ -5,24 +5,11 @@ import java.io.File
 import collection.mutable.{ListBuffer, HashMap}
 
 
-class Block( var base: Int = 0, val data: ListBuffer[Byte] = new ListBuffer[Byte] )
+class Segment( val name: String, var base: Int = 0, val data: ListBuffer[Byte] = new ListBuffer[Byte] )
 
-class Segment( val name: String, val segments: ListBuffer[Block] = new ListBuffer[Block] )
-
-case class AssemblerResult( symbols: Map[String, Any], segments: List[(String, List[(Int, List[Byte])])] )
+case class AssemblerResult( symbols: Map[String, Any], segments: (String, Int, List[Byte]) )
 
 object Assembler {
-	
-	def apply( mem: Memory, src: String ): Map[String, Any] = apply( mem, io.Source.fromString(src) )
-	
-	def apply( mem: Memory, src: io.Source ): Map[String, Any] = {
-		val AssemblerResult(symbols, segments) = apply( src )
-		
-		for (((base, data), ind) <- segments zipWithIndex)
-			mem add new ROM( "asm" + ind, base, data )
-			
-		symbols
-	}
 	
 	def apply( src: String ): AssemblerResult = apply( io.Source.fromString(src) )
 	
@@ -34,7 +21,8 @@ object Assembler {
 		var pointer = 0
 		var pointerExact = true
 		var allknown = true
-		
+		var last: String = null
+
 		def check( cond: Boolean, msg: String ) =
 			if (cond)
 				problem( msg )
@@ -64,8 +52,17 @@ object Assembler {
 				case NumberExpressionAST( n ) => Known( n )
 				case StringExpressionAST( s ) => Known( s )
 				case ReferenceExpressionAST( r ) =>
-					symbols get r match {
-						case None|Some( None ) if mustknow => problem( "undefined reference: " + r )
+					val r1 =
+						if (r startsWith ".") {
+							if (last eq null)
+								problem( "no previous label" )
+								
+							last + r
+						} else
+							r
+
+					symbols get r1 match {
+						case None|Some( None ) if mustknow => problem( "undefined reference: " + r1 )
 						case None => Unknown
 						case Some( None ) => Knowable
 						case Some( Some(a) ) => Known( a )
@@ -89,14 +86,28 @@ object Assembler {
 		
 		def pass1( ast: SourceAST ) {
 			
+			last = null
 			pointer = 0
 			pointerExact = true
 			allknown = true
 			
 			ast.statements foreach {
 				case dir@LabelDirectiveAST( label, false ) =>
-					dir.definite = defineHere( label )
-				case LabelDirectiveAST( _, true ) =>
+					val label1 =
+						if (label startsWith ".") {
+							if (last eq null)
+								problem( "no previous label: " + label )
+								
+							last + label
+						} else {
+							last = label
+							label
+						}
+					
+					dir.definite = defineHere( label1 )
+				case LabelDirectiveAST( label, true ) =>
+					if (!(label startsWith "."))
+						last = label
 				case OriginDirectiveAST( expr ) =>
 					ieval( expr, false ) match {
 						case Known( org ) =>
@@ -171,18 +182,19 @@ object Assembler {
 		def pass2( ast: SourceAST ): AssemblerResult = {
 			
 			val segments = new HashMap[String, Segment]
-			val blocks = new ListBuffer[Block]
-			val block = new Block
+			val segment = new Segment( "zpage" )
+			
+			last = null
 			
 			def word( w: Int ) {
-				block += w.toByte
-				block += (w >> 8).toByte
+				segment.data += w.toByte
+				segment.data += (w >> 8).toByte
 			}
 			
 			def opcode( mnemonic: String, mode: Symbol ) =
 				CPU.asm6502.get( (mnemonic, mode) ) match {
 					case None => problem( "illegal instruction: " + (mnemonic, mode) )
-					case Some( op ) => block += op
+					case Some( op ) => segment.data += op
 				}
 
 			def append =
@@ -195,6 +207,9 @@ object Assembler {
 			pointerExact = true
 			
 			ast.statements foreach {
+				case LabelDirectiveAST( label, _ ) =>
+					if (!(label startsWith "."))
+						last = label
 				case OriginDirectiveAST( expr ) =>
 					append
 					pointer = ieval( expr, false ).get

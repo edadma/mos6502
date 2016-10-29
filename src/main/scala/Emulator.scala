@@ -12,7 +12,8 @@ class Emulator( chip: String ) extends Flags {
 			def init {
 				removeDevices
 				regions.clear
-				add( new RAM("main", 0x0000, 0x5FFF) )
+				add( new RAM("main", 0x0000, 0x7FFF) )
+				add( new ROM("program", 0x9000, 0xFFFF) )
 			}
 		}
 	val cpu =
@@ -45,12 +46,21 @@ class Emulator( chip: String ) extends Flags {
 			for ((m, ind) <- block findAllMatchIn p zipWithIndex)
 				mem add new RAM( "main" + ind, hex(m group 1), hex(m group 2) )
 		}	)
+	register( "_rom_",
+		(p: String, mem: Memory, cpu: CPU) => {
+			mem.removeROM
+			
+			val block = """(\p{XDigit}+)\-(\p{XDigit}+)"""r
+			
+			for ((m, ind) <- block findAllMatchIn p zipWithIndex)
+				mem add new ROM( "main" + ind, hex(m group 1), hex(m group 2) )
+		}	)
 	
 	var dumpcur = 0
 	var discur = 0
 	var symbols = Map[String, Any]()
 	var reverseSymbols = Map[Any, String]()
-		
+	
 	def register( name: String, installer: (String, Memory, CPU) => Unit ) {
 		if (registry contains name)
 			sys.error( "device installer already registered: " + name )
@@ -58,9 +68,29 @@ class Emulator( chip: String ) extends Flags {
 		registry(name) = installer
 	}
 	
+	def degister( name: String ) {
+		if (!(registry contains name))
+			sys.error( "device installer not registered: " + name )
+			
+		registry -= name
+	}
+	
+	def reregister( name: String, installer: (String, Memory, CPU) => Unit ) {
+		if (!(registry contains name))
+			sys.error( "device installer not registered: " + name )
+			
+		registry(name) = installer
+	}
+	
 	def assemble( src: io.Source ) {
+		if (cpu.isRunning)
+			sys.error( "can't load while running" )
+			
 		mem.init
-		symbols = Assembler( mem, src )
+		
+		val AssemblerResult(syms, segments) = Assembler( src )
+				
+		symbols = syms
 		reverseSymbols = symbols map {case (s, t) => (t, s)}
 		discur = mem.code
 		
@@ -69,6 +99,10 @@ class Emulator( chip: String ) extends Flags {
 				case None =>
 				case Some( installer: ((String, Memory, CPU) => Unit) ) => installer( v.asInstanceOf[String], mem, cpu )
 			}
+		
+		for ((base, data) <- segments)
+			for (i <- 0 until data.length)
+				mem.program( base + i, data(i) )
 			
 		clearBreakpoints
 		reset
@@ -83,6 +117,8 @@ class Emulator( chip: String ) extends Flags {
 	
 	def step = cpu.step
 	
+	def stop = cpu.stop
+	
 	def readByte( addr: Int ) = mem.readByte( addr )
 	
 	def readWord( addr: Int ) = mem.readWord( addr )
@@ -94,10 +130,16 @@ class Emulator( chip: String ) extends Flags {
 		String.format( "N:%s V:%s B:%s D:%s I:%s Z:%s C:%s\n", Seq(N, V, B, D, I, Z, C) map (cpu.read(_).toString): _* ) +
 		disassemble( cpu.PC, 1 )
 		
+	def display( label: String ) =
+		label indexOf '.' match {
+			case -1 => label
+			case dot => label substring dot
+		}
+	
 	def reference( target: Int, zp: Boolean ) =
 		reverseSymbols get target match {
 			case None => "$" + (if (zp) hexByte( target ) else hexWord( target ))
-			case Some( l ) => l
+			case Some( l ) => display( l )
 		}
 		
 	def target( ref: String ) =
@@ -134,7 +176,7 @@ class Emulator( chip: String ) extends Flags {
 			val label =
 				(reverseSymbols get addr match {
 					case None => ""
-					case Some( l ) => l
+					case Some( l ) => display( l )
 				})
 				
 			if (cpu.breakpoints( addr ))
@@ -183,6 +225,9 @@ class Emulator( chip: String ) extends Flags {
 	}
 		
 	def load( file: String ) {
+		if (cpu.isRunning)
+			sys.error( "can't load while running" )
+			
 		mem.init
 		SREC( mem, new File(file) )
 		discur = mem.code

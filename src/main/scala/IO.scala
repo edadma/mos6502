@@ -1,5 +1,7 @@
 package xyz.hyperreal.mos6502
 
+import jline.console.ConsoleReader
+
 
 class StdIOChar( val start: Int ) extends SingleAddressDevice {
 	
@@ -26,6 +28,38 @@ class StdIOHex( val start: Int ) extends SingleAddressDevice {
 	val name = "stdio-hex"
 	
 	def readByte( addr: Int ) = hex( io.StdIn.readLine )
+	
+	def writeByte( addr: Int, value: Int ) = print( value.toHexString )
+	
+}
+
+class JLineInt( val start: Int, reader: ConsoleReader ) extends SingleAddressDevice {
+	
+	val name = "stdio-int"
+	
+	def readByte( addr: Int ) = {
+		val p = reader.getPrompt
+		val res = reader.readLine("").toInt
+		
+		reader.setPrompt( p )
+		res
+	}
+	
+	def writeByte( addr: Int, value: Int ) = print( value )
+	
+}
+
+class JLineHex( val start: Int, reader: ConsoleReader ) extends SingleAddressDevice {
+	
+	val name = "stdio-hex"
+	
+	def readByte( addr: Int ) = {
+		val p = reader.getPrompt
+		val res = hex( reader.readLine("") )
+		
+		reader.setPrompt( p )
+		res
+	}
 	
 	def writeByte( addr: Int, value: Int ) = print( value.toHexString )
 	
@@ -60,11 +94,12 @@ class KeyPress( val start: Int ) extends SingleAddressDevice {
 
 class VideoRAM( start: Int, keyPress: KeyPress, width: Int, height: Int, square: Int, cpu: CPU, palette: Seq[Int] ) extends RAM( "video", start, start + width*height - 1 ) with Device {
 
+	import javax.swing.BorderFactory._
 	import javax.swing.WindowConstants._
+	import javax.swing.border._
 	
 	import scala.swing._
 	import Swing._
-	import BorderPanel.Position._
 	import scala.swing.event._
 	
 	require( start >= 0 )
@@ -75,12 +110,13 @@ class VideoRAM( start: Int, keyPress: KeyPress, width: Int, height: Int, square:
 	val colors = (palette map {c => new Color(c)}).toArray
 	val panel = new Panel {
 		preferredSize = (width*square, height*square)
+		border = createBevelBorder( BevelBorder.LOWERED )
 		
 		if (keyPress ne null) {
 			listenTo( keys )
 			reactions += {
-				case KeyTyped( _, key, _, _ ) =>
-					keyPress.key = key
+				case ev: KeyPressed =>
+					keyPress.key = ev.peer.getKeyChar
 				}
 			focusable = true
 			requestFocus
@@ -99,18 +135,51 @@ class VideoRAM( start: Int, keyPress: KeyPress, width: Int, height: Int, square:
 			title = "Video"
 			contents =
 				new BorderPanel {
-					layout(panel) = Center
 					layout(
-						Button( "Stop" ) {
-							cpu.stop
-						}
-					) = South
+						new FlowPanel( FlowPanel.Alignment.Center )(panel)
+					) = BorderPanel.Position.Center
+					layout(
+						new FlowPanel( FlowPanel.Alignment.Center )(
+							new Button( Action("Stop")({
+								cpu.stop
+								println( "stopped from GUI" )
+							}) ) {
+								focusable = false
+							},
+							new Button( Action("Run")({
+								try {
+									cpu.run
+									println( "run from GUI" )
+								} catch {
+									case e: Exception => println( e )
+								}
+							}) ) {
+								focusable = false
+							},
+							new Button( Action("Reset")({
+								try {
+									cpu.reset
+									println( "reset from GUI" )
+								} catch {
+									case e: Exception => println( e )
+								}
+							}) ) {
+								focusable = false
+							} )
+					) = BorderPanel.Position.South
 				}
+				
+// 			override def closeOperation {
+// 				cpu.stop
+// 				sys.exit
+// 			}
+			
 			pack
-			peer.setDefaultCloseOperation( DO_NOTHING_ON_CLOSE )
+			peer.setDefaultCloseOperation( EXIT_ON_CLOSE )
 		}
 	
 	override def init {
+		clear
 		frame.visible = true
 	}
 	

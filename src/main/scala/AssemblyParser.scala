@@ -44,7 +44,7 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 			StringExpressionAST( escape(s) )
 	}
 	
-	def label = "[_0-9a-zA-Z]+:?".r ^^ {
+	def label = """(?:\.[_0-9a-zA-Z]+|[_a-zA-Z][_0-9a-zA-Z]*):?""".r ^^ {
 		s =>
 			if (s endsWith ":")
 				s dropRight 1

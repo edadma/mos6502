@@ -7,7 +7,7 @@ import jline.console.ConsoleReader
 
 object Main extends App with Flags {
 	
-	lazy val emu = new Emulator( "6502" )	
+	lazy val emu = new Emulator( "6502" )
 	var enterREPL = true
 	
 	Options( args )
@@ -60,6 +60,11 @@ object Main extends App with Flags {
 
 	def save( file: String ) = emu.save( file )
 	
+	def waitWhileRunning = {
+		while (!emu.cpu.isRunning) {}
+		while (emu.cpu.isRunning) {}
+	}
+	
 	def REPL {
 		val reader = new ConsoleReader
 		val out = new PrintWriter( reader.getTerminal.wrapOutIfNeeded(System.out), true )
@@ -69,11 +74,20 @@ object Main extends App with Flags {
 		reader.setBellEnabled( false )
 		reader.setPrompt( "> " )
 
-		def registers = out.print( emu.registers )
+		emu.reregister( "_stdioInt_",
+			(p: String, mem: Memory, cpu: CPU) => {
+				mem add new JLineInt( hex(p), reader )
+			} )
+		emu.reregister( "_stdioHex_",
+			(p: String, mem: Memory, cpu: CPU) => {
+				mem add new JLineHex( hex(p), reader )
+			} )
+
+		def registers = out.println( emu.registers )
 	
-		def dump( start: Int, lines: Int ) = out.print( emu.dump(start, lines) )
+		def dump( start: Int, lines: Int ) = out.println( emu.dump(start, lines) )
 		
-		def disassemble( start: Int, lines: Int ) = out.print( emu.disassemble(start, lines) )
+		def disassemble( start: Int, lines: Int ) = out.println( emu.disassemble(start, lines) )
 				
 		out.println( "MOS 6502 emulator v0.3" )
 		out.println( "Type 'help' for list of commands." )
@@ -100,6 +114,12 @@ object Main extends App with Flags {
 						println( emu.breakpoints map {case (b, l) => hexWord(b) + (if (l != "") "/" + l else "")} mkString " " )
 					case "disassemble"|"u" =>
 						disassemble( (if (com.length > 1) emu.target( com(1) ) else -1), 15 )
+					case "clear"|"c" =>
+						if (com.length > 2)
+							for (i <- hex( com(1) ) until hex( com(2) ))
+								emu.mem.program( i, 0 )
+						else
+							emu.mem.clearRAM
 					case "drop"|"dr" =>
 						emu.mem.remove( com(1) )
 						out.println( emu.mem )
@@ -116,29 +136,38 @@ object Main extends App with Flags {
 							emu.cpu.PC = emu.target( com(1) )
 						
 						emu.run
+					case "execute&wait"|"ew" =>
+						if (com.length > 1)
+							emu.cpu.PC = emu.target( com(1) )
+						
+						emu.run
+						waitWhileRunning
 						registers
 					case "help"|"h" =>
 						"""
-						|assemble (a) <file>            clear ROM, assemble <file>, and reset CPU
-						|assemble (a) <org>             clear ROM, assemble REPL input at <org>, and reset CPU
-						|breakpoint (b) <addr>*         set/clear breakpoint at <addr>
-						|disassemble (u) [<addr>*]      print disassembled code at <addr> or where left off
-						|drop (dr) <region>             drop memory <region>
-						|dump (d) [<addr>*]             print memory at <addr> or where left off
-						|execute (e) [<addr>*]          execute instructions starting from current PC or <addr>
-						|help (h)                       print this summary
-						|load (l) <file>                clear ROM, load SREC <file>, and reset CPU
-						|memory (m)                     print memory map
-						|memory (m) <addr>* <data>*...  write <data> (space separated bytes) to memory at <addr>
-						|quit (q)                       exit the REPL
-						|registers (r)                  print CPU registers
-						|registers (r) <reg> <val>*     set CPU <reg>ister to <val>ue
-						|reload (rl)                    redo last 'load' or 'assemble' command
-						|reset (re)                     reset CPU registers setting PC from reset vector
-						|step (s) [<addr>*]             execute only next instruction at current PC or <addr>
-						|save (sa) <file>               save all ROM contents to SREC file
-						|symbols (sy)                   print symbol table
-						|symbols (sy) <symbol> <val>*   add <symbol> with associated <val>ue to symbol table
+						|assemble (a) <file>              clear ROM, assemble <file>, and reset CPU
+						|assemble (a) <org>               clear ROM, assemble REPL input at <org>, and reset CPU
+						|breakpoint (b) <addr>*           set/clear breakpoint at <addr>
+						|disassemble (u) [<addr>*]        print disassembled code at <addr> or where left off
+						|clear (c) [<addr1>* <addr2>*]    clear RAM, optionally from <addr1> up to but not including <addr2>
+						|drop (dr) <region>               drop memory <region>
+						|dump (d) [<addr>*]               print memory at <addr> or where left off
+						|execute (e) [<addr>*]            execute instructions starting from current PC or <addr>
+						|execute&wait (ew) [<addr>*]      execute instructions starting from current PC or <addr> and wait to finish
+						|help (h)                         print this summary
+						|load (l) <file>                  clear ROM, load SREC <file>, and reset CPU
+						|memory (m)                       print memory map
+						|memory (m) <addr>* <data>*...    write <data> (space separated bytes) to memory at <addr>
+						|quit (q)                         exit the REPL
+						|registers (r)                    print CPU registers
+						|registers (r) <reg> <val>*       set CPU <reg>ister to <val>ue
+						|reload (rl)                      redo last 'load' or 'assemble' command
+						|reset (re)                       reset CPU registers setting PC from reset vector
+						|step (s) [<addr>*]               execute only next instruction at current PC or <addr>
+						|stop (st)                        stop code execution
+						|save (sa) <file>                 save all ROM contents to SREC file
+						|symbols (sy)                     print symbol table
+						|symbols (sy) <symbol> <val>*     add <symbol> with associated <val>ue to symbol table
 						|* can either be a hexadecimal value or label (optionally followed by a colon)
 						""".trim.stripMargin.lines foreach out.println
 					case "load"|"l" =>
@@ -154,7 +183,10 @@ object Main extends App with Flags {
 							dump( addr, (com.length - 2 + addr%16)/16 + 1 )
 						} else
 							out.println( emu.mem )
-					case "quit"|"q" => sys.exit
+					case "quit"|"q" =>
+						emu.stop
+						emu.mem.removeDevices
+						sys.exit
 					case "registers"|"r" =>
 						if (com.length > 2) {
 							val n = emu.target( com(2) )
@@ -185,6 +217,10 @@ object Main extends App with Flags {
 							emu.cpu.PC = emu.target( com(1) )
 							
 						emu.step
+						registers
+					case "stop"|"st" =>
+						emu.stop
+						waitWhileRunning
 						registers
 					case "save"|"sa" =>
 						save( com(1) )

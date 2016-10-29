@@ -57,17 +57,18 @@ class RAM( val name: String, val start: Int, end: Int ) extends Addressable {
 	override def toString = s"$name RAM: ${hexWord(start)}-${hexWord(end)}"
 }
 
-class ROM( val name: String, val start: Int, vals: Seq[Byte] ) extends Addressable {
+class ROM( val name: String, val start: Int, end: Int ) extends Addressable {
 	
 	require( start >= 0 )
-	require( vals.size > 0 )
+	require( end >= start )
 	
-	protected val mem = vals.toArray
-	val size = mem.size
+	val size = end - start + 1
+		
+	protected val mem = new Array[Byte]( size )
 	
 	def readByte( addr: Int ) = mem( addr - start )&0xFF
 	
-	def writeByte( addr: Int, value: Int ) = sys.error( "read only memory: " + addr.toHexString + " (tried to write " + value.toHexString + ")" )
+	def writeByte( addr: Int, value: Int ) = sys.error( "read only memory: " + (addr&0xffff).toHexString + " (tried to write " + (value&0xff).toHexString + ")" )
 	
 	override def program( addr: Int, value: Int ) = mem( addr - start ) = value.toByte
 	
@@ -76,14 +77,10 @@ class ROM( val name: String, val start: Int, vals: Seq[Byte] ) extends Addressab
 }
 
 object ROM {
-	def apply( name: String, start: Int, mem: Int* ) = new ROM( name, start, mem.toIndexedSeq map (_.toByte) )
-}
-
-object Vectors {
-	def apply( resetVector: Int, brkVector: Int ) = {
-		def word2bytes( a: Int ) = IndexedSeq( a.toByte, (a >> 8).toByte )
-		
-		new ROM( "vector table", 0xFFFC, word2bytes(resetVector) ++ word2bytes(brkVector) )
+	def apply( name: String, start: Int, data: Seq[Byte] ) = {
+		new ROM( name, start, start + data.length - 1 ) {
+			data.copyToArray( mem )
+		}
 	}
 }
 
@@ -147,6 +144,8 @@ abstract class Memory extends Addressable {
 	def readByte( addr: Int ) = find( addr ).readByte( addr )
 	
 	def writeByte( addr: Int, value: Int ) = find( addr ).writeByte( addr, value )
+	
+	override def program( addr: Int, value: Int ) = find( addr ).program( addr, value )
 	
 	def addressable( addr: Int ) = lookup( addr ) != None
 	

@@ -1,5 +1,7 @@
 package xyz.hyperreal.mos6502
 
+import java.util.concurrent.locks.ReentrantLock
+
 import collection.mutable.HashMap
 
 
@@ -7,7 +9,7 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 	
 	val opcodes: Seq[Instruction]
 	
-	var init = false
+//	var init = false
 	var breakpoints = Set[Int]()
 	
 	var A = 0
@@ -20,7 +22,21 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 	
 	var trace = false
 	var opcode = 0
-	var cont = true
+	protected var cont = true
+	protected var running = false
+	
+	def isRunning = running
+	
+	def setCont( c: Boolean ) = synchronized {
+		cont = c
+	}
+	
+	def getCont = synchronized {
+		val res = cont
+		
+		cont = true
+		res
+	}
 	
 	def status( flag: Int ) = (S&flag) != 0
 	
@@ -93,46 +109,72 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 		mem.readByte( SP )
 	}
 	
-	def step = {
+	protected def execute = {
 		
-		if (!init) {
-			init = true
-			reset
-		}
-			
-		cont = true
+// 		if (!init) {
+// 			init = true
+// 			reset
+// 		}
 		
 		if (trace)
 			println( hexWord(PC) + ' ' + hexByte(mem.readByte(PC)) )
 			
-		opcodes(nextByte) apply this
+		opcode = nextByte&0xff
+		opcodes(opcode) apply this
 		
 		if (trace)
 			printf( "A:%s X:%s Y:%s SP:%s PC:%s N:%d V:%d B:%d D:%d I:%d Z:%d C:%d\n\n", hexByte(A), hexByte(X), hexByte(Y), hexWord(SP), hexWord(PC),
 							read(N), read(V), read(B), read(D), read(I), read(Z), read(C) )
 		
-		cont && !breakpoints.contains( PC )
+		getCont && !breakpoints.contains( PC )
 	}
 	
-	def run = while (step) {}
+	def step =
+		if (running)
+			sys.error( "already running" )
+		else {
+			running = true
+			execute
+			running = false
+		}
+		
+	def run =
+		if (running)
+			sys.error( "already running" )
+		else
+			new Thread (
+				new Runnable {
+					cont = true
+					
+					def run {
+						running = true
+						
+						while (execute) {}
+						
+						running = false
+					}
+				} ).start
 	
 	def stop {
-		cont = false
+		setCont( false )
 	}
 	
 	def reset {
-		A = 0
-		X = 0
-		Y = 0
-		SP = 0x1FD
-		PC =
-			(if (mem.addressable( RESET_VECTOR ))
-				mem.readWord( RESET_VECTOR )
-			else
-				mem.code)
-		S = 0
-		mem.clearRAM
-		mem.seqDevice foreach (_.init)
+		if (running)
+			sys.error( "can't reset while running" )
+		else {
+			A = 0
+			X = 0
+			Y = 0
+			SP = 0x1FD
+			PC =
+				(if (mem.addressable( RESET_VECTOR ))
+					mem.readWord( RESET_VECTOR )
+				else
+					mem.code)
+			S = 0
+			mem.seqDevice foreach (_.init)
+		}
 	}
 	
 }
