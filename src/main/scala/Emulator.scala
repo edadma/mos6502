@@ -89,6 +89,7 @@ class Emulator( chip: String ) extends Flags {
 		mem.init
 		
 		val AssemblerResult(syms, segments) = Assembler( src )
+		println( segments )
 				
 		symbols = syms
 		reverseSymbols = symbols map {case (s, t) => (t, s)}
@@ -100,7 +101,7 @@ class Emulator( chip: String ) extends Flags {
 				case Some( installer: ((String, Memory, CPU) => Unit) ) => installer( v.asInstanceOf[String], mem, cpu )
 			}
 		
-		for ((base, data) <- segments)
+		for ((name, base, data) <- segments)
 			for (i <- 0 until data.length)
 				mem.program( base + i, data(i) )
 			

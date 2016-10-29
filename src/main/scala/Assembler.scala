@@ -12,7 +12,7 @@ class Segment( val name: String ) {
 	var pointerExact = true
 }
 
-case class AssemblerResult( symbols: Map[String, Any], segments: (String, Int, List[Byte]) )
+case class AssemblerResult( symbols: Map[String, Any], segments: List[(String, Int, List[Byte])] )
 
 object Assembler {
 	
@@ -29,15 +29,17 @@ object Assembler {
 		var seg: Segment = null
 		var count = 0
 		
-		switchSegment( name: String ) =
+		def switchSegment( name: String ) {
 			segments get name match {
 				case None =>
 					seg = new Segment( "seg" + count )
-					count += 1
 					segments(seg.name) = seg
 				case Some( s ) =>
 					seg = s
 			}
+			
+			count += 1
+		}
 		
 		def check( cond: Boolean, msg: String ) =
 			if (cond)
@@ -128,6 +130,9 @@ object Assembler {
 					ieval( expr, false ) match {
 						case Known( org ) =>
 							check( org < 0 || org >= 0x10000, "origin must be less than 0x10000" )
+							switchSegment( "seg" + count )
+							println( seg.name, org )
+							seg.base = org
 							seg.pointer = org
 							seg.pointerExact = true
 						case Knowable|Unknown => problem( "origin must be known when the directive is encountered" )
@@ -211,28 +216,21 @@ object Assembler {
 					case None => problem( "illegal instruction: " + (mnemonic, mode) )
 					case Some( op ) => seg.data += op
 				}
-
-			def append =
-				if (!block.isEmpty) {
-					blocks += (base -> block.toList)
-					block.clear
-				}
 			
 			ast.statements foreach {
 				case LabelDirectiveAST( label, _ ) =>
 					if (!(label startsWith "."))
 						last = label
 				case OriginDirectiveAST( expr ) =>
-					append
-					pointer = ieval( expr, false ).get
-					base = pointer
+					switchSegment( "seg" + count )
+					seg.pointer = ieval( expr, false ).get
 				case IncludeDirectiveAST( _, ast ) =>
 					pass2( ast.get )
 				case InstructionAST( mnemonic, SimpleModeAST(mode), _ ) =>
-					pointer += 1
+					seg.pointer += 1
 					opcode( mnemonic, mode )
 				case InstructionAST( mnemonic@("jmp"|"jsr"), OperandModeAST(mode, expr, operand), _ ) =>
-					pointer += 3
+					seg.pointer += 3
 					opcode( mnemonic, mode )					
 					word( operand match {
 						case None => ieval( expr, true ).get
@@ -246,13 +244,13 @@ object Assembler {
 						case Some( t ) => t
 					}
 					
-					pointer += 2
+					seg.pointer += 2
 					opcode( mnemonic, 'relative )
-					block += (target - pointer).toByte
+					seg.data += (target - seg.pointer).toByte
 				case InstructionAST( mnemonic, OperandModeAST(mode@('immediate|'indirectX|'indirectY), expr, operand), _ ) =>
-					pointer += 2
+					seg.pointer += 2
 					opcode( mnemonic, mode )
-					block += (operand match {
+					seg.data += (operand match {
 						case None => ieval( expr, true ).get
 						case Some( t ) => t
 					}).toByte
@@ -263,7 +261,7 @@ object Assembler {
 					}
 					
 					if (o < 0x100) {
-						pointer += 2
+						seg.pointer += 2
 						
 						val m = mode match {
 							case 'direct => 'zeroPage
@@ -272,9 +270,9 @@ object Assembler {
 						}
 						
 						opcode( mnemonic, m )
-						block += o.toByte
+						seg.data += o.toByte
 					} else {
-						pointer += 3
+						seg.pointer += 3
 						opcode( mnemonic, mode )
 						word( o )
 					}
@@ -284,22 +282,21 @@ object Assembler {
 					for (d <- data)
 						eval( d, true ).get match {
 							case s: String =>
-								block ++= s.getBytes
+								seg.data ++= s.getBytes
 							case v: Int =>
-								block += v.toByte
+								seg.data += v.toByte
 						}
 					
-					pointer += dblength( data )
+					seg.pointer += dblength( data )
 				case DataWordAST( data ) =>
 					for (d <- data)
 						word( ieval(d, true).get )
 					
-					pointer += data.length*2
+					seg.pointer += data.length*2
 				case _ =>
 			}
 			
-			append
-			AssemblerResult( symbols map {case (k, v) => k -> v.get} toMap, blocks.toList )
+			AssemblerResult( symbols map {case (k, v) => k -> v.get} toMap, segments.toList map {case (name, s) => (name, s.base, s.data.toList)} )
 			
 		}
 		

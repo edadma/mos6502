@@ -100,140 +100,137 @@ object Main extends App with Flags {
 			
 			try {
 				com match {
-					case "assemble"|"a" :: file :: _ =>
+					case List( "assemble"|"a", file ) =>
 						reload = command
 						assemble( file )
 						out.println( emu.mem )
-					case "breakpoint"|"b" :: "--" :: _ =>
+					case List( "breakpoint"|"b", "--" ) =>
 						emu.clearBreakpoints
 						printBreakpoints
-					case "breakpoint"|"b" :: bp :: _ if bp startsWith "-" =>
+					case List( "breakpoint"|"b", bp ) if bp startsWith "-" =>
 						emu.clearBreakpoint( emu.target(bp drop 1) )
 						printBreakpoints
-					case "breakpoint"|"b" :: bp :: _ =>
+					case List( "breakpoint"|"b", bp ) =>
 						emu.setBreakpoint( emu.target(bp) )
 						printBreakpoints
-					case "disassemble"|"u" :: addr :: _  =>
+					case List( "disassemble"|"u", addr )  =>
 						disassemble( emu.target( addr ), 15 )
-					case "disassemble"|"u" :: _  =>
+					case List( "disassemble"|"u" )  =>
 						disassemble( -1, 15 )
-// 					case "clear"|"c" =>
-// 						if (com.length > 2)
-// 							for (i <- hex( com(1) ) until hex( com(2) ))
-// 								emu.mem.program( i, 0 )
-// 						else
-// 							emu.mem.clearRAM
-// 					case "drop"|"dr" =>
-// 						emu.mem.remove( com(1) )
-// 						out.println( emu.mem )
-// 					case "dump"|"d" =>
-// 						val from =
-// 							if (com.length > 1)
-// 								emu.target( com(1) )
-// 							else
-// 								-1
-// 								
-// 						dump( from, 10 )
-// 					case "execute"|"e" =>
-// 						if (com.length > 1)
-// 							emu.cpu.PC = emu.target( com(1) )
-// 						
-// 						emu.run
-// 					case "execute&wait"|"ew" =>
-// 						if (com.length > 1)
-// 							emu.cpu.PC = emu.target( com(1) )
-// 						
-// 						emu.run
-// 						waitWhileRunning
-// 						registers
-// 					case "help"|"h" =>
-// 						"""
-// 						|assemble (a) <file>              clear ROM, assemble <file>, and reset CPU
-// 						|assemble (a) <org>               clear ROM, assemble REPL input at <org>, and reset CPU
-// 						|breakpoint (b) <addr>*           set/clear breakpoint at <addr>
-// 						|disassemble (u) [<addr>*]        print disassembled code at <addr> or where left off
-// 						|clear (c) [<addr1>* <addr2>*]    clear RAM, optionally from <addr1> up to but not including <addr2>
-// 						|drop (dr) <region>               drop memory <region>
-// 						|dump (d) [<addr>*]               print memory at <addr> or where left off
-// 						|execute (e) [<addr>*]            execute instructions starting from current PC or <addr>
-// 						|execute&wait (ew) [<addr>*]      execute instructions starting from current PC or <addr> and wait to finish
-// 						|help (h)                         print this summary
-// 						|load (l) <file>                  clear ROM, load SREC <file>, and reset CPU
-// 						|memory (m)                       print memory map
-// 						|memory (m) <addr>* <data>*...    write <data> (space separated bytes) to memory at <addr>
-// 						|quit (q)                         exit the REPL
-// 						|registers (r)                    print CPU registers
-// 						|registers (r) <reg> <val>*       set CPU <reg>ister to <val>ue
-// 						|reload (rl)                      redo last 'load' or 'assemble' command
-// 						|reset (re)                       reset CPU registers setting PC from reset vector
-// 						|step (s) [<addr>*]               execute only next instruction at current PC or <addr>
-// 						|stop (st)                        stop code execution
-// 						|save (sa) <file>                 save all ROM contents to SREC file
-// 						|symbols (sy)                     print symbol table
-// 						|symbols (sy) <symbol> <val>*     add <symbol> with associated <val>ue to symbol table
-// 						|* can either be a hexadecimal value or label (optionally followed by a colon)
-// 						""".trim.stripMargin.lines foreach out.println
-// 					case "load"|"l" =>
-// 						reload = command
-// 						load( com(1) )
-// 					case "memory"|"m" =>
-// 						if (com.length > 2) {
-// 							val addr = emu.target( com(1) )
-// 							
-// 							for ((d, i) <- com drop 2 map (emu.target) zipWithIndex)
-// 								emu.program( addr + i, d )
-// 								
-// 							dump( addr, (com.length - 2 + addr%16)/16 + 1 )
-// 						} else
-// 							out.println( emu.mem )
-// 					case "quit"|"q" =>
-// 						emu.stop
-// 						emu.mem.removeDevices
-// 						sys.exit
-// 					case "registers"|"r" =>
-// 						if (com.length > 2) {
-// 							val n = emu.target( com(2) )
-// 							
-// 							com(1).toLowerCase match {
-// 								case "a" => emu.cpu.A = n
-// 								case "x" => emu.cpu.X = n
-// 								case "y" => emu.cpu.Y = n
-// 								case "sp" => emu.cpu.SP = n
-// 								case "pc" => emu.cpu.PC = n
-// 								case "n" => emu.cpu.set( N, n )
-// 								case "v" => emu.cpu.set( V, n )
-// 								case "b" => emu.cpu.set( B, n )
-// 								case "d" => emu.cpu.set( D, n )
-// 								case "i" => emu.cpu.set( I, n )
-// 								case "z" => emu.cpu.set( Z, n )
-// 								case "c" => emu.cpu.set( C, n )
-// 							}
-// 						}
-// 						
-// 						registers
-// 					case "reload"|"rl" =>
-// 						interp( reload )
-// 					case "reset"|"re" =>
-// 						emu.reset
-// 					case "step"|"s" =>
-// 						if (com.length > 1)
-// 							emu.cpu.PC = emu.target( com(1) )
-// 							
-// 						emu.step
-// 						registers
-// 					case "stop"|"st" =>
-// 						emu.stop
-// 						waitWhileRunning
-// 						registers
-// 					case "save"|"sa" =>
-// 						save( com(1) )
-// 					case "symbols"|"sy" =>
-// 						if (com.length > 2)
-// 							emu.symbols += (com(1) -> emu.target( com(2) ))
-// 						else
-// 							out.println( emu.symbols )
-// 					case "" =>
-// 					case c => out.println( "unrecognized command: " + c )
+					case List( "clear"|"c", addr1, addr2 ) =>
+						for (i <- hex( addr1 ) until hex( addr2 ))
+							emu.mem.program( i, 0 )
+					case List( "clear"|"c" ) =>
+						emu.mem.clearRAM
+					case List( "drop"|"dr", region ) =>
+						emu.mem.remove( region )
+						out.println( emu.mem )
+					case List( "dump"|"d", addr ) =>
+						dump( emu.target(addr), 10 )
+					case List( "dump"|"d" ) =>
+						dump( -1, 10 )
+					case List( "execute"|"e", addr ) =>
+						emu.cpu.PC = emu.target( addr )
+						emu.run
+					case List( "execute"|"e" ) =>
+						emu.run
+					case List( "execute&wait"|"ew", addr ) =>
+						emu.cpu.PC = emu.target( addr )
+						emu.run
+						waitWhileRunning
+						registers
+					case List( "execute&wait"|"ew" ) =>
+						emu.run
+						waitWhileRunning
+						registers
+					case List( "help"|"h" ) =>
+						"""
+						|assemble (a) <file>              clear ROM, assemble <file>, and reset CPU
+						|assemble (a) <org>               clear ROM, assemble REPL input at <org>, and reset CPU
+						|breakpoint (b) <addr>*           set/clear breakpoint at <addr>
+						|disassemble (u) [<addr>*]        print disassembled code at <addr> or where left off
+						|clear (c) [<addr1>* <addr2>*]    clear RAM, optionally from <addr1> up to but not including <addr2>
+						|drop (dr) <region>               drop memory <region>
+						|dump (d) [<addr>*]               print memory at <addr> or where left off
+						|execute (e) [<addr>*]            execute instructions starting from current PC or <addr>
+						|execute&wait (ew) [<addr>*]      execute instructions starting from current PC or <addr> and wait to finish
+						|help (h)                         print this summary
+						|load (l) <file>                  clear ROM, load SREC <file>, and reset CPU
+						|memory (m)                       print memory map
+						|memory (m) <addr>* <data>*...    write <data> (space separated bytes) to memory at <addr>
+						|quit (q)                         exit the REPL
+						|registers (r)                    print CPU registers
+						|registers (r) <reg> <val>*       set CPU <reg>ister to <val>ue
+						|reload (rl)                      redo last 'load' or 'assemble' command
+						|reset (re)                       reset CPU registers setting PC from reset vector
+						|step (s) [<addr>*]               execute only next instruction at current PC or <addr>
+						|stop (st)                        stop code execution
+						|save (sa) <file>                 save all ROM contents to SREC file
+						|symbols (sy)                     print symbol table
+						|symbols (sy) <symbol> <val>*     add <symbol> with associated <val>ue to symbol table
+						|* can either be a hexadecimal value or label (optionally followed by a colon)
+						""".trim.stripMargin.lines foreach out.println
+					case List( "load"|"l", file ) =>
+						reload = command
+						load( file )
+					case ("memory"|"m") :: addr :: data =>
+						val addr1 = emu.target( addr )
+						
+						for ((d, i) <- data map emu.target zipWithIndex)
+							emu.program( addr1 + i, d )
+							
+						dump( addr1, (data.length + addr1%16)/16 + 1 )
+						out.println( emu.mem )
+					case List( "memory"|"m" ) =>
+						out.println( emu.mem )
+					case List( "quit"|"q" ) =>
+						emu.stop
+						emu.mem.removeDevices
+						sys.exit
+					case List( "registers"|"r", reg, value ) =>
+						val n = emu.target( value )
+							
+						reg.toLowerCase match {
+							case "a" => emu.cpu.A = n
+							case "x" => emu.cpu.X = n
+							case "y" => emu.cpu.Y = n
+							case "sp" => emu.cpu.SP = n
+							case "pc" => emu.cpu.PC = n
+							case "n" => emu.cpu.set( N, n )
+							case "v" => emu.cpu.set( V, n )
+							case "b" => emu.cpu.set( B, n )
+							case "d" => emu.cpu.set( D, n )
+							case "i" => emu.cpu.set( I, n )
+							case "z" => emu.cpu.set( Z, n )
+							case "c" => emu.cpu.set( C, n )
+						}
+						
+						registers
+					case List( "registers"|"r" ) =>
+						registers
+					case List( "reload"|"rl" ) =>
+						interp( reload )
+					case List( "reset"|"re" ) =>
+						emu.reset
+					case List( "step"|"s", addr ) =>
+						emu.cpu.PC = emu.target( addr )
+						emu.step
+						registers
+					case List( "step"|"s" ) =>
+						emu.step
+						registers
+					case List( "stop"|"st" ) =>
+						emu.stop
+						waitWhileRunning
+						registers
+					case List( "save"|"sa", file ) =>
+						save( file )
+					case List( "symbols"|"sy", symbol, value ) =>
+						emu.symbols += (symbol -> emu.target( value ))
+					case List( "symbols"|"sy" ) =>
+						out.println( emu.symbols )
+					case Nil|List( "" ) =>
+					case _ => out.println( "error interpreting command" )
 				}
 			}
 			catch
