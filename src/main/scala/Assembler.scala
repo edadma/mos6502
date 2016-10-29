@@ -73,7 +73,7 @@ object Assembler {
 					val r1 =
 						if (r startsWith ".") {
 							if (last eq null)
-								problem( "no previous label" )
+								problem( "no label scope" )
 								
 							last + r
 						} else
@@ -114,7 +114,7 @@ object Assembler {
 					val label1 =
 						if (label startsWith ".") {
 							if (last eq null)
-								problem( "no previous label: " + label )
+								problem( "no label scope: " + label )
 								
 							last + label
 						} else {
@@ -126,25 +126,29 @@ object Assembler {
 				case LabelDirectiveAST( label, true ) =>
 					if (!(label startsWith "."))
 						last = label
-				case OriginDirectiveAST( expr ) =>
+				case dir@OriginDirectiveAST( expr, None ) =>
 					ieval( expr, false ) match {
 						case Known( org ) =>
 							check( org < 0 || org >= 0x10000, "origin must be less than 0x10000" )
 							switchSegment( "seg" + count )
-							println( seg.name, org )
 							seg.base = org
 							seg.pointer = org
 							seg.pointerExact = true
+							dir.value = Some( org )
 						case Knowable|Unknown => problem( "origin must be known when the directive is encountered" )
 					}
-				case dir@EquateDirectiveAST( equ, expr, None ) =>
+				case OriginDirectiveAST( expr, Some(org) ) =>
+					switchSegment( "seg" + count )
+					seg.pointer = org
+					seg.pointerExact = true
+				case dir@EquateDirectiveAST( equ, expr, false ) =>
 					eval( expr, false ) match {
 						case Known( v ) =>
-							dir.value = Some( v )
-							define( equ, dir.value )
-						case Knowable|Unknown => problem( "equate must be known when the directive is encountered" )
+							dir.definite = define( equ, Some(v) )
+// 						case Knowable|Unknown => problem( "equate must be known when the directive is encountered" )
+						case Knowable|Unknown => dir.definite = define( equ, None )
 					}
-				case EquateDirectiveAST( _, _, Some(_) ) =>
+				case EquateDirectiveAST( _, _, true ) =>
 				case inc@IncludeDirectiveAST( file, ast ) =>
 					if (ast == None)
 						inc.ast = Some( new AssemblyParser(io.Source.fromFile(seval(file, true).get)).parse )
@@ -221,9 +225,10 @@ object Assembler {
 				case LabelDirectiveAST( label, _ ) =>
 					if (!(label startsWith "."))
 						last = label
-				case OriginDirectiveAST( expr ) =>
+				case OriginDirectiveAST( expr, Some(org) ) =>
 					switchSegment( "seg" + count )
-					seg.pointer = ieval( expr, false ).get
+					seg.pointer = org
+					seg.pointerExact = true
 				case IncludeDirectiveAST( _, ast ) =>
 					pass2( ast.get )
 				case InstructionAST( mnemonic, SimpleModeAST(mode), _ ) =>
@@ -296,7 +301,9 @@ object Assembler {
 				case _ =>
 			}
 			
-			AssemblerResult( symbols map {case (k, v) => k -> v.get} toMap, segments.toList map {case (name, s) => (name, s.base, s.data.toList)} )
+			AssemblerResult( symbols map {case (k, v) => k -> v.get} toMap, segments.toList
+				filterNot {case (_, s) => s.data isEmpty}
+				map {case (name, s) => (name, s.base, s.data.toList)} )
 			
 		}
 		

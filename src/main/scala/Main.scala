@@ -60,8 +60,11 @@ object Main extends App with Flags {
 
 	def save( file: String ) = emu.save( file )
 	
-	def waitWhileRunning = {
+	def waitUntilRunning = {
 		while (!emu.cpu.isRunning) {}
+	}
+	
+	def waitWhileRunning = {
 		while (emu.cpu.isRunning) {}
 	}
 	
@@ -90,6 +93,13 @@ object Main extends App with Flags {
 		def disassemble( start: Int, lines: Int ) = out.println( emu.disassemble(start, lines) )
 		
 		def printBreakpoints = out.println( emu.breakpoints map {case (b, l) => hexWord(b) + (if (l != "") "/" + l else "")} mkString " " )
+		
+		def runAndWait {
+			emu.run
+			waitUntilRunning
+			waitWhileRunning
+			registers
+		}
 		
 		out.println( "MOS 6502 emulator v0.3" )
 		out.println( "Type 'help' for list of commands." )
@@ -136,13 +146,9 @@ object Main extends App with Flags {
 						emu.run
 					case List( "execute&wait"|"ew", addr ) =>
 						emu.cpu.PC = emu.target( addr )
-						emu.run
-						waitWhileRunning
-						registers
+						runAndWait
 					case List( "execute&wait"|"ew" ) =>
-						emu.run
-						waitWhileRunning
-						registers
+						runAndWait
 					case List( "help"|"h" ) =>
 						"""
 						|assemble (a) <file>              clear ROM, assemble <file>, and reset CPU
@@ -228,7 +234,37 @@ object Main extends App with Flags {
 					case List( "symbols"|"sy", symbol, value ) =>
 						emu.symbols += (symbol -> emu.target( value ))
 					case List( "symbols"|"sy" ) =>
-						out.println( emu.symbols )
+						out.println( "           name value       segment" )
+						out.println( "           ---- -----       -------" )
+						for ((s, v) <- emu.symbols.toList sortBy (_._1))
+							v match {
+								case str: String => out.printf( "%15s %-11s\n", s, '"' + str + '"' )
+								case addr: Int =>
+									val seg =
+										emu.segments get addr match {
+											case None =>
+												if (emu.segments isEmpty)
+													""
+												else {
+													val range = emu.segments.range( emu.segments.min._2._2, addr )
+													
+													if (range isEmpty)
+														""
+													else {
+														val (base, (name, len)) = range.max
+														
+														if (addr < base + len)
+															name
+														else
+															""
+													}
+												}
+											case Some( (name, _) ) => name
+										}
+										
+									
+									out.printf( "%15s %-11s %s\n", s, hexWord(addr), seg )
+							}
 					case Nil|List( "" ) =>
 					case _ => out.println( "error interpreting command" )
 				}

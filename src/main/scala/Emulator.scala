@@ -2,6 +2,7 @@ package xyz.hyperreal.mos6502
 
 import java.io.File
 
+import collection.immutable.TreeMap
 import collection.mutable.HashMap
 
 
@@ -60,6 +61,7 @@ class Emulator( chip: String ) extends Flags {
 	var discur = 0
 	var symbols = Map[String, Any]()
 	var reverseSymbols = Map[Any, String]()
+	var segments = TreeMap[Int, (String, Int)]()
 	
 	def register( name: String, installer: (String, Memory, CPU) => Unit ) {
 		if (registry contains name)
@@ -88,8 +90,7 @@ class Emulator( chip: String ) extends Flags {
 			
 		mem.init
 		
-		val AssemblerResult(syms, segments) = Assembler( src )
-		println( segments )
+		val AssemblerResult(syms, segs) = Assembler( src )
 				
 		symbols = syms
 		reverseSymbols = symbols map {case (s, t) => (t, s)}
@@ -101,10 +102,11 @@ class Emulator( chip: String ) extends Flags {
 				case Some( installer: ((String, Memory, CPU) => Unit) ) => installer( v.asInstanceOf[String], mem, cpu )
 			}
 		
-		for ((name, base, data) <- segments)
+		for ((name, base, data) <- segs)
 			for (i <- 0 until data.length)
 				mem.program( base + i, data(i) )
 			
+		segments = TreeMap( segs map {case (name, base, data) => (base, (name, data.length))}: _* )
 		clearBreakpoints
 		reset
 	}
@@ -193,7 +195,13 @@ class Emulator( chip: String ) extends Flags {
 						(mode match {
 							case 'implicit => ("", 0)
 							case 'accumulator => ("A", 0)
-							case 'immediate => ("#" + "$" + hexByte(cpu.readByte(addr)), 1)
+							case 'immediate =>
+								val b = cpu.readByte( addr )
+								
+								if (b < 10)
+									("#" + b, 1)
+								else
+									("#$" + hexByte(b), 1)
 							case 'relative => (reference(cpu.readByte(addr).toByte + addr + 1, false), 1)
 							case 'indirectX => ("(" + reference(cpu.readByte(addr), true) + ",X)", 1)
 							case 'indirectY => ("(" + reference(cpu.readByte(addr), true) + "),Y", 1)
