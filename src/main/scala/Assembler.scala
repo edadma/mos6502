@@ -5,7 +5,12 @@ import java.io.File
 import collection.mutable.{ListBuffer, HashMap}
 
 
-class Segment( val name: String, var base: Int = 0, val data: ListBuffer[Byte] = new ListBuffer[Byte] )
+class Segment( val name: String ) {
+	var base: Int = 0
+	val data: ListBuffer[Byte] = new ListBuffer[Byte]
+	var pointer = 0
+	var pointerExact = true
+}
 
 case class AssemblerResult( symbols: Map[String, Any], segments: (String, Int, List[Byte]) )
 
@@ -18,11 +23,22 @@ object Assembler {
 	def apply( ast: SourceAST ): AssemblerResult = {
 		
 		val symbols = new HashMap[String, Option[Any]]
-		var pointer = 0
-		var pointerExact = true
 		var allknown = true
 		var last: String = null
-
+		val segments = new HashMap[String, Segment]
+		var seg: Segment = null
+		var count = 0
+		
+		switchSegment( name: String ) =
+			segments get name match {
+				case None =>
+					seg = new Segment( "seg" + count )
+					count += 1
+					segments(seg.name) = seg
+				case Some( s ) =>
+					seg = s
+			}
+		
 		def check( cond: Boolean, msg: String ) =
 			if (cond)
 				problem( msg )
@@ -41,7 +57,7 @@ object Assembler {
 			target != None
 		}
 		
-		def defineHere( symbol: String ) = define( symbol, if (pointerExact) Some(pointer) else None )
+		def defineHere( symbol: String ) = define( symbol, if (seg.pointerExact) Some(seg.pointer) else None )
 		
 		def ieval( expr: ExpressionAST, mustknow: Boolean ) = eval( expr, mustknow ).asInstanceOf[Know[Int]]
 		
@@ -87,9 +103,9 @@ object Assembler {
 		def pass1( ast: SourceAST ) {
 			
 			last = null
-			pointer = 0
-			pointerExact = true
 			allknown = true
+			switchSegment( "seg0" )
+			count = 1
 			
 			ast.statements foreach {
 				case dir@LabelDirectiveAST( label, false ) =>
@@ -112,8 +128,8 @@ object Assembler {
 					ieval( expr, false ) match {
 						case Known( org ) =>
 							check( org < 0 || org >= 0x10000, "origin must be less than 0x10000" )
-							pointer = org
-							pointerExact = true
+							seg.pointer = org
+							seg.pointerExact = true
 						case Knowable|Unknown => problem( "origin must be known when the directive is encountered" )
 					}
 				case dir@EquateDirectiveAST( equ, expr, None ) =>
@@ -130,49 +146,49 @@ object Assembler {
 						
 					pass1( inc.ast.get )
 				case InstructionAST( _, _, Some(size) ) =>
-					pointer += size
+					seg.pointer += size
 				case inst@InstructionAST( _, SimpleModeAST(_), None ) =>
 					inst.size = Some( 1 )
-					pointer += 1
+					seg.pointer += 1
 				case inst@InstructionAST( _, OperandModeAST('immediate|'indirectX|'indirectY, _, _), None ) =>
 					inst.size = Some( 2 )
-					pointer += 2
+					seg.pointer += 2
 				case inst@InstructionAST( "jmp"|"jsr", _, None ) =>
 					inst.size = Some( 3 )
-					pointer += 3
+					seg.pointer += 3
 				case inst@InstructionAST( "bcc"|"bcs"|"beq"|"bmi"|"bne"|"bpl"|"bvc"|"bvs", _, None ) =>
 					inst.size = Some( 2 )
-					pointer += 2
+					seg.pointer += 2
 				case inst@InstructionAST( _, mode@OperandModeAST(_, expr, _), None ) =>
 					ieval( expr, false ) match {
 						case Known( a ) =>
 							if (a < 0x100) {
 								inst.size = Some( 2 )
-								pointer += 2
+								seg.pointer += 2
 							} else {
 								inst.size = Some( 3 )
-								pointer += 3
+								seg.pointer += 3
 							}
 							
 							mode.operand = Some( a )
 						case Knowable =>
 							inst.size = Some( 3 )
-							pointer += 3
+							seg.pointer += 3
 						case Unknown =>
-							pointerExact = false
+							seg.pointerExact = false
 					}
 				case DataByteAST( data ) =>
-					pointer += dblength( data )
+					seg.pointer += dblength( data )
 				case DataWordAST( data ) =>
-					pointer += data.length*2
+					seg.pointer += data.length*2
 				case ReserveByteAST( None ) =>
-					pointer += 1
+					seg.pointer += 1
 				case ReserveWordAST( None ) =>
-					pointer += 2
+					seg.pointer += 2
 				case ReserveByteAST( Some(count) ) =>
-					pointer += ieval( count, true ).get
+					seg.pointer += ieval( count, true ).get
 				case ReserveWordAST( Some(count) ) =>
-					pointer += ieval( count, true ).get*2
+					seg.pointer += ieval( count, true ).get*2
 			}
 		
 			if (!allknown)
@@ -180,21 +196,20 @@ object Assembler {
 		}
 		
 		def pass2( ast: SourceAST ): AssemblerResult = {
-			
-			val segments = new HashMap[String, Segment]
-			val segment = new Segment( "zpage" )
-			
+						
 			last = null
+			switchSegment( "seg0" )
+			count = 1
 			
 			def word( w: Int ) {
-				segment.data += w.toByte
-				segment.data += (w >> 8).toByte
+				seg.data += w.toByte
+				seg.data += (w >> 8).toByte
 			}
 			
 			def opcode( mnemonic: String, mode: Symbol ) =
 				CPU.asm6502.get( (mnemonic, mode) ) match {
 					case None => problem( "illegal instruction: " + (mnemonic, mode) )
-					case Some( op ) => segment.data += op
+					case Some( op ) => seg.data += op
 				}
 
 			def append =
@@ -202,9 +217,6 @@ object Assembler {
 					blocks += (base -> block.toList)
 					block.clear
 				}
-
-			pointer = 0
-			pointerExact = true
 			
 			ast.statements foreach {
 				case LabelDirectiveAST( label, _ ) =>
