@@ -183,7 +183,7 @@ class Emulator( chip: String ) extends Flags {
 				})
 				
 			if (cpu.breakpoints( addr ))
-				buf append Console.BLUE_B
+				buf append Console.CYAN_B
 				
 			buf append( hexWord(addr) + "  " + hexByte(opcode) + " " )
 			addr += 1

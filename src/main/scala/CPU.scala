@@ -55,6 +55,8 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 	
 	def read( flag: Int ) = if (status( flag )) 1 else 0
 	
+	def readInverse( flag: Int ) = if (status( flag )) 0 else 1
+	
 	def nextByte = {
 		val res = mem.readByte(PC)
 		

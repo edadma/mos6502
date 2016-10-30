@@ -114,6 +114,8 @@ object Main extends App with Flags {
 						reload = command
 						assemble( file )
 						out.println( emu.mem )
+					case List( "breakpoint"|"b" ) =>
+						printBreakpoints
 					case List( "breakpoint"|"b", "--" ) =>
 						emu.clearBreakpoints
 						printBreakpoints
