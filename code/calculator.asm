@@ -13,7 +13,10 @@ key         = $8000
 						
 						seg "code"
             org $9000
-main:               cld
+main:               
+										ldx #$ff
+										txs
+										cld
 
                     jsr display
 
@@ -281,10 +284,9 @@ end_add:            rts
 digit_add:          dcb 0
 carry_add:          dcb 0
 
+						seg "code"
 sub:                ; sub operand 1 and operand 2
 
-
-						seg "code"
                     ldx #0
 
                     ldy #0

@@ -159,6 +159,8 @@ abstract class Memory extends Addressable {
 	
 	def memory( addr: Int ) = find( addr, r => r.isRAM || r.isROM )
 	
+	def rom( addr: Int ) = find( addr, r => r.isROM )
+	
 	def remove( name: String ) {
 		regions.indexWhere( r => r.name == name ) match {
 			case -1 => sys.error( "not found: " + name )

@@ -267,6 +267,10 @@ object Main extends App with Flags {
 									
 									out.printf( "%-15s %-5s %s\n", s, hexWord(addr), seg )
 							}
+					case List( "trace"|"t", "on" ) =>
+						emu.cpu.trace = true
+					case List( "trace"|"t", "off" ) =>
+						emu.cpu.trace = false
 					case Nil|List( "" ) =>
 					case _ => out.println( "error interpreting command" )
 				}

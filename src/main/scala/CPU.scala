@@ -21,6 +21,7 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 	var S = 0
 	
 	var trace = false
+	var safety = true
 	var opcode = 0
 	protected var cont = true
 	protected var running = false
@@ -120,6 +121,9 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 		
 		if (trace)
 			println( hexWord(PC) + ' ' + hexByte(mem.readByte(PC)) )
+		
+		if (safety && !mem.rom( PC ))
+			sys.error( "Attempting to execute code not in ROM: " + hexWord(PC) )
 			
 		opcode = nextByte&0xff
 		opcodes(opcode) apply this

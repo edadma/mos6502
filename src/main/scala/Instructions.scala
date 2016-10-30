@@ -8,7 +8,7 @@ object Instructions extends Flags with VectorsAddresses {
 	//
 	def adc( cpu: CPU, addr: Int ) {
 		val src = cpu.readByte( addr )
-		val res = cpu.A + src + cpu.read( C )
+		val res = (cpu.A + src + cpu.read( C ))&0xffff	// make unsigned 16-bit
 		
 		if (cpu.status( D )) {
 			val res1 =
@@ -66,7 +66,7 @@ object Instructions extends Flags with VectorsAddresses {
 				else
 					temp1
 					
-			cpu.set( C, temp2 < 0x100 )
+			cpu.set( C, temp2 >= 0 )
 			cpu.A = temp2&0xff
 		} else {
 			cpu.set( C, temp >= 0 )
