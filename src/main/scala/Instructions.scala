@@ -8,7 +8,7 @@ object Instructions extends Flags with VectorsAddresses {
 	//
 	def adc( cpu: CPU, addr: Int ) {
 		val src = cpu.readByte( addr )
-		val res = (cpu.A + src + cpu.read( C ))&0xffff	// make unsigned 16-bit
+		val res = cpu.A + src + cpu.read( C )
 		
 		if (cpu.status( D )) {
 			val res1 =
@@ -28,7 +28,7 @@ object Instructions extends Flags with VectorsAddresses {
 					res1
 			
 			cpu.set( C, res2 > 0x99 )
-			cpu.A = res2
+			cpu.A = res2&0xff
 		} else {
 			cpu.set( C, res > 0xff )
 			cpu.set( V, (cpu.A^res)&(src^res)&0x80 )
@@ -36,15 +36,15 @@ object Instructions extends Flags with VectorsAddresses {
 		}
 	}
 	
-	def and( cpu: CPU, addr: Int ) = cpu.loadA( cpu.flags(cpu.A&cpu.readByte(addr)) )
+	def and( cpu: CPU, addr: Int ) = cpu.loadA( cpu.A&cpu.readByte(addr) )
 	
 	def cmp( cpu: CPU, addr: Int ) = cpu.set( C, cpu.flags(cpu.A - cpu.readByte(addr)) >= 0 )
 	
-	def eor( cpu: CPU, addr: Int ) = cpu.loadA( cpu.flags(cpu.A^cpu.readByte(addr)) )
+	def eor( cpu: CPU, addr: Int ) = cpu.loadA( cpu.A^cpu.readByte(addr) )
 
 	def lda( cpu: CPU, addr: Int ) = cpu.loadA( cpu.readByte(addr) )
 
-	def ora( cpu: CPU, addr: Int ) = cpu.loadA( cpu.flags(cpu.A|cpu.readByte(addr)) )
+	def ora( cpu: CPU, addr: Int ) = cpu.loadA( cpu.A|cpu.readByte(addr) )
 	
 	def sbc( cpu: CPU, addr: Int ) {
 		val src = cpu.readByte( addr )
@@ -99,18 +99,18 @@ object Instructions extends Flags with VectorsAddresses {
 	
 	def rol( cpu: CPU, addr: Int ) = {
 		val src = cpu.readByte( addr )
-		val res = (src << 1) | (if ((src&0x80) != 0) 1 else 0)
+		val res = (src << 1) | cpu.read( C )
 		
-		cpu.set( C, res > 0xFF )
+		cpu.set( C, res&0x100 )
 		cpu.writeByte( addr, cpu.flags(res) )
 	}
 	
 	def ror( cpu: CPU, addr: Int ) = {
 		val src = cpu.readByte( addr )
-		val carry = (src&0x01) != 0
+		val res = (if (cpu.status( C )) 0x80 else 0)|(src >> 1)
 		
-		cpu.set( C, carry )
-		cpu.writeByte( addr, cpu.flags((src >> 1)|(if (carry) 0x80 else 0)) )
+		cpu.set( C, src&0x01 )
+		cpu.writeByte( addr, cpu.flags(res) )
 	}
 	
 	//

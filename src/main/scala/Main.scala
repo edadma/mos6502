@@ -176,6 +176,7 @@ object Main extends App with Flags {
 						|save (sa) <file>                 save all ROM contents to SREC file
 						|symbols (sy)                     print symbol table
 						|symbols (sy) <symbol> <val>*     add <symbol> with associated <val>ue to symbol table
+						|trace (t) on/off                 turn CPU trace on or off
 						|* can either be a hexadecimal value or label (optionally followed by a colon)
 						""".trim.stripMargin.lines foreach out.println
 					case List( "load"|"l", file ) =>
