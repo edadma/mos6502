@@ -62,7 +62,7 @@ will print
 
 The easiest way to try this out is to follow the [build](https://github.com/edadma/mos6502#build-and-run-the-repl) instructions below. Then, once inside the REPL, type
 
-	a code/1to5.asm
+	a code/count.asm
 	e
 
 Of course, when doing this in the REPL you will also see
