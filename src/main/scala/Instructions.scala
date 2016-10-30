@@ -48,8 +48,9 @@ object Instructions extends Flags with VectorsAddresses {
 	
 	def sbc( cpu: CPU, addr: Int ) {
 		val src = cpu.readByte( addr )
-		val temp = cpu.flags( cpu.A - src - cpu.readInverse(C) )
+		val temp = cpu.A - src - cpu.readInverse( C )
 		
+		cpu.flags( temp )
 		cpu.set( V, ((cpu.A^temp)&0x80) != 0 && ((cpu.A^src)&0x80) != 0 )
 		
 		if (cpu.status( D )) {
@@ -68,7 +69,7 @@ object Instructions extends Flags with VectorsAddresses {
 			cpu.set( C, temp2 < 0x100 )
 			cpu.A = temp2&0xff
 		} else {
-			cpu.set( C, temp < 0x100 )
+			cpu.set( C, temp >= 0 )
 			cpu.A = temp&0xff
 		}
 	}

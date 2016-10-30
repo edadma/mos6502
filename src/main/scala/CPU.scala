@@ -182,7 +182,7 @@ abstract class CPU( val mem: Memory ) extends LogicalAddressModes with VectorsAd
 }
 
 trait Flags {
-	val C = 0x00
+	val C = 0x01
 	val Z = 0x02
 	val I = 0x04
 	val D = 0x08

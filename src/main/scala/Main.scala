@@ -188,7 +188,6 @@ object Main extends App with Flags {
 							emu.program( addr1 + i, d )
 							
 						dump( addr1, (data.length + addr1%16)/16 + 1 )
-						out.println( emu.mem )
 					case List( "memory"|"m" ) =>
 						out.println( emu.mem )
 					case List( "quit"|"q" ) =>
@@ -220,6 +219,7 @@ object Main extends App with Flags {
 						interp( reload )
 					case List( "reset"|"re" ) =>
 						emu.reset
+						registers
 					case List( "step"|"s", addr ) =>
 						emu.cpu.PC = emu.target( addr )
 						emu.step
