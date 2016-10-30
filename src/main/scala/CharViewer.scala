@@ -43,7 +43,6 @@ object CharViewer extends App {
 	while ({line = reader.readLine; line != null}) {
 		try {
 			line.trim split "\\s+" toList match {
-				case "q" :: _ => sys.exit
 				case "c" :: from :: to :: _ =>
 					for (i <- from.toInt to to.toInt)
 						display( i )
@@ -52,12 +51,23 @@ object CharViewer extends App {
 					for (i <- from.toInt to to.toInt)
 						data( i )
 				case "d" :: ind :: _ => data( ind.toInt )
+				case "h" :: Nil =>
+					"""
+					|c <index>            display character at <index>
+					|c <from> <to>        display character at <from> up to <to>
+					|d <index>            display assembly data for <index>
+					|d <from> <to>        display assembly data for <from> up to <to>
+					|h                    display this help
+					|o <file>             open raw binary <file>
+					|q                    quit
+					""".trim.stripMargin.lines foreach println
 				case "o" :: path :: _ =>
 					if (file ne null)
 						file.close
 						
 					file = new RandomAccessFile( path, "r" )
 					println( "size: " + file.length + " (dec), " + file.length.toHexString + " (hex)" )
+				case "q" :: Nil => sys.exit
 				case Nil|"" :: _ =>
 				case _ => println( "error" )
 			}

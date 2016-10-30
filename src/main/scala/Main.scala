@@ -26,13 +26,15 @@ object Main extends App with Flags {
 			enterREPL = false
 			Nil
 		case "--help" :: _ =>
-			println( "MOS 6502 emulator v0.3" )
-			println( "Usage:  --help      display this help and exit" )
-			println( "        -l <file>   load SREC <file> and enter REPL" )
-			println( "        -le <file>  load SREC <file> and execute" )
-			println( "        -a <file>   assemble source <file> and enter REPL" )
-			println( "        -ae <file>  assemble source <file> and execute" )
-			println( "        -as <file>  assemble source <file> and save SREC" )
+			"""
+			|MOS 6502 emulator v0.3
+			|Usage:  --help      display this help and exit
+			|        -l <file>   load SREC <file> and enter REPL
+			|        -le <file>  load SREC <file> and execute
+			|        -a <file>   assemble source <file> and enter REPL
+			|        -ae <file>  assemble source <file> and execute
+			|        -as <file>  assemble source <file> and save SREC
+			""".trim.stripMargin.lines foreach println
 			enterREPL = false
 			Nil
 		case "-l" :: file :: _ =>
@@ -197,7 +199,7 @@ object Main extends App with Flags {
 						sys.exit
 					case List( "registers"|"r", reg, value ) =>
 						val n = emu.target( value )
-							
+						
 						reg.toLowerCase match {
 							case "a" => emu.cpu.A = n
 							case "x" => emu.cpu.X = n
@@ -265,7 +267,6 @@ object Main extends App with Flags {
 											case Some( (name, _) ) => name
 										}
 										
-									
 									out.printf( "%-15s %-5s %s\n", s, hexWord(addr), seg )
 							}
 					case List( "trace"|"t", "on" ) =>
