@@ -164,17 +164,10 @@ object Assembler {
 					seg.pointerExact = true
 				case dir@EquateDirectiveAST( equ, expr, false ) =>
 					eval( expr, false ) match {
-						case Known( v ) =>
-							dir.definite = define( equ, Some(v) )
-// 						case Knowable|Unknown => problem( "equate must be known when the directive is encountered" )
+						case Known( v ) => dir.definite = define( equ, Some(v) )
 						case Knowable|Unknown => dir.definite = define( equ, None )
 					}
 				case EquateDirectiveAST( _, _, true ) =>
-				case inc@IncludeDirectiveAST( file, ast ) =>
-					if (ast == None)
-						inc.ast = Some( new AssemblyParser(io.Source.fromFile(seval(file, true).get)).parse )
-						
-					pass1( inc.ast.get )
 				case InstructionAST( _, _, Some(size) ) =>
 					seg.pointer += size
 				case inst@InstructionAST( _, SimpleModeAST(_), None ) =>
@@ -261,11 +254,8 @@ object Assembler {
 					if (seg.base != seg.pointer)
 						switchSegment()
 					
-//					println( seg.name, seg.base)
 					seg.pointer = org
 					seg.pointerExact = true
-				case IncludeDirectiveAST( _, ast ) =>
-					pass2( ast.get )
 				case InstructionAST( mnemonic, SimpleModeAST(mode), _ ) =>
 					seg.pointer += 1
 					opcode( mnemonic, mode )

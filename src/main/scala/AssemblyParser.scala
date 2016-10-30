@@ -1,5 +1,7 @@
 package xyz.hyperreal.mos6502
 
+import java.io.File
+
 import collection.immutable.PagedSeq
 
 import util.parsing.combinator.RegexParsers
@@ -64,7 +66,7 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 	
 	def blank = os ~ opt(comment) ~ nl
 	
-	def source = rep(blank) ~> repsep(statement, rep1(blank)) <~ (rep(blank) ~ opt(os ~ opt(comment))) ^^ {l => SourceAST( l.flatten )}
+	def source: Parser[SourceAST] = rep(blank) ~> repsep(statement, rep1(blank)) <~ (rep(blank) ~ opt(os ~ opt(comment))) ^^ {l => SourceAST( l.flatten )}
 	
 	def statement =
 		instruction |
@@ -101,7 +103,10 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 		}
 	
 	def directive =
-		("#include" ~ space) ~> expression ^^ {f => List(IncludeDirectiveAST( f ))} |
+		("#include" ~ space) ~> string ^^ {
+			case StringExpressionAST( file ) =>
+				new AssemblyParser( io.Source.fromFile(file) ).parse.statements
+			} |
 		(space ~ "org|ORG|.org|.ORG".r ~ space) ~> expression ^^ {e => List( OriginDirectiveAST(e) )} |
 		(label <~ (space ~ "equ|EQU|=".r ~ space)) ~ expression ^^ {
 			case equ ~ expr =>

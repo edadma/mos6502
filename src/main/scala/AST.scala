@@ -24,11 +24,10 @@ trait DirectiveAST extends StatementAST
 case class LabelDirectiveAST( label: String, var definite: Boolean = false ) extends DirectiveAST
 case class EquateDirectiveAST( equ: String, expr: ExpressionAST, var definite: Boolean = false ) extends DirectiveAST
 case class OriginDirectiveAST( org: ExpressionAST, var value: Option[Int] = None ) extends DirectiveAST
-case class IncludeDirectiveAST( file: ExpressionAST, var ast: Option[SourceAST] = None ) extends DirectiveAST
+// class IncludeDirectiveAST( file: ExpressionAST, var ast: Option[SourceAST] = None ) extends DirectiveAST
+case class SegmentDirectiveAST( name: String ) extends DirectiveAST
 
-abstract class AllocationAST extends StatementAST {
-//	var size: Option[Int] = None
-}
+abstract class AllocationAST extends StatementAST
 
 case class InstructionAST( mnemonic: String, mode: ModeAST, var size: Option[Int] = None ) extends AllocationAST
 case class DataByteAST( data: Seq[ExpressionAST], var size: Option[Int] = None ) extends AllocationAST
