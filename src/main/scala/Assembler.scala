@@ -12,7 +12,7 @@ class Segment( val name: String ) {
 	var pointerExact = true
 }
 
-case class AssemblerResult( symbols: Map[String, Any], segments: List[(String, Int, List[Byte])] )
+case class AssemblerResult( symbols: Map[String, Any], segments: Seq[(String, Int, List[Byte])] )
 
 object Assembler {
 	
@@ -142,7 +142,9 @@ object Assembler {
 				case LabelDirectiveAST( label, true ) =>
 					if (!(label startsWith "."))
 						last = label
-				case dir@OriginDirectiveAST( expr, None ) =>
+				case SegmentDirectiveAST( name ) =>
+					switchSegment( name )
+				case dir@OriginDirectiveAST( expr, false ) =>
 					ieval( expr, false ) match {
 						case Known( org ) =>
 							check( org < 0 || org >= 0x10000, "origin must be less than 0x10000" )
@@ -153,15 +155,12 @@ object Assembler {
 							seg.base = org
 							seg.pointer = org
 							seg.pointerExact = true
-							dir.value = Some( org )
+							dir.encountered = true
 						case Knowable|Unknown => problem( "origin must be known when the directive is encountered" )
 					}
-				case OriginDirectiveAST( expr, Some(org) ) =>		
+				case OriginDirectiveAST( expr, _ ) =>
 					if (seg.base != seg.pointer)
 						switchSegment()
-							
-					seg.pointer = org
-					seg.pointerExact = true
 				case dir@EquateDirectiveAST( equ, expr, false ) =>
 					eval( expr, false ) match {
 						case Known( v ) => dir.definite = define( equ, Some(v) )
@@ -250,12 +249,11 @@ object Assembler {
 				case LabelDirectiveAST( label, _ ) =>
 					if (!(label startsWith "."))
 						last = label
-				case OriginDirectiveAST( expr, Some(org) ) =>
+				case SegmentDirectiveAST( name ) =>
+					switchSegment( name )
+				case OriginDirectiveAST( expr, _ ) =>
 					if (seg.base != seg.pointer)
 						switchSegment()
-					
-					seg.pointer = org
-					seg.pointerExact = true
 				case InstructionAST( mnemonic, SimpleModeAST(mode), _ ) =>
 					seg.pointer += 1
 					opcode( mnemonic, mode )
@@ -332,9 +330,20 @@ object Assembler {
 				case _ =>
 			}
 
-			AssemblerResult( symbols map {case (k, v) => k -> v.get} toMap, segments.toList
-				filterNot {case (_, s) => s.data isEmpty}
-				map {case (name, s) => (name, s.base, s.data.toList)} )
+			for ((name, s) <- segments)
+				if (s.data isEmpty)
+					segments -= name
+				
+			val segs = segments.toIndexedSeq
+			
+			for (((name, seg), index) <- segs zipWithIndex)
+				segs.view( index + 1, segs.length ).
+					find( {case (name1, seg1) => seg.base <= seg1.base + seg1.data.length - 1 && seg1.base <= seg.base + seg.data.length - 1} ) match {
+					case None =>
+					case Some( (name1, _) ) => problem( "segments overlap: " + name + ", " + name1 )
+				}
+			
+			AssemblerResult( symbols map {case (k, v) => k -> v.get} toMap, segs map {case (name, s) => (name, s.base, s.data.toList)} )
 			
 		}
 		

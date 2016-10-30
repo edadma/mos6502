@@ -15,7 +15,7 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
  	def mnemonic: Parser[String] =
 		"adc|and|asl|bcc|bcs|beq|bit|bmi|bne|bpl|brk|bvc|bvs|clc|cld|cli|clv|cmp|cpx|cpy|dec|dex|dey|eor|inc|inx|iny|jmp|jsr|lda|ldx|ldy|lsr|nop|ora|pha|php|pla|plp|rol|ror|rti|rts|sbc|sec|sed|sei|sta|stx|sty|tax|tay|tsx|txa|txs|tya|ADC|AND|ASL|BCC|BCS|BEQ|BIT|BMI|BNE|BPL|BRK|BVC|BVS|CLC|CLD|CLI|CLV|CMP|CPX|CPY|DEC|DEX|DEY|EOR|INC|INX|INY|JMP|JSR|LDA|LDX|LDY|LSR|NOP|ORA|PHA|PHP|PLA|PLP|ROL|ROR|RTI|RTS|SBC|SEC|SED|SEI|STA|STX|STY|TAX|TAY|TSX|TXA|TXS|TYA".r ^^ {_.toLowerCase}
 	
-	def number = """[0-9]+|\$[0-9a-fA-F]+""".r ^^ {
+	def numberLiteral = """[0-9]+|\$[0-9a-fA-F]+""".r ^^ {
 		s =>
 			NumberExpressionAST(
 				if (s startsWith "$")
@@ -25,7 +25,7 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 			)
 	}
 
-	def escape( s: String ) = s.substring(1, s.length - 1).
+	def escape( s: String ) = s.
 				replaceAll("""\\0""", "\u0000").
 				replaceAll("""\\\\""", "\\").
 				replaceAll("""\\'""", "'").
@@ -36,15 +36,14 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 				replaceAll("""\\r""", "\r").
 				replaceAll("""\\n""", "\n")
 
-	def character = """'(?:[^"\x00-\x1F\x7F\\]|\\[\\'"bfnrt0])'""".r ^^ {
+	def charLiteral = """'(?:[^"\x00-\x1F\x7F\\]|\\[\\'"bfnrt0])'""".r ^^ {
 		s =>
-			NumberExpressionAST( escape(s).head.toInt )
+			NumberExpressionAST( escape(s.substring(1, s.length - 1)).head.toInt )
 	}
 
-	def string = """"(?:[^"\x00-\x1F\x7F\\]|\\[\\'"bfnrt0])*"""".r ^^ {
-		s =>
-			StringExpressionAST( escape(s) )
-	}
+	def string = """"(?:[^"\x00-\x1F\x7F\\]|\\[\\'"bfnrt0])*"""".r ^^ {s => s.substring(1, s.length - 1)}
+	
+	def stringLiteral = string ^^ {s => 	StringExpressionAST( escape(s) )}
 	
 	def label = """(?:\.[_0-9a-zA-Z]+|[_a-zA-Z][_0-9a-zA-Z]*):?""".r ^^ {
 		s =>
@@ -75,10 +74,10 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 	def expression: Parser[ExpressionAST] =
 		"<" ~> expression ^^ {UnaryExpressionAST( "<", _ )} |
 		">" ~> expression ^^ {UnaryExpressionAST( ">", _ )} |
-		number |
-		character |
+		numberLiteral |
+		charLiteral |
 		reference |
-		string
+		stringLiteral
 	
 	def mode =
 		"#" ~> expression ^^ {OperandModeAST( 'immediate, _ )} |
@@ -104,10 +103,11 @@ class AssemblyParser( input: io.Source ) extends RegexParsers {
 	
 	def directive =
 		("#include" ~ space) ~> string ^^ {
-			case StringExpressionAST( file ) =>
+			file =>
 				new AssemblyParser( io.Source.fromFile(file) ).parse.statements
 			} |
 		(space ~ "org|ORG|.org|.ORG".r ~ space) ~> expression ^^ {e => List( OriginDirectiveAST(e) )} |
+		(space ~ "seg|SEG".r ~ space) ~> string ^^ {name => List( SegmentDirectiveAST(name) )} |
 		(label <~ (space ~ "equ|EQU|=".r ~ space)) ~ expression ^^ {
 			case equ ~ expr =>
 				List( EquateDirectiveAST(equ, expr) )

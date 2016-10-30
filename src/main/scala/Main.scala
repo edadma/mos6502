@@ -246,7 +246,7 @@ object Main extends App with Flags {
 												if (emu.segments isEmpty)
 													""
 												else {
-													val range = emu.segments.range( emu.segments.min._2._2, addr )
+													val range = emu.segments.range( emu.segments.min._1, addr )
 													
 													if (range isEmpty)
 														""
@@ -272,8 +272,8 @@ object Main extends App with Flags {
 			catch
 			{
 				case e: Exception =>
-					out.println( e )
-//					e.printStackTrace( out )
+//					out.println( e )
+					e.printStackTrace( out )
 			}
 		}
 		
