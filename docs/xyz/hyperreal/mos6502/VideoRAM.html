@@ -89,7 +89,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="xyz.hyperreal.mos6502.VideoRAM#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(start:Int,width:Int,height:Int,cpu:xyz.hyperreal.mos6502.CPU,palette:Seq[Int]):xyz.hyperreal.mos6502.VideoRAM"></a>
+      <a id="&lt;init&gt;(start:Int,keyPress:xyz.hyperreal.mos6502.KeyPress,width:Int,height:Int,square:Int,cpu:xyz.hyperreal.mos6502.CPU,palette:Seq[Int]):xyz.hyperreal.mos6502.VideoRAM"></a>
       <a id="&lt;init&gt;:VideoRAM"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -97,10 +97,10 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">VideoRAM</span><span class="params">(<span name="start">start: <span class="extype" name="scala.Int">Int</span></span>, <span name="width">width: <span class="extype" name="scala.Int">Int</span></span>, <span name="height">height: <span class="extype" name="scala.Int">Int</span></span>, <span name="cpu">cpu: <a href="CPU.html" class="extype" name="xyz.hyperreal.mos6502.CPU">CPU</a></span>, <span name="palette">palette: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Int">Int</span>]</span>)</span>
+        <span class="name">VideoRAM</span><span class="params">(<span name="start">start: <span class="extype" name="scala.Int">Int</span></span>, <span name="keyPress">keyPress: <a href="KeyPress.html" class="extype" name="xyz.hyperreal.mos6502.KeyPress">KeyPress</a></span>, <span name="width">width: <span class="extype" name="scala.Int">Int</span></span>, <span name="height">height: <span class="extype" name="scala.Int">Int</span></span>, <span name="square">square: <span class="extype" name="scala.Int">Int</span></span>, <span name="cpu">cpu: <a href="CPU.html" class="extype" name="xyz.hyperreal.mos6502.CPU">CPU</a></span>, <span name="palette">palette: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Int">Int</span>]</span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.VideoRAM@&lt;init&gt;(start:Int,width:Int,height:Int,cpu:xyz.hyperreal.mos6502.CPU,palette:Seq[Int]):xyz.hyperreal.mos6502.VideoRAM" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.VideoRAM@&lt;init&gt;(start:Int,keyPress:xyz.hyperreal.mos6502.KeyPress,width:Int,height:Int,square:Int,cpu:xyz.hyperreal.mos6502.CPU,palette:Seq[Int]):xyz.hyperreal.mos6502.VideoRAM" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -239,6 +239,23 @@
       </a>
     </span>
       
+    </li><li name="xyz.hyperreal.mos6502.VideoRAM#disable" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="disable:Unit"></a>
+      <a id="disable:Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">disable</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.VideoRAM@disable:Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.mos6502.VideoRAM">VideoRAM</a> → <a href="Device.html" class="extype" name="xyz.hyperreal.mos6502.Device">Device</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -297,18 +314,18 @@
               
         </dd></dl></div>
     </li><li name="xyz.hyperreal.mos6502.VideoRAM#frame" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="frame:scala.swing.Frame{defcloseOperation():Nothing}"></a>
-      <a id="frame:Frame{defcloseOperation():Nothing}"></a>
+      <a id="frame:scala.swing.Frame"></a>
+      <a id="frame:Frame"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">frame</span><span class="result">: <span class="extype" name="scala.swing.Frame">Frame</span> { def closeOperation(): Nothing }</span>
+        <span class="name">frame</span><span class="result">: <span class="extype" name="scala.swing.Frame">Frame</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.VideoRAM@frame:scala.swing.Frame{defcloseOperation():Nothing}" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.VideoRAM@frame:scala.swing.Frame" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -602,23 +619,6 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RAM.html" class="extype" name="xyz.hyperreal.mos6502.RAM">RAM</a> → <a href="Addressable.html" class="extype" name="xyz.hyperreal.mos6502.Addressable">Addressable</a></dd></dl></div>
-    </li><li name="xyz.hyperreal.mos6502.VideoRAM#square" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="square:Int"></a>
-      <a id="square:Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">square</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.VideoRAM@square:Int" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
     </li><li name="xyz.hyperreal.mos6502.RAM#start" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="start:Int"></a>
       <a id="start:Int"></a>

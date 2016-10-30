@@ -1,9 +1,9 @@
 <!DOCTYPE html >
 <html>
         <head>
-          <title>DirectiveAST - xyz.hyperreal.mos6502.DirectiveAST</title>
-          <meta name="description" content="DirectiveAST - xyz.hyperreal.mos6502.DirectiveAST" />
-          <meta name="keywords" content="DirectiveAST xyz.hyperreal.mos6502.DirectiveAST" />
+          <title>JLineInt - xyz.hyperreal.mos6502.JLineInt</title>
+          <meta name="description" content="JLineInt - xyz.hyperreal.mos6502.JLineInt" />
+          <meta name="keywords" content="JLineInt xyz.hyperreal.mos6502.JLineInt" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -16,7 +16,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../index.html';
-            var hash = 'xyz.hyperreal.mos6502.DirectiveAST';
+            var hash = 'xyz.hyperreal.mos6502.JLineInt';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -28,12 +28,12 @@
         </head>
         <body class="type">
       <div id="definition">
-        <img alt="Trait" src="../../../lib/trait_big.png" />
+        <img alt="Class" src="../../../lib/class_big.png" />
         <p id="owner"><a href="../../package.html" class="extype" name="xyz">xyz</a>.<a href="../package.html" class="extype" name="xyz.hyperreal">hyperreal</a>.<a href="package.html" class="extype" name="xyz.hyperreal.mos6502">mos6502</a></p>
-        <h1>DirectiveAST</h1><h3><span class="morelinks"><div>Related Doc:
+        <h1>JLineInt</h1><h3><span class="morelinks"><div>Related Doc:
             <a href="package.html" class="extype" name="xyz.hyperreal.mos6502">package mos6502</a>
           </div></span></h3><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.DirectiveAST" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -42,20 +42,17 @@
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">trait</span>
+        <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">DirectiveAST</span><span class="result"> extends <a href="StatementAST.html" class="extype" name="xyz.hyperreal.mos6502.StatementAST">StatementAST</a></span>
+        <span class="name">JLineInt</span><span class="result"> extends <a href="SingleAddressDevice.html" class="extype" name="xyz.hyperreal.mos6502.SingleAddressDevice">SingleAddressDevice</a></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="StatementAST.html" class="extype" name="xyz.hyperreal.mos6502.StatementAST">StatementAST</a>, <a href="AST.html" class="extype" name="xyz.hyperreal.mos6502.AST">AST</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
-        </div><div class="toggleContainer block">
-            <span class="toggle">Known Subclasses</span>
-            <div class="subClasses hiddenContent"><a href="EquateDirectiveAST.html" class="extype" name="xyz.hyperreal.mos6502.EquateDirectiveAST">EquateDirectiveAST</a>, <a href="LabelDirectiveAST.html" class="extype" name="xyz.hyperreal.mos6502.LabelDirectiveAST">LabelDirectiveAST</a>, <a href="OriginDirectiveAST.html" class="extype" name="xyz.hyperreal.mos6502.OriginDirectiveAST">OriginDirectiveAST</a>, <a href="SegmentDirectiveAST.html" class="extype" name="xyz.hyperreal.mos6502.SegmentDirectiveAST">SegmentDirectiveAST</a></div>
-          </div></div>
+          <div class="superTypes hiddenContent"><a href="SingleAddressDevice.html" class="extype" name="xyz.hyperreal.mos6502.SingleAddressDevice">SingleAddressDevice</a>, <a href="Device.html" class="extype" name="xyz.hyperreal.mos6502.Device">Device</a>, <a href="Addressable.html" class="extype" name="xyz.hyperreal.mos6502.Addressable">Addressable</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div></div>
         
 
       <div id="mbrsel">
@@ -72,7 +69,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="xyz.hyperreal.mos6502.DirectiveAST"><span>DirectiveAST</span></li><li class="in" name="xyz.hyperreal.mos6502.StatementAST"><span>StatementAST</span></li><li class="in" name="xyz.hyperreal.mos6502.AST"><span>AST</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="xyz.hyperreal.mos6502.JLineInt"><span>JLineInt</span></li><li class="in" name="xyz.hyperreal.mos6502.SingleAddressDevice"><span>SingleAddressDevice</span></li><li class="in" name="xyz.hyperreal.mos6502.Device"><span>Device</span></li><li class="in" name="xyz.hyperreal.mos6502.Addressable"><span>Addressable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -89,7 +86,27 @@
 
       <div id="template">
         <div id="allMembers">
-        
+        <div id="constructors" class="members">
+              <h3>Instance Constructors</h3>
+              <ol><li name="xyz.hyperreal.mos6502.JLineInt#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(start:Int,reader:jline.console.ConsoleReader):xyz.hyperreal.mos6502.JLineInt"></a>
+      <a id="&lt;init&gt;:JLineInt"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">new</span>
+      </span>
+      <span class="symbol">
+        <span class="name">JLineInt</span><span class="params">(<span name="start">start: <span class="extype" name="scala.Int">Int</span></span>, <span name="reader">reader: <span class="extype" name="jline.console.ConsoleReader">ConsoleReader</span></span>)</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@&lt;init&gt;(start:Int,reader:jline.console.ConsoleReader):xyz.hyperreal.mos6502.JLineInt" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li></ol>
+            </div>
 
         
 
@@ -109,7 +126,7 @@
         <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.DirectiveAST@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@!=(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -126,7 +143,7 @@
         <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.DirectiveAST@##():Int" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@##():Int" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -143,7 +160,7 @@
         <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.DirectiveAST@==(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@==(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -160,7 +177,7 @@
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.DirectiveAST@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@asInstanceOf[T0]:T0" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -177,7 +194,7 @@
         <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.DirectiveAST@clone():Object" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@clone():Object" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -188,6 +205,23 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="xyz.hyperreal.mos6502.Device#disable" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="disable:Unit"></a>
+      <a id="disable:Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">disable</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@disable:Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Device.html" class="extype" name="xyz.hyperreal.mos6502.Device">Device</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -200,7 +234,7 @@
         <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.DirectiveAST@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -217,7 +251,7 @@
         <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.DirectiveAST@equals(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@equals(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -234,7 +268,7 @@
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.DirectiveAST@finalize():Unit" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@finalize():Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -257,7 +291,7 @@
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.DirectiveAST@getClass():Class[_]" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@getClass():Class[_]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -274,11 +308,45 @@
         <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.DirectiveAST@hashCode():Int" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@hashCode():Int" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="xyz.hyperreal.mos6502.Device#init" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="init:Unit"></a>
+      <a id="init:Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">init</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@init:Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Device.html" class="extype" name="xyz.hyperreal.mos6502.Device">Device</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.mos6502.Addressable#isDevice" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isDevice:Boolean"></a>
+      <a id="isDevice:Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isDevice</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@isDevice:Boolean" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Addressable.html" class="extype" name="xyz.hyperreal.mos6502.Addressable">Addressable</a></dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -291,11 +359,62 @@
         <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.DirectiveAST@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="xyz.hyperreal.mos6502.Addressable#isRAM" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isRAM:Boolean"></a>
+      <a id="isRAM:Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isRAM</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@isRAM:Boolean" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Addressable.html" class="extype" name="xyz.hyperreal.mos6502.Addressable">Addressable</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.mos6502.Addressable#isROM" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isROM:Boolean"></a>
+      <a id="isROM:Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isROM</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@isROM:Boolean" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Addressable.html" class="extype" name="xyz.hyperreal.mos6502.Addressable">Addressable</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.mos6502.JLineInt#name" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="name:String"></a>
+      <a id="name:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">name</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@name:String" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.mos6502.JLineInt">JLineInt</a> → <a href="Addressable.html" class="extype" name="xyz.hyperreal.mos6502.Addressable">Addressable</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -308,7 +427,7 @@
         <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.DirectiveAST@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -325,7 +444,7 @@
         <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.DirectiveAST@notify():Unit" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@notify():Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -342,11 +461,96 @@
         <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.DirectiveAST@notifyAll():Unit" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@notifyAll():Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="xyz.hyperreal.mos6502.Addressable#program" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="program(addr:Int,value:Int):Unit"></a>
+      <a id="program(Int,Int):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">program</span><span class="params">(<span name="addr">addr: <span class="extype" name="scala.Int">Int</span></span>, <span name="value">value: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@program(addr:Int,value:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Addressable.html" class="extype" name="xyz.hyperreal.mos6502.Addressable">Addressable</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.mos6502.JLineInt#readByte" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="readByte(addr:Int):Int"></a>
+      <a id="readByte(Int):Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">readByte</span><span class="params">(<span name="addr">addr: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@readByte(addr:Int):Int" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.mos6502.JLineInt">JLineInt</a> → <a href="Addressable.html" class="extype" name="xyz.hyperreal.mos6502.Addressable">Addressable</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.mos6502.Addressable#readWord" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="readWord(addr:Int):Int"></a>
+      <a id="readWord(Int):Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">readWord</span><span class="params">(<span name="addr">addr: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@readWord(addr:Int):Int" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Addressable.html" class="extype" name="xyz.hyperreal.mos6502.Addressable">Addressable</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.mos6502.SingleAddressDevice#size" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="size:Int"></a>
+      <a id="size:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">size</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@size:Int" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="SingleAddressDevice.html" class="extype" name="xyz.hyperreal.mos6502.SingleAddressDevice">SingleAddressDevice</a> → <a href="Addressable.html" class="extype" name="xyz.hyperreal.mos6502.Addressable">Addressable</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.mos6502.JLineInt#start" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="start:Int"></a>
+      <a id="start:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">start</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@start:Int" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.mos6502.JLineInt">JLineInt</a> → <a href="Addressable.html" class="extype" name="xyz.hyperreal.mos6502.Addressable">Addressable</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -359,12 +563,12 @@
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.DirectiveAST@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="xyz.hyperreal.mos6502.SingleAddressDevice#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>
       <h4 class="signature">
@@ -373,14 +577,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.DirectiveAST@toString():String" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@toString():String" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="SingleAddressDevice.html" class="extype" name="xyz.hyperreal.mos6502.SingleAddressDevice">SingleAddressDevice</a> → <a href="Device.html" class="extype" name="xyz.hyperreal.mos6502.Device">Device</a> → AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -393,7 +597,7 @@
         <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.DirectiveAST@wait():Unit" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@wait():Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -416,7 +620,7 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.DirectiveAST@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -439,7 +643,7 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.DirectiveAST@wait(x$1:Long):Unit" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@wait(x$1:Long):Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -450,6 +654,40 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="xyz.hyperreal.mos6502.JLineInt#writeByte" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="writeByte(addr:Int,value:Int):Unit"></a>
+      <a id="writeByte(Int,Int):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">writeByte</span><span class="params">(<span name="addr">addr: <span class="extype" name="scala.Int">Int</span></span>, <span name="value">value: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@writeByte(addr:Int,value:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="xyz.hyperreal.mos6502.JLineInt">JLineInt</a> → <a href="Addressable.html" class="extype" name="xyz.hyperreal.mos6502.Addressable">Addressable</a></dd></dl></div>
+    </li><li name="xyz.hyperreal.mos6502.Addressable#writeWord" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="writeWord(addr:Int,value:Int):Unit"></a>
+      <a id="writeWord(Int,Int):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">writeWord</span><span class="params">(<span name="addr">addr: <span class="extype" name="scala.Int">Int</span></span>, <span name="value">value: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.JLineInt@writeWord(addr:Int,value:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Addressable.html" class="extype" name="xyz.hyperreal.mos6502.Addressable">Addressable</a></dd></dl></div>
     </li></ol>
             </div>
 
@@ -459,10 +697,12 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="xyz.hyperreal.mos6502.StatementAST">
-              <h3>Inherited from <a href="StatementAST.html" class="extype" name="xyz.hyperreal.mos6502.StatementAST">StatementAST</a></h3>
-            </div><div class="parent" name="xyz.hyperreal.mos6502.AST">
-              <h3>Inherited from <a href="AST.html" class="extype" name="xyz.hyperreal.mos6502.AST">AST</a></h3>
+        <div class="parent" name="xyz.hyperreal.mos6502.SingleAddressDevice">
+              <h3>Inherited from <a href="SingleAddressDevice.html" class="extype" name="xyz.hyperreal.mos6502.SingleAddressDevice">SingleAddressDevice</a></h3>
+            </div><div class="parent" name="xyz.hyperreal.mos6502.Device">
+              <h3>Inherited from <a href="Device.html" class="extype" name="xyz.hyperreal.mos6502.Device">Device</a></h3>
+            </div><div class="parent" name="xyz.hyperreal.mos6502.Addressable">
+              <h3>Inherited from <a href="Addressable.html" class="extype" name="xyz.hyperreal.mos6502.Addressable">Addressable</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">

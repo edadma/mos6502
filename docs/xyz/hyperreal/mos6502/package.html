@@ -165,7 +165,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="AssemblerResult.html"><span class="name">AssemblerResult</span></a><span class="params">(<span name="symbols">symbols: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Int">Int</span>]</span>, <span name="segments">segments: <span class="extype" name="scala.List">List</span>[(<span class="extype" name="scala.Int">Int</span>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Byte">Byte</span>])]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="AssemblerResult.html"><span class="name">AssemblerResult</span></a><span class="params">(<span name="symbols">symbols: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Any">Any</span>]</span>, <span name="segments">segments: <span class="extype" name="scala.Seq">Seq</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Int">Int</span>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Byte">Byte</span>])]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.mos6502.package@AssemblerResultextendsProductwithSerializable" title="Permalink" target="_top">
@@ -267,7 +267,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="DataByteAST.html"><span class="name">DataByteAST</span></a><span class="params">(<span name="data">data: <span class="extype" name="scala.Seq">Seq</span>[<a href="ExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.ExpressionAST">ExpressionAST</a>]</span>)</span><span class="result"> extends <a href="AllocationAST.html" class="extype" name="xyz.hyperreal.mos6502.AllocationAST">AllocationAST</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="DataByteAST.html"><span class="name">DataByteAST</span></a><span class="params">(<span name="data">data: <span class="extype" name="scala.Seq">Seq</span>[<a href="ExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.ExpressionAST">ExpressionAST</a>]</span>, <span name="size">size: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="AllocationAST.html" class="extype" name="xyz.hyperreal.mos6502.AllocationAST">AllocationAST</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.mos6502.package@DataByteASTextendsAllocationASTwithProductwithSerializable" title="Permalink" target="_top">
@@ -284,7 +284,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="DataWordAST.html"><span class="name">DataWordAST</span></a><span class="params">(<span name="data">data: <span class="extype" name="scala.Seq">Seq</span>[<a href="ExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.ExpressionAST">ExpressionAST</a>]</span>)</span><span class="result"> extends <a href="AllocationAST.html" class="extype" name="xyz.hyperreal.mos6502.AllocationAST">AllocationAST</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="DataWordAST.html"><span class="name">DataWordAST</span></a><span class="params">(<span name="data">data: <span class="extype" name="scala.Seq">Seq</span>[<a href="ExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.ExpressionAST">ExpressionAST</a>]</span>, <span name="size">size: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="AllocationAST.html" class="extype" name="xyz.hyperreal.mos6502.AllocationAST">AllocationAST</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.mos6502.package@DataWordASTextendsAllocationASTwithProductwithSerializable" title="Permalink" target="_top">
@@ -326,6 +326,23 @@
       </a>
     </span>
       
+    </li><li name="xyz.hyperreal.mos6502.Emulator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="EmulatorextendsFlags"></a>
+      <a id="Emulator:Emulator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Emulator.html"><span class="name">Emulator</span></a><span class="result"> extends <a href="Flags.html" class="extype" name="xyz.hyperreal.mos6502.Flags">Flags</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@EmulatorextendsFlags" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="xyz.hyperreal.mos6502.EquateDirectiveAST" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="EquateDirectiveASTextendsDirectiveASTwithProductwithSerializable"></a>
       <a id="EquateDirectiveAST:EquateDirectiveAST"></a>
@@ -335,7 +352,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="EquateDirectiveAST.html"><span class="name">EquateDirectiveAST</span></a><span class="params">(<span name="equ">equ: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="expr">expr: <a href="ExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.ExpressionAST">ExpressionAST</a></span>, <span name="value">value: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="DirectiveAST.html" class="extype" name="xyz.hyperreal.mos6502.DirectiveAST">DirectiveAST</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="EquateDirectiveAST.html"><span class="name">EquateDirectiveAST</span></a><span class="params">(<span name="equ">equ: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="expr">expr: <a href="ExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.ExpressionAST">ExpressionAST</a></span>, <span name="definite">definite: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="result"> extends <a href="DirectiveAST.html" class="extype" name="xyz.hyperreal.mos6502.DirectiveAST">DirectiveAST</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.mos6502.package@EquateDirectiveASTextendsDirectiveASTwithProductwithSerializable" title="Permalink" target="_top">
@@ -411,6 +428,57 @@
       </a>
     </span>
       
+    </li><li name="xyz.hyperreal.mos6502.JLineHex" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="JLineHexextendsSingleAddressDevice"></a>
+      <a id="JLineHex:JLineHex"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="JLineHex.html"><span class="name">JLineHex</span></a><span class="result"> extends <a href="SingleAddressDevice.html" class="extype" name="xyz.hyperreal.mos6502.SingleAddressDevice">SingleAddressDevice</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@JLineHexextendsSingleAddressDevice" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="xyz.hyperreal.mos6502.JLineInt" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="JLineIntextendsSingleAddressDevice"></a>
+      <a id="JLineInt:JLineInt"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="JLineInt.html"><span class="name">JLineInt</span></a><span class="result"> extends <a href="SingleAddressDevice.html" class="extype" name="xyz.hyperreal.mos6502.SingleAddressDevice">SingleAddressDevice</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@JLineIntextendsSingleAddressDevice" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="xyz.hyperreal.mos6502.KeyPress" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="KeyPressextendsSingleAddressDevice"></a>
+      <a id="KeyPress:KeyPress"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="KeyPress.html"><span class="name">KeyPress</span></a><span class="result"> extends <a href="SingleAddressDevice.html" class="extype" name="xyz.hyperreal.mos6502.SingleAddressDevice">SingleAddressDevice</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@KeyPressextendsSingleAddressDevice" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="xyz.hyperreal.mos6502.Know" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="Know[+A]extendsAnyRef"></a>
       <a id="Know[+A]:Know[A]"></a>
@@ -479,12 +547,12 @@
       </a>
     </span>
       
-    </li><li name="xyz.hyperreal.mos6502.Memory" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="xyz.hyperreal.mos6502.Memory" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="MemoryextendsAddressable"></a>
       <a id="Memory:Memory"></a>
       <h4 class="signature">
       <span class="modifier_kind">
-        <span class="modifier"></span>
+        <span class="modifier">abstract </span>
         <span class="kind">class</span>
       </span>
       <span class="symbol">
@@ -556,7 +624,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="OriginDirectiveAST.html"><span class="name">OriginDirectiveAST</span></a><span class="params">(<span name="org">org: <a href="ExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.ExpressionAST">ExpressionAST</a></span>)</span><span class="result"> extends <a href="DirectiveAST.html" class="extype" name="xyz.hyperreal.mos6502.DirectiveAST">DirectiveAST</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="OriginDirectiveAST.html"><span class="name">OriginDirectiveAST</span></a><span class="params">(<span name="org">org: <a href="ExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.ExpressionAST">ExpressionAST</a></span>, <span name="encountered">encountered: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="result"> extends <a href="DirectiveAST.html" class="extype" name="xyz.hyperreal.mos6502.DirectiveAST">DirectiveAST</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.mos6502.package@OriginDirectiveASTextendsDirectiveASTwithProductwithSerializable" title="Permalink" target="_top">
@@ -658,7 +726,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="ReserveByteAST.html"><span class="name">ReserveByteAST</span></a><span class="params">(<span name="count">count: <span class="extype" name="scala.Option">Option</span>[<a href="ExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.ExpressionAST">ExpressionAST</a>]</span>)</span><span class="result"> extends <a href="AllocationAST.html" class="extype" name="xyz.hyperreal.mos6502.AllocationAST">AllocationAST</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="ReserveByteAST.html"><span class="name">ReserveByteAST</span></a><span class="params">(<span name="count">count: <span class="extype" name="scala.Option">Option</span>[<a href="ExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.ExpressionAST">ExpressionAST</a>]</span>, <span name="size">size: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="AllocationAST.html" class="extype" name="xyz.hyperreal.mos6502.AllocationAST">AllocationAST</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.mos6502.package@ReserveByteASTextendsAllocationASTwithProductwithSerializable" title="Permalink" target="_top">
@@ -675,10 +743,44 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="ReserveWordAST.html"><span class="name">ReserveWordAST</span></a><span class="params">(<span name="count">count: <span class="extype" name="scala.Option">Option</span>[<a href="ExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.ExpressionAST">ExpressionAST</a>]</span>)</span><span class="result"> extends <a href="AllocationAST.html" class="extype" name="xyz.hyperreal.mos6502.AllocationAST">AllocationAST</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="ReserveWordAST.html"><span class="name">ReserveWordAST</span></a><span class="params">(<span name="count">count: <span class="extype" name="scala.Option">Option</span>[<a href="ExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.ExpressionAST">ExpressionAST</a>]</span>, <span name="size">size: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="AllocationAST.html" class="extype" name="xyz.hyperreal.mos6502.AllocationAST">AllocationAST</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#xyz.hyperreal.mos6502.package@ReserveWordASTextendsAllocationASTwithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="xyz.hyperreal.mos6502.Segment" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SegmentextendsAnyRef"></a>
+      <a id="Segment:Segment"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Segment.html"><span class="name">Segment</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@SegmentextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="xyz.hyperreal.mos6502.SegmentDirectiveAST" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SegmentDirectiveASTextendsDirectiveASTwithProductwithSerializable"></a>
+      <a id="SegmentDirectiveAST:SegmentDirectiveAST"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="SegmentDirectiveAST.html"><span class="name">SegmentDirectiveAST</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="DirectiveAST.html" class="extype" name="xyz.hyperreal.mos6502.DirectiveAST">DirectiveAST</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@SegmentDirectiveASTextendsDirectiveASTwithProductwithSerializable" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -962,6 +1064,23 @@
       </a>
     </span>
       
+    </li><li name="xyz.hyperreal.mos6502.CharViewer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CharViewer"></a>
+      <a id="CharViewer:CharViewer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="CharViewer$.html"><span class="name">CharViewer</span></a><span class="result"> extends <span class="extype" name="scala.App">App</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@CharViewer" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="xyz.hyperreal.mos6502.Hex" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Hex"></a>
       <a id="Hex:Hex"></a>
@@ -1115,23 +1234,6 @@
       </a>
     </span>
       
-    </li><li name="xyz.hyperreal.mos6502.Vectors" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="Vectors"></a>
-      <a id="Vectors:Vectors"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="Vectors$.html"><span class="name">Vectors</span></a>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.package@Vectors" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
     </li><li name="xyz.hyperreal.mos6502#hex" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="hex(s:String):Int"></a>
       <a id="hex(String):Int"></a>
@@ -1183,19 +1285,19 @@
       </a>
     </span>
       
-    </li><li name="xyz.hyperreal.mos6502#ishex" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="ishex(s:String):Boolean"></a>
-      <a id="ishex(String):Boolean"></a>
+    </li><li name="xyz.hyperreal.mos6502#isHex" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="isHex(s:String):Boolean"></a>
+      <a id="isHex(String):Boolean"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ishex</span><span class="params">(<span name="s">s: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">isHex</span><span class="params">(<span name="s">s: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.package@ishex(s:String):Boolean" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.package@isHex(s:String):Boolean" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>

@@ -45,7 +45,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">EquateDirectiveAST</span><span class="params">(<span name="equ">equ: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="expr">expr: <a href="ExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.ExpressionAST">ExpressionAST</a></span>, <span name="value">value: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="DirectiveAST.html" class="extype" name="xyz.hyperreal.mos6502.DirectiveAST">DirectiveAST</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">EquateDirectiveAST</span><span class="params">(<span name="equ">equ: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="expr">expr: <a href="ExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.ExpressionAST">ExpressionAST</a></span>, <span name="definite">definite: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="result"> extends <a href="DirectiveAST.html" class="extype" name="xyz.hyperreal.mos6502.DirectiveAST">DirectiveAST</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
@@ -89,7 +89,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="xyz.hyperreal.mos6502.EquateDirectiveAST#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(equ:String,expr:xyz.hyperreal.mos6502.ExpressionAST,value:Option[Int]):xyz.hyperreal.mos6502.EquateDirectiveAST"></a>
+      <a id="&lt;init&gt;(equ:String,expr:xyz.hyperreal.mos6502.ExpressionAST,definite:Boolean):xyz.hyperreal.mos6502.EquateDirectiveAST"></a>
       <a id="&lt;init&gt;:EquateDirectiveAST"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -97,10 +97,10 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">EquateDirectiveAST</span><span class="params">(<span name="equ">equ: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="expr">expr: <a href="ExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.ExpressionAST">ExpressionAST</a></span>, <span name="value">value: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>)</span>
+        <span class="name">EquateDirectiveAST</span><span class="params">(<span name="equ">equ: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="expr">expr: <a href="ExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.ExpressionAST">ExpressionAST</a></span>, <span name="definite">definite: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.EquateDirectiveAST@&lt;init&gt;(equ:String,expr:xyz.hyperreal.mos6502.ExpressionAST,value:Option[Int]):xyz.hyperreal.mos6502.EquateDirectiveAST" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.EquateDirectiveAST@&lt;init&gt;(equ:String,expr:xyz.hyperreal.mos6502.ExpressionAST,definite:Boolean):xyz.hyperreal.mos6502.EquateDirectiveAST" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -205,6 +205,23 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="xyz.hyperreal.mos6502.EquateDirectiveAST#definite" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="definite:Boolean"></a>
+      <a id="definite:Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">var</span>
+      </span>
+      <span class="symbol">
+        <span class="name">definite</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.EquateDirectiveAST@definite:Boolean" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -381,23 +398,6 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="xyz.hyperreal.mos6502.EquateDirectiveAST#value" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="value:Option[Int]"></a>
-      <a id="value:Option[Int]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">var</span>
-      </span>
-      <span class="symbol">
-        <span class="name">value</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.EquateDirectiveAST@value:Option[Int]" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>

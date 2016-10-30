@@ -213,7 +213,7 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Parsers</dd></dl></div>
     </li><li name="scala.util.parsing.combinator.Parsers.ParseResult" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="ParseResult[+T&lt;:&lt;?&gt;]extendsAnyRef"></a>
+      <a id="ParseResult[+T]extendsAnyRef"></a>
       <a id="ParseResult[+T]:ParseResult[T]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -338,6 +338,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.util.parsing.combinator.Parsers.NoSuccess" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="NoSuccess"></a>
+      <a id="NoSuccess:NoSuccess"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <span class="name">NoSuccess</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.AssemblyParser@NoSuccess" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Parsers</dd></dl></div>
     </li><li name="scala.util.parsing.combinator.Parsers#OnceParser" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="OnceParser[T&lt;:&lt;?&gt;](f:&lt;?&gt;):Parsers.this.Parser[T]withParsers.this.OnceParser[T]"></a>
       <a id="OnceParser[T]((Input)⇒ParseResult[T]):Parser[T]withOnceParser[T]"></a>
@@ -559,19 +576,19 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Parsers</dd></dl></div>
-    </li><li name="xyz.hyperreal.mos6502.AssemblyParser#character" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="character:AssemblyParser.this.Parser[xyz.hyperreal.mos6502.NumberExpressionAST]"></a>
-      <a id="character:Parser[NumberExpressionAST]"></a>
+    </li><li name="xyz.hyperreal.mos6502.AssemblyParser#charLiteral" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="charLiteral:AssemblyParser.this.Parser[xyz.hyperreal.mos6502.NumberExpressionAST]"></a>
+      <a id="charLiteral:Parser[NumberExpressionAST]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">character</span><span class="result">: <a href="#Parser[+T]extendsParsers.this.Input=&gt;Parsers.this.ParseResult[T]" class="extmbr" name="xyz.hyperreal.mos6502.AssemblyParser.Parser">Parser</a>[<a href="NumberExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.NumberExpressionAST">NumberExpressionAST</a>]</span>
+        <span class="name">charLiteral</span><span class="result">: <a href="#Parser[+T]extendsParsers.this.Input=&gt;Parsers.this.ParseResult[T]" class="extmbr" name="xyz.hyperreal.mos6502.AssemblyParser.Parser">Parser</a>[<a href="NumberExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.NumberExpressionAST">NumberExpressionAST</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.AssemblyParser@character:AssemblyParser.this.Parser[xyz.hyperreal.mos6502.NumberExpressionAST]" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.AssemblyParser@charLiteral:AssemblyParser.this.Parser[xyz.hyperreal.mos6502.NumberExpressionAST]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -634,18 +651,18 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Parsers</dd></dl></div>
     </li><li name="xyz.hyperreal.mos6502.AssemblyParser#directive" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="directive:AssemblyParser.this.Parser[List[xyz.hyperreal.mos6502.StatementASTwithProductwithSerializable]]"></a>
-      <a id="directive:Parser[List[StatementASTwithProductwithSerializable]]"></a>
+      <a id="directive:AssemblyParser.this.Parser[List[xyz.hyperreal.mos6502.StatementAST]]"></a>
+      <a id="directive:Parser[List[StatementAST]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">directive</span><span class="result">: <a href="#Parser[+T]extendsParsers.this.Input=&gt;Parsers.this.ParseResult[T]" class="extmbr" name="xyz.hyperreal.mos6502.AssemblyParser.Parser">Parser</a>[<span class="extype" name="scala.collection.immutable.List">List</span>[<a href="StatementAST.html" class="extype" name="xyz.hyperreal.mos6502.StatementAST">StatementAST</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span>]]</span>
+        <span class="name">directive</span><span class="result">: <a href="#Parser[+T]extendsParsers.this.Input=&gt;Parsers.this.ParseResult[T]" class="extmbr" name="xyz.hyperreal.mos6502.AssemblyParser.Parser">Parser</a>[<span class="extype" name="scala.List">List</span>[<a href="StatementAST.html" class="extype" name="xyz.hyperreal.mos6502.StatementAST">StatementAST</a>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.AssemblyParser@directive:AssemblyParser.this.Parser[List[xyz.hyperreal.mos6502.StatementASTwithProductwithSerializable]]" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.AssemblyParser@directive:AssemblyParser.this.Parser[List[xyz.hyperreal.mos6502.StatementAST]]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -735,6 +752,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Parsers</dd></dl></div>
+    </li><li name="xyz.hyperreal.mos6502.AssemblyParser#escape" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="escape(s:String):String"></a>
+      <a id="escape(String):String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">escape</span><span class="params">(<span name="s">s: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.AssemblyParser@escape(s:String):String" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="xyz.hyperreal.mos6502.AssemblyParser#expression" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="expression:AssemblyParser.this.Parser[xyz.hyperreal.mos6502.ExpressionAST]"></a>
       <a id="expression:Parser[ExpressionAST]"></a>
@@ -911,23 +945,6 @@
       </a>
     </span>
       
-    </li><li name="xyz.hyperreal.mos6502.AssemblyParser#lit" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="lit(s:String):String"></a>
-      <a id="lit(String):String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">lit</span><span class="params">(<span name="s">s: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.AssemblyParser@lit(s:String):String" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
     </li><li name="scala.util.parsing.combinator.RegexParsers#literal" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="literal(s:String):RegexParsers.this.Parser[String]"></a>
       <a id="literal(String):Parser[String]"></a>
@@ -1098,19 +1115,19 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="xyz.hyperreal.mos6502.AssemblyParser#number" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="number:AssemblyParser.this.Parser[xyz.hyperreal.mos6502.NumberExpressionAST]"></a>
-      <a id="number:Parser[NumberExpressionAST]"></a>
+    </li><li name="xyz.hyperreal.mos6502.AssemblyParser#numberLiteral" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="numberLiteral:AssemblyParser.this.Parser[xyz.hyperreal.mos6502.NumberExpressionAST]"></a>
+      <a id="numberLiteral:Parser[NumberExpressionAST]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">number</span><span class="result">: <a href="#Parser[+T]extendsParsers.this.Input=&gt;Parsers.this.ParseResult[T]" class="extmbr" name="xyz.hyperreal.mos6502.AssemblyParser.Parser">Parser</a>[<a href="NumberExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.NumberExpressionAST">NumberExpressionAST</a>]</span>
+        <span class="name">numberLiteral</span><span class="result">: <a href="#Parser[+T]extendsParsers.this.Input=&gt;Parsers.this.ParseResult[T]" class="extmbr" name="xyz.hyperreal.mos6502.AssemblyParser.Parser">Parser</a>[<a href="NumberExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.NumberExpressionAST">NumberExpressionAST</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.AssemblyParser@number:AssemblyParser.this.Parser[xyz.hyperreal.mos6502.NumberExpressionAST]" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.AssemblyParser@numberLiteral:AssemblyParser.this.Parser[xyz.hyperreal.mos6502.NumberExpressionAST]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1354,7 +1371,7 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Parsers</dd></dl></div>
     </li><li name="scala.util.parsing.combinator.Parsers#rep1" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="rep1[T&lt;:&lt;?&gt;](first:&lt;?&gt;,p0:&lt;?&gt;):Parsers.this.Parser[List[T]]"></a>
+      <a id="rep1[T](first:=&gt;Parsers.this.Parser[T],p0:=&gt;Parsers.this.Parser[T]):Parsers.this.Parser[List[T]]"></a>
       <a id="rep1[T](⇒Parser[T],⇒Parser[T]):Parser[List[T]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1374,7 +1391,7 @@
               
         </dd><dt>Migration</dt><dd class="cmt"><p><i>(Changed in version 2.9.0)</i> The <code>p0</code> call-by-name arguments is evaluated at most once per constructed Parser object, instead of on every need that arises during parsing.</p></dd></dl></div>
     </li><li name="scala.util.parsing.combinator.Parsers#rep1" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="rep1[T&lt;:&lt;?&gt;](p:&lt;?&gt;):Parsers.this.Parser[List[T]]"></a>
+      <a id="rep1[T](p:=&gt;Parsers.this.Parser[T]):Parsers.this.Parser[List[T]]"></a>
       <a id="rep1[T](⇒Parser[T]):Parser[List[T]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1493,35 +1510,52 @@
     </span>
       
     </li><li name="xyz.hyperreal.mos6502.AssemblyParser#statement" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="statement:AssemblyParser.this.Parser[List[xyz.hyperreal.mos6502.StatementASTwithProductwithSerializable]]"></a>
-      <a id="statement:Parser[List[StatementASTwithProductwithSerializable]]"></a>
+      <a id="statement:AssemblyParser.this.Parser[List[xyz.hyperreal.mos6502.StatementAST]]"></a>
+      <a id="statement:Parser[List[StatementAST]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">statement</span><span class="result">: <a href="#Parser[+T]extendsParsers.this.Input=&gt;Parsers.this.ParseResult[T]" class="extmbr" name="xyz.hyperreal.mos6502.AssemblyParser.Parser">Parser</a>[<span class="extype" name="scala.collection.immutable.List">List</span>[<a href="StatementAST.html" class="extype" name="xyz.hyperreal.mos6502.StatementAST">StatementAST</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span>]]</span>
+        <span class="name">statement</span><span class="result">: <a href="#Parser[+T]extendsParsers.this.Input=&gt;Parsers.this.ParseResult[T]" class="extmbr" name="xyz.hyperreal.mos6502.AssemblyParser.Parser">Parser</a>[<span class="extype" name="scala.List">List</span>[<a href="StatementAST.html" class="extype" name="xyz.hyperreal.mos6502.StatementAST">StatementAST</a>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.AssemblyParser@statement:AssemblyParser.this.Parser[List[xyz.hyperreal.mos6502.StatementASTwithProductwithSerializable]]" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.AssemblyParser@statement:AssemblyParser.this.Parser[List[xyz.hyperreal.mos6502.StatementAST]]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       
     </li><li name="xyz.hyperreal.mos6502.AssemblyParser#string" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="string:AssemblyParser.this.Parser[xyz.hyperreal.mos6502.StringExpressionAST]"></a>
-      <a id="string:Parser[StringExpressionAST]"></a>
+      <a id="string:AssemblyParser.this.Parser[String]"></a>
+      <a id="string:Parser[String]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">string</span><span class="result">: <a href="#Parser[+T]extendsParsers.this.Input=&gt;Parsers.this.ParseResult[T]" class="extmbr" name="xyz.hyperreal.mos6502.AssemblyParser.Parser">Parser</a>[<a href="StringExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.StringExpressionAST">StringExpressionAST</a>]</span>
+        <span class="name">string</span><span class="result">: <a href="#Parser[+T]extendsParsers.this.Input=&gt;Parsers.this.ParseResult[T]" class="extmbr" name="xyz.hyperreal.mos6502.AssemblyParser.Parser">Parser</a>[<span class="extype" name="java.lang.String">String</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#xyz.hyperreal.mos6502.AssemblyParser@string:AssemblyParser.this.Parser[xyz.hyperreal.mos6502.StringExpressionAST]" title="Permalink" target="_top">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.AssemblyParser@string:AssemblyParser.this.Parser[String]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="xyz.hyperreal.mos6502.AssemblyParser#stringLiteral" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="stringLiteral:AssemblyParser.this.Parser[xyz.hyperreal.mos6502.StringExpressionAST]"></a>
+      <a id="stringLiteral:Parser[StringExpressionAST]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">stringLiteral</span><span class="result">: <a href="#Parser[+T]extendsParsers.this.Input=&gt;Parsers.this.ParseResult[T]" class="extmbr" name="xyz.hyperreal.mos6502.AssemblyParser.Parser">Parser</a>[<a href="StringExpressionAST.html" class="extype" name="xyz.hyperreal.mos6502.StringExpressionAST">StringExpressionAST</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#xyz.hyperreal.mos6502.AssemblyParser@stringLiteral:AssemblyParser.this.Parser[xyz.hyperreal.mos6502.StringExpressionAST]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
