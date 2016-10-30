@@ -234,11 +234,11 @@ object Main extends App with Flags {
 					case List( "symbols"|"sy", symbol, value ) =>
 						emu.symbols += (symbol -> emu.target( value ))
 					case List( "symbols"|"sy" ) =>
-						out.println( "           name value       segment" )
-						out.println( "           ---- -----       -------" )
+						out.println( "name            value segment" )
+						out.println( "----            ----- -------" )
 						for ((s, v) <- emu.symbols.toList sortBy (_._1))
 							v match {
-								case str: String => out.printf( "%15s %-11s\n", s, '"' + str + '"' )
+								case str: String => out.printf( "%-15s %-5s\n", s, '"' + str + '"' )
 								case addr: Int =>
 									val seg =
 										emu.segments get addr match {
@@ -263,7 +263,7 @@ object Main extends App with Flags {
 										}
 										
 									
-									out.printf( "%15s %-11s %s\n", s, hexWord(addr), seg )
+									out.printf( "%-15s %-5s %s\n", s, hexWord(addr), seg )
 							}
 					case Nil|List( "" ) =>
 					case _ => out.println( "error interpreting command" )
@@ -272,8 +272,8 @@ object Main extends App with Flags {
 			catch
 			{
 				case e: Exception =>
-					out.println( e )
-//					e.printStackTrace( out )
+//					out.println( e )
+					e.printStackTrace( out )
 			}
 		}
 		

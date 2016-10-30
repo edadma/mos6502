@@ -31,7 +31,7 @@ abstract class AllocationAST extends StatementAST {
 }
 
 case class InstructionAST( mnemonic: String, mode: ModeAST, var size: Option[Int] = None ) extends AllocationAST
-case class DataByteAST( data: Seq[ExpressionAST] ) extends AllocationAST
-case class DataWordAST( data: Seq[ExpressionAST] ) extends AllocationAST
-case class ReserveByteAST( count: Option[ExpressionAST] ) extends AllocationAST
-case class ReserveWordAST( count: Option[ExpressionAST] ) extends AllocationAST
+case class DataByteAST( data: Seq[ExpressionAST], var size: Option[Int] = None ) extends AllocationAST
+case class DataWordAST( data: Seq[ExpressionAST], var size: Option[Int] = None ) extends AllocationAST
+case class ReserveByteAST( count: Option[ExpressionAST], var size: Option[Int] = None ) extends AllocationAST
+case class ReserveWordAST( count: Option[ExpressionAST], var size: Option[Int] = None ) extends AllocationAST
