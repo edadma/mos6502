@@ -38,7 +38,12 @@ object Instructions extends Flags with VectorsAddresses {
 	
 	def and( cpu: CPU, addr: Int ) = cpu.loadA( cpu.A&cpu.readByte(addr) )
 	
-	def cmp( cpu: CPU, addr: Int ) = cpu.set( C, cpu.flags(cpu.A - cpu.readByte(addr)) >= 0 )
+	def cmp( cpu: CPU, addr: Int ) {
+		val diff = cpu.A - cpu.readByte(addr)
+		
+		cpu.flags( diff )
+		cpu.set( C, diff >= 0 )
+	}
 	
 	def eor( cpu: CPU, addr: Int ) = cpu.loadA( cpu.A^cpu.readByte(addr) )
 
