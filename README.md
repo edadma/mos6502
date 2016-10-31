@@ -63,31 +63,31 @@ will print
 The easiest way to try this out is to follow the [build](https://github.com/edadma/mos6502#build-and-run-the-repl) instructions below. Then, once inside the REPL, type
 
 	a code/count.asm
-	e
+	ew
 
 Of course, when doing this in the REPL you will also see
 
 	A:06 X:00 Y:00 SP:01FD PC:900D
-	N:0 V:0 B:0 D:0 I:0 Z:1 C:0
-	900D  8D 01 80   PRINT           STA INTIO
+	N:0 V:0 B:0 D:0 I:0 Z:1 C:1
+	900D  8D 01 80   .2              STA INTIO
 
 as well, showing you the state of the CPU after execution.
 
-If you now type the `u` command to disassemble the program from memory, you should see
+If you now type the command `u 9000` to disassemble the program from memory, you should see
 
-	9000  A9 00                      LDA #$00
+	9000  A9 00      START           LDA #0
 	9002  85 00                      STA COUNTER
-	9004  E6 00      LOOP            INC COUNTER
+	9004  E6 00      .1              INC COUNTER
 	9006  A5 00                      LDA COUNTER
-	9008  C9 06                      CMP #$06
-	900A  D0 01                      BNE PRINT
+	9008  C9 06                      CMP #6
+	900A  D0 01                      BNE .2
 	900C  00                         BRK 
-	900D  8D 01 80   PRINT           STA INTIO
+	900D  8D 01 80   .2              STA INTIO
 	9010  A9 0A                      LDA #$0A
 	9012  8D 00 80                   STA CHIO
-	9015  4C 04 90                   JMP LOOP
+	9015  4C 04 90                   JMP .1
 
-Notice that the REPL can use the symbol information from the assembler to provide a more readable disassembly.
+Notice that the REPL uses the symbol information (if available) from the assembler to provide a more readable disassembly.
 
 
 License
