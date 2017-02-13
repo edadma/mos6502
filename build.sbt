@@ -1,8 +1,10 @@
 name := "mos6502"
 
-version := "0.3"
+version := "0.4"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.1"
+
+crossScalaVersions := Seq( "2.11.8" )
 
 scalacOptions ++= Seq( "-deprecation", "-feature", "-language:postfixOps", "-language:implicitConversions", "-language:existentials" )
 
@@ -18,12 +20,12 @@ resolvers += "Hyperreal Repository" at "https://dl.bintray.com/edadma/maven"
 
 libraryDependencies ++= Seq(
 	"org.scalatest" %% "scalatest" % "3.0.0" % "test",
-	"org.scalacheck" %% "scalacheck" % "1.13.2" % "test"
+	"org.scalacheck" %% "scalacheck" % "1.13.4" % "test"
 )
 
 libraryDependencies ++= Seq(
-	"org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
-	"org.scala-lang.modules" %% "scala-swing" % "1.0.2"
+	"org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.5",
+	"org.scala-lang.modules" %% "scala-swing" % "2.0.0"
 )
 
 libraryDependencies ++= Seq(
