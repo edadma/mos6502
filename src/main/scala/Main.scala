@@ -103,7 +103,7 @@ object Main extends App with Flags {
 			registers
 		}
 		
-		out.println( "MOS 6502 emulator v0.3" )
+		out.println( "MOS 6502 Emulator v0.5" )
 		out.println( "Type 'help' for list of commands." )
 		out.println
 		

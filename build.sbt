@@ -1,14 +1,12 @@
 name := "mos6502"
 
-version := "0.4"
+version := "0.5"
 
-scalaVersion := "2.12.1"
+scalaVersion := "2.12.4"
 
-crossScalaVersions := Seq( "2.11.8" )
+crossScalaVersions := Seq( "2.11.11" )
 
 scalacOptions ++= Seq( "-deprecation", "-feature", "-language:postfixOps", "-language:implicitConversions", "-language:existentials" )
-
-incOptions := incOptions.value.withNameHashing( true )
 
 organization := "xyz.hyperreal"
 
@@ -24,12 +22,12 @@ libraryDependencies ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-	"org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.5",
+	"org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.6",
 	"org.scala-lang.modules" %% "scala-swing" % "2.0.0"
 )
 
 libraryDependencies ++= Seq(
-	"jline" % "jline" % "2.14.2"
+	"jline" % "jline" % "2.14.5"
 )
 
 mainClass in (Compile, run) := Some( "xyz.hyperreal." + name.value + ".Main" )
@@ -44,11 +42,11 @@ publishArtifact in Test := false
 
 pomIncludeRepository := { _ => false }
 
-licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
+licenses := Seq("ISC" -> url("https://opensource.org/licenses/ISC"))
 
 homepage := Some(url("https://github.com/edadma/" + name.value))
 
-pomExtra := (
+pomExtra :=
   <scm>
     <url>git@github.com:edadma/{name.value}.git</url>
     <connection>scm:git:git@github.com:edadma/{name.value}.git</connection>
@@ -59,4 +57,4 @@ pomExtra := (
       <name>Edward A. Maxedon, Sr.</name>
       <url>https://github.com/edadma</url>
     </developer>
-  </developers>)
+  </developers>
