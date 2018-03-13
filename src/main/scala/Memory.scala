@@ -32,7 +32,7 @@ trait Addressable {
 	
 	def writeWord( addr: Int, value: Int ) {
 		writeByte( addr, value&0xFF )
-		writeByte( addr, value>>8 )
+		writeByte( addr + 1, value>>8 )
 	}
 	
 }
